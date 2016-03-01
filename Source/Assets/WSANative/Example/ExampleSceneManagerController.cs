@@ -2,10 +2,18 @@
 using UnityEngine;
 using WSANativeDialogs;
 using WSANativeFileStorage;
+using WSANativeIAPStore;
 using WSANativeSerialisers;
 
 public class ExampleSceneManagerController : MonoBehaviour
 {
+    public void Start()
+    {
+        WSANativeStore.EnableTestMode();
+
+        WSANativeStore.ReloadSimulator();
+    }
+
     public void CreateDialog()
     {
         WSANativeDialog.ShowDialogWithOptions("This is a title", "This is a message", new List<WSADialogCommand>() { new WSADialogCommand("Yes"), new WSADialogCommand("No"), new WSADialogCommand("Cancel") }, 0, 2, (WSADialogResult result) =>
@@ -65,6 +73,42 @@ public class ExampleSceneManagerController : MonoBehaviour
         {
             WSANativeStorage.DeleteFile("Test.txt");
         }
+    }
+
+    public void PurchaseProduct()
+    {
+        WSANativeStore.GetProductListings((List<WSAProduct> products) =>
+        {
+            if (products != null && products.Count > 0)
+            {
+                WSANativeStore.PurchaseProduct(products[0].Id, (WSAPurchaseResult result) =>
+                {
+                    if (result.Status == WSAPurchaseResultStatus.Succeeded)
+                    {
+                        WSANativeDialog.ShowDialog("Purchased", "YAY");
+                    }
+                    else
+                    {
+                        WSANativeDialog.ShowDialog("Not Purchased", "NAY");
+                    }
+                });
+            }
+        });
+    }
+
+    public void PurchaseApp()
+    {
+        WSANativeStore.PurchaseApp((string response) =>
+        {
+            if (!string.IsNullOrEmpty(response))
+            {
+                WSANativeDialog.ShowDialog("Purchased", response);
+            }
+            else
+            {
+                WSANativeDialog.ShowDialog("Not Purchased", "NAY");
+            }
+        });
     }
 }
 

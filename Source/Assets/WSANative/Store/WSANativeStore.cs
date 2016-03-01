@@ -51,9 +51,8 @@ namespace WSANativeIAPStore
         }
 
         /// <summary>
-        /// Turn on dev options in settings
+        /// Reloads the simulator with an xml file containing test products - see the documentation for detailed usage
         /// </summary>
-        /// <param name="result"></param>
         public static void ReloadSimulator()
         {
 #if NETFX_CORE
