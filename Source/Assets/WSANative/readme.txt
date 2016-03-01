@@ -11,6 +11,8 @@ Support Email: clayton.inds+support@gmail.com
 ------------------------------------------------------------------------------------------------------------------------
 Basics - all functions listed below have detailed comments in the code
 
+***All the functions below except the serialisation functions will only work once you build a windows store solution - however they are safe to use in the editor***
+
 Show a dialog:
 WSANativeDialog.ShowDialog
 
