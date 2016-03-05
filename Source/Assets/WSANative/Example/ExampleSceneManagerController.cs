@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using WSANativeDialogs;
+using WSANativeFilePickers;
 using WSANativeFileStorage;
 using WSANativeIAPStore;
 using WSANativeSerialisers;
@@ -107,6 +108,18 @@ public class ExampleSceneManagerController : MonoBehaviour
             else
             {
                 WSANativeDialog.ShowDialog("Not Purchased", "NAY");
+            }
+        });
+    }
+
+    public void ShowFilePicker()
+    {
+        WSANativeFilePicker.ChooseFile("Select", WSAPickerViewMode.Thumbnail, WSAPickerLocationId.PicturesLibrary, new[] { ".png", ".jpg" }, (result) =>
+        {
+            if (result != null)
+            {
+                byte[] fileBytes = result.ReadBytes();
+                string fileString = result.ReadText();
             }
         });
     }
