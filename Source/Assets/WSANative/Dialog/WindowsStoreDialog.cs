@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using Windows.UI.Core;
 using Windows.UI.Popups;
 
-namespace WSANativeDialogs
+namespace CI.WSANative.Dialogs
 {
     public class WindowsStoreDialog
     {

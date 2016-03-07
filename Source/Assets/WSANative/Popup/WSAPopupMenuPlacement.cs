@@ -6,7 +6,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace WSANativeDialogs
+namespace CI.WSANative.Dialogs
 {
     public enum WSAPopupMenuPlacement
     {

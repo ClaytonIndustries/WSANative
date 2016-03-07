@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using CI.WSANative.Dialogs;
+using CI.WSANative.FilePickers;
+using CI.WSANative.FileStorage;
+using CI.WSANative.IAPStore;
+using CI.WSANative.Serialisers;
 using UnityEngine;
-using WSANativeDialogs;
-using WSANativeFilePickers;
-using WSANativeFileStorage;
-using WSANativeIAPStore;
-using WSANativeSerialisers;
+
 
 public class ExampleSceneManagerController : MonoBehaviour
 {

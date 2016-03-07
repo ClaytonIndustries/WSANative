@@ -6,7 +6,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace WSANativeIAPStore
+namespace CI.WSANative.IAPStore
 {
     public enum WSAPurchaseResultStatus
     {

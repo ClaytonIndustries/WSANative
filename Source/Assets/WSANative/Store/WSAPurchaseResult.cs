@@ -8,7 +8,7 @@
 
 using System;
 
-namespace WSANativeIAPStore
+namespace CI.WSANative.IAPStore
 {
     public class WSAPurchaseResult
     {

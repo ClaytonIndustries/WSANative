@@ -6,7 +6,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace WSANativeFilePickers
+namespace CI.WSANative.FilePickers
 {
     public enum WSAPickerLocationId
     {

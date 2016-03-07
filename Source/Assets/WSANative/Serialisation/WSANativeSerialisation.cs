@@ -9,7 +9,7 @@
 using System.IO;
 using System.Xml.Serialization;
 
-namespace WSANativeSerialisers
+namespace CI.WSANative.Serialisers
 {
     public static class WSANativeSerialisation
     {

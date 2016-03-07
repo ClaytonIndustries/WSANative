@@ -16,7 +16,7 @@ using Windows.ApplicationModel.Store;
 using Windows.Storage;
 #endif
 
-namespace WSANativeIAPStore
+namespace CI.WSANative.IAPStore
 {
     public static class WSANativeStore
     {

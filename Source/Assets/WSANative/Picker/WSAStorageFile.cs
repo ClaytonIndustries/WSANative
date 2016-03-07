@@ -13,7 +13,7 @@ using Windows.Storage;
 using Windows.Storage.Streams;
 #endif
 
-namespace WSANativeFilePickers
+namespace CI.WSANative.FilePickers
 {
     public class WSAStorageFile
     {

@@ -15,7 +15,7 @@ using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 #endif
 
-namespace WSANativeFilePickers
+namespace CI.WSANative.FilePickers
 {
     public static class WSANativeFilePicker
     {

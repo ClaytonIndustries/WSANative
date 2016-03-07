@@ -10,7 +10,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace WSANativeDialogs
+namespace CI.WSANative.Dialogs
 {
     public static class WSANativeDialog
     {

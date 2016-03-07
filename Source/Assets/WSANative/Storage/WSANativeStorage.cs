@@ -16,7 +16,7 @@ using Windows.Storage.Search;
 
 using System.Collections.Generic;
 
-namespace WSANativeFileStorage
+namespace CI.WSANative.FileStorage
 {
     public static class WSANativeStorage
     {
