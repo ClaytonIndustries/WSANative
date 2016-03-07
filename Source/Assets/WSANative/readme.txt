@@ -3,7 +3,8 @@
 Thanks for downloading WSA Native we hope you enjoy using it!
 
 A demo scene is included that shows how to use most features
-Full documentation can be found on the website or if you need additional support please contact us at the address below.
+Full documentation can be found on the website or if you need additional support please contact us at the address below
+If you would like to see any features added please get in touch
 
 Support Website: http://claytonindustries.16mb.com/
 Support Email: clayton.inds+support@gmail.com
@@ -41,6 +42,10 @@ WSANativeStore.PurchaseApp
 WSANativeStore.GetLicenseForApp
 WSANativeStore.GetLicenseForProduct
 WSANativeStore.ShowAppStorePage
+
+File Picker
+WSANativeFilePicker.ShowFileOpenPicker
+WSANativeFilePicker.ShowFileSavePicker
 
 ------------------------------------------------------------------------------------------------------------------------
 Windows Store - Configuring test products

@@ -112,14 +112,26 @@ public class ExampleSceneManagerController : MonoBehaviour
         });
     }
 
-    public void ShowFilePicker()
+    public void ShowFileOpenPicker()
     {
-        WSANativeFilePicker.ChooseFile("Select", WSAPickerViewMode.Thumbnail, WSAPickerLocationId.PicturesLibrary, new[] { ".png", ".jpg" }, (result) =>
+        WSANativeFilePicker.PickSingleFile("Select", WSAPickerViewMode.Thumbnail, WSAPickerLocationId.PicturesLibrary, new[] { ".png", ".jpg" }, (result) =>
         {
             if (result != null)
             {
                 byte[] fileBytes = result.ReadBytes();
                 string fileString = result.ReadText();
+            }
+        });
+    }
+
+    public void ShowFileSavePicker()
+    {
+        WSANativeFilePicker.PickSaveFile("Save", ".jpg", "Test Image", WSAPickerLocationId.DocumentsLibrary, new List<KeyValuePair<string, IList<string>>>() { new KeyValuePair<string, IList<string>>("Image Files", new List<string>() { ".png", ".jpg" }) }, (result) =>
+        {
+            if (result != null)
+            {
+                result.WriteBytes(new byte[2]);
+                result.WriteText("Hello World");
             }
         });
     }

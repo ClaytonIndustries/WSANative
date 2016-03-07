@@ -59,5 +59,27 @@ namespace WSANativeFilePickers
             return string.Empty;
 #endif
         }
+
+        /// <summary>
+        /// Writes a series of bytes to the file - does nothing in the editor
+        /// </summary>
+        /// <param name="bytes">The bytes to write</param>
+        public void WriteBytes(byte[] bytes)
+        {
+#if NETFX_CORE
+            FileIO.WriteBytesAsync(OriginalFile, bytes).AsTask().Wait();
+#endif
+        }
+
+        /// <summary>
+        /// Writes a string to the file - does nothing in the editor
+        /// </summary>
+        /// <param name="text">The string to write</param>
+        public void WriteText(string text)
+        {
+#if NETFX_CORE
+            FileIO.WriteTextAsync(OriginalFile, text).AsTask().Wait();
+#endif
+        }
     }
 }
