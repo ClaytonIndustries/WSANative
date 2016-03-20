@@ -141,7 +141,9 @@ namespace CI.WSANative.FilePickers
                     Name = file.Name,
                     Path = file.Path,
                     DisplayType = file.DisplayType,
+#if (UNITY_WSA_10_0 || UNITY_WSA_8_1)
                     IsAvailable = file.IsAvailable,
+#endif
                     OriginalFile = file
                 };
             }

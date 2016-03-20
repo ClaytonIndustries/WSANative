@@ -23,6 +23,10 @@ namespace CI.WSANative.FilePickers
         public string Name;
         public string Path;
         public string DisplayType;
+
+        /// <summary>
+        /// Only available in universal 10 or desktop 8.1
+        /// </summary>
         public bool IsAvailable;
 
 #if NETFX_CORE
