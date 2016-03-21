@@ -113,9 +113,11 @@ namespace CI.WSANative.IAPStore
                     {
                         Id = product.ProductId,
                         Name = product.Name,
+#if (UNITY_WSA_10_0 || UNITY_WP8_1)
                         Description = product.Description,
-                        FormattedPrice = product.FormattedPrice,
                         ImageUri = product.ImageUri,
+#endif
+                        FormattedPrice = product.FormattedPrice,
                         ProductType = Enum.GetName(typeof(ProductType), product.ProductType)
                     });
                 }
@@ -399,7 +401,9 @@ namespace CI.WSANative.IAPStore
 
                 try
                 {
+#if (UNITY_WSA_10_0 || UNITY_WP8_1)
                     license.IsConsumable = CurrentAppSimulator.LicenseInformation.ProductLicenses[id].IsConsumable;
+#endif
                 }
                 catch
                 {
@@ -416,7 +420,9 @@ namespace CI.WSANative.IAPStore
 
                 try
                 {
+#if (UNITY_WSA_10_0 || UNITY_WP8_1)
                     license.IsConsumable = CurrentApp.LicenseInformation.ProductLicenses[id].IsConsumable;
+#endif
                 }
                 catch
                 {

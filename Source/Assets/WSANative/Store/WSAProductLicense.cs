@@ -26,7 +26,7 @@ namespace CI.WSANative.IAPStore
         }
 
         /// <summary>
-        /// If the license is for a product - is it a consumable
+        /// If the license is for a product - is it a consumable - Not available for 8.1 desktop
         /// </summary>
         public bool IsConsumable
         {

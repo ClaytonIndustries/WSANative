@@ -22,6 +22,9 @@ namespace CI.WSANative.IAPStore
             get; set;
         }
 
+        /// <summary>
+        /// Not available for 8.1 desktop
+        /// </summary>
         public string Description
         {
             get; set;
@@ -32,6 +35,9 @@ namespace CI.WSANative.IAPStore
             get; set;
         }
 
+        /// <summary>
+        /// Not available for 8.1 desktop
+        /// </summary>
         public Uri ImageUri
         {
             get; set;
