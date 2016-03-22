@@ -43,9 +43,16 @@ WSANativeStore.GetLicenseForApp
 WSANativeStore.GetLicenseForProduct
 WSANativeStore.ShowAppStorePage
 
-File Picker
+File Picker:
 WSANativeFilePicker.ShowFileOpenPicker
 WSANativeFilePicker.ShowFileSavePicker
+
+Advertising:
+Interstitial:
+WSANativeInterstitialAd.Init
+WSANativeInterstitialAd.RequestAd
+WSANativeInterstitialAd.Show
+WSANativeInterstitialAd.Close
 
 ------------------------------------------------------------------------------------------------------------------------
 Windows Store - Configuring test products
@@ -53,3 +60,8 @@ Windows Store - Configuring test products
 When in test mode products and info about your app are defined in an xml file called WindowsStoreProxy.xml which can be found at C:\Users\<username>\AppData\Local\Packages\<app package folder>\LocalState\Microsoft\Windows Store\ApiData\WindowsStoreProxy.xml.
 Once you have build your windows store solution you can copy the file to the Assets folder (this is the Assets folder in the solution that is created when you do a build from Unity) and call reload simulator (see below) to configure the simulated store.
 Then call WSANativeStore.ReloadSimulator when you app starts up.
+
+Avertising - Interstitial
+
+Once you have build your windows store visual studio solution with unity delete "#define ADS_DISABLED" from the file WSANativeInterstitialAd to enable the code.
+Then add references to the microsoft advertising sdk.
