@@ -63,5 +63,5 @@ Then call WSANativeStore.ReloadSimulator when you app starts up.
 
 Avertising - Interstitial
 
-Once you have build your windows store visual studio solution with unity delete "#define ADS_DISABLED" from the file WSANativeInterstitialAd to enable the code.
-Then add references to the microsoft advertising sdk.
+Once you have built your windows store visual studio solution with unity, delete "#define ADS_DISABLED" from the file WSANativeInterstitialAd.cs to enable the code.
+Then add a reference to the microsoft advertising sdk.
