@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CI.WSANative.Advertising;
 using CI.WSANative.Dialogs;
 using CI.WSANative.FilePickers;
 using CI.WSANative.FileStorage;
@@ -11,9 +12,9 @@ public class ExampleSceneManagerController : MonoBehaviour
 {
     public void Start()
     {
-        WSANativeStore.EnableTestMode();
+        //WSANativeStore.EnableTestMode();
 
-        WSANativeStore.ReloadSimulator();
+        //WSANativeStore.ReloadSimulator();
     }
 
     public void CreateDialog()
@@ -135,6 +136,21 @@ public class ExampleSceneManagerController : MonoBehaviour
                 result.WriteText("Hello World");
             }
         });
+    }
+
+    public void CreateInterstitialAd()
+    {
+        WSANativeInterstitialAd.Initialise("d25517cb-12d4-4699-8bdc-52040c712cab", "10042998");
+        WSANativeInterstitialAd.AdReady += () =>
+        {
+            WSANativeInterstitialAd.ShowAd();
+        };
+        WSANativeInterstitialAd.RequestAd();
+    }
+
+    public void CreateBannerAd()
+    {
+        WSANativeBannerAd.CreatAd("d25517cb-12d4-4699-8bdc-52040c712cab", "10042998", 728, 90, WSAAdPlacement.Top);
     }
 }
 

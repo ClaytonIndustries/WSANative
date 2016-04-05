@@ -39,7 +39,7 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// Raised when the interstitial ad encounters an operational error
         /// </summary>
-        public static Action ErrorOcurred
+        public static Action ErrorOccurred
         {
             get; set;
         }
@@ -66,7 +66,7 @@ namespace CI.WSANative.Advertising
         /// Initialise the interstitial ad
         /// </summary>
         /// <param name="appId">Your apps id</param>
-        /// <param name="adUnitId">Your add unit id</param>
+        /// <param name="adUnitId">Your ad unit id</param>
         public static void Initialise(string appId, string adUnitId)
         {
             _appId = appId;
@@ -79,12 +79,10 @@ namespace CI.WSANative.Advertising
         /// </summary>
         public static void RequestAd()
         {
-#if NETFX_CORE
             if(Request != null)
             {
                 Request(_appId, _adUnitId);
             }
-#endif
         }
 
         /// <summary>
@@ -93,12 +91,10 @@ namespace CI.WSANative.Advertising
         /// </summary>
         public static void ShowAd()
         {
-#if NETFX_CORE
             if(Show != null)
             {
                 Show();
             }
-#endif
         }
 
         /// <summary>
@@ -106,12 +102,10 @@ namespace CI.WSANative.Advertising
         /// </summary>
         public static void CloseAd()
         {
-#if NETFX_CORE
             if(Close != null)
             {
                 Close();
             }
-#endif
         }
 
         /// <summary>
@@ -120,7 +114,6 @@ namespace CI.WSANative.Advertising
         /// <param name="action"></param>
         public static void RaiseActionOnAppThread(Action action)
         {
-#if NETFX_CORE
             UnityEngine.WSA.Application.InvokeOnAppThread(() =>
             {
                 if (action != null)
@@ -128,7 +121,6 @@ namespace CI.WSANative.Advertising
                     action();
                 }
             }, false);
-#endif
         }
     }
 }
