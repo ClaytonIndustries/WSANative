@@ -76,3 +76,14 @@ private void ConfigureBannerAd()
 
 // Add reference to advertising sdk
 // Add internet client to appmanifest
+
+
+1) Use Unity to build a windows store visual studio solution
+2) Open the solution and add a reference to the ad sdk - use the one from here
+3) Build the solution (you don't have to but it resolves any references that visual studio says are missing)
+4) Open MainPage.xaml.cs and add the following using statements
+using Microsoft.Advertising.WinRT.UI;
+using CI.WSANative.Advertising;
+5) Copy the below function and add it just below the MainPage constructor
+6) Call the function we just added from the bottom of the MainPage constructor
+7) Open the apps manifest file and add the internet client capability (you must do this or the ads won't show)
