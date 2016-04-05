@@ -6,13 +6,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#define ADS_DISABLED
-
 using System;
-
-#if NETFX_CORE && !ADS_DISABLED
-using Microsoft.Advertising.WinRT.UI;
-#endif
 
 namespace CI.WSANative.Advertising
 {
@@ -21,26 +15,49 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// Raised when the interstitial ad is ready to be shown
         /// </summary>
-        public static Action AdReady;
+        public static Action AdReady
+        {
+            get; set;
+        }
 
         /// <summary>
         /// Raised when the user cancels the interstitial ad before it is considered complete
         /// </summary>
-        public static Action Cancelled;
+        public static Action Cancelled
+        {
+            get; set;
+        }
 
         /// <summary>
         /// Raised when the interstitial ad has been closed and the experience is considered complete
         /// </summary>
-        public static Action Completed;
+        public static Action Completed
+        {
+            get; set;
+        }
 
         /// <summary>
         /// Raised when the interstitial ad encounters an operational error
         /// </summary>
-        public static Action ErrorOcurred;
+        public static Action ErrorOcurred
+        {
+            get; set;
+        }
 
-#if NETFX_CORE && !ADS_DISABLED
-        private static InterstitialAd _interstitialAd;
-#endif
+        /// <summary>
+        /// For internal use only
+        /// </summary>
+        public static Action<string, string> Request;
+
+        /// <summary>
+        /// For internal use only
+        /// </summary>
+        public static Action Show;
+
+        /// <summary>
+        /// For internal use only
+        /// </summary>
+        public static Action Close;
 
         private static string _appId;
         private static string _adUnitId;
@@ -50,18 +67,10 @@ namespace CI.WSANative.Advertising
         /// </summary>
         /// <param name="appId">Your apps id</param>
         /// <param name="adUnitId">Your add unit id</param>
-        public static void Init(string appId, string adUnitId)
+        public static void Initialise(string appId, string adUnitId)
         {
             _appId = appId;
             _adUnitId = adUnitId;
-
-#if NETFX_CORE && !ADS_DISABLED
-            _interstitialAd = new InterstitialAd();
-            _interstitialAd.AdReady += delegate { RaiseActionOnAppThread(AdReady); };
-            _interstitialAd.ErrorOccurred += delegate { RaiseActionOnAppThread(Cancelled); };
-            _interstitialAd.Completed += delegate { RaiseActionOnAppThread(Completed); };
-            _interstitialAd.Cancelled += delegate { RaiseActionOnAppThread(ErrorOcurred); };
-#endif
         }
 
         /// <summary>
@@ -70,19 +79,10 @@ namespace CI.WSANative.Advertising
         /// </summary>
         public static void RequestAd()
         {
-#if NETFX_CORE && !ADS_DISABLED
-            if(_interstitialAd != null)
+#if NETFX_CORE
+            if(Request != null)
             {
-                try
-                {
-                    UnityEngine.WSA.Application.InvokeOnUIThread(() =>
-                    {
-                        _interstitialAd.RequestAd(AdType.Video, _appId, _adUnitId);
-                    }, false);
-                }
-                catch
-                {
-                }
+                Request(_appId, _adUnitId);
             }
 #endif
         }
@@ -91,21 +91,12 @@ namespace CI.WSANative.Advertising
         /// Shows the interstitial ad if it is ready
         /// It is recommended that you have at least a 60 second gap between ads
         /// </summary>
-        public static void Show()
+        public static void ShowAd()
         {
-#if NETFX_CORE && !ADS_DISABLED
-            if (_interstitialAd != null && _interstitialAd.State == InterstitialAdState.Ready)
+#if NETFX_CORE
+            if(Show != null)
             {
-                try
-                {
-                    UnityEngine.WSA.Application.InvokeOnUIThread(() =>
-                    {
-                        _interstitialAd.Show();
-                    }, false);
-                }
-                catch
-                {
-                }
+                Show();
             }
 #endif
         }
@@ -113,28 +104,23 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// Closes the interstitial ad that is showing
         /// </summary>
-        public static void Close()
+        public static void CloseAd()
         {
-#if NETFX_CORE && !ADS_DISABLED
-            if (_interstitialAd != null && _interstitialAd.State == InterstitialAdState.Showing)
+#if NETFX_CORE
+            if(Close != null)
             {
-                try
-                {
-                    UnityEngine.WSA.Application.InvokeOnUIThread(() =>
-                    {
-                        _interstitialAd.Close();
-                    }, false);
-                }
-                catch
-                {
-                }
+                Close();
             }
 #endif
         }
 
-        private static void RaiseActionOnAppThread(Action action)
+        /// <summary>
+        /// For internal use only
+        /// </summary>
+        /// <param name="action"></param>
+        public static void RaiseActionOnAppThread(Action action)
         {
-#if NETFX_CORE && !ADS_DISABLED
+#if NETFX_CORE
             UnityEngine.WSA.Application.InvokeOnAppThread(() =>
             {
                 if (action != null)
