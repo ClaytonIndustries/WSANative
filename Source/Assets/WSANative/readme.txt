@@ -48,11 +48,15 @@ WSANativeFilePicker.ShowFileOpenPicker
 WSANativeFilePicker.ShowFileSavePicker
 
 Advertising:
+Banner:
+CreatAd
+DestroyAd
 Interstitial:
-WSANativeInterstitialAd.Init
+WSANativeInterstitialAd.Initialise
 WSANativeInterstitialAd.RequestAd
-WSANativeInterstitialAd.Show
-WSANativeInterstitialAd.Close
+WSANativeInterstitialAd.ShowAd
+WSANativeInterstitialAd.CloseAd
+
 
 ------------------------------------------------------------------------------------------------------------------------
 Windows Store - Configuring test products
@@ -61,7 +65,6 @@ When in test mode products and info about your app are defined in an xml file ca
 Once you have build your windows store solution you can copy the file to the Assets folder (this is the Assets folder in the solution that is created when you do a build from Unity) and call reload simulator (see below) to configure the simulated store.
 Then call WSANativeStore.ReloadSimulator when you app starts up.
 
-Avertising - Interstitial
+Avertising
 
-Once you have built your windows store visual studio solution with unity, delete "#define ADS_DISABLED" from the file WSANativeInterstitialAd.cs to enable the code.
-Then add a reference to the microsoft advertising sdk.
+Both banner and interstitial ads require additional setup once you have build your windows store solution using unity - please see the website for details
