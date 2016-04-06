@@ -56,13 +56,15 @@ namespace CI.WSANative.Advertising
         /// <param name="placement">Where should the ad be placed</param>
         public static void CreatAd(string appId, string adUnitId, int width, int height, WSAAdPlacement placement)
         {
+#if NETFX_CORE
             if (Create != null)
             {
                 UnityEngine.WSA.Application.InvokeOnUIThread(() =>
                 {
                     Create(new WSABannerAdSettings() { AppId = appId, AdUnitId = adUnitId, Width = width, Height = height, Placement = placement });
                 }, false);
-            }
+        }
+#endif
         }
 
         /// <summary>
@@ -70,6 +72,7 @@ namespace CI.WSANative.Advertising
         /// </summary>
         public static void DestroyAd()
         {
+#if NETFX_CORE
             UnityEngine.WSA.Application.InvokeOnUIThread(() =>
             {
                 if (Destroy != null)
@@ -77,6 +80,7 @@ namespace CI.WSANative.Advertising
                     Destroy();
                 }
             }, false);
+#endif
         }
 
         /// <summary>
@@ -85,6 +89,7 @@ namespace CI.WSANative.Advertising
         /// <param name="action"></param>
         public static void RaiseActionOnAppThread(Action action)
         {
+#if NETFX_CORE
             UnityEngine.WSA.Application.InvokeOnAppThread(() =>
             {
                 if (action != null)
@@ -92,6 +97,7 @@ namespace CI.WSANative.Advertising
                     action();
                 }
             }, false);
+#endif
         }
     }
 }

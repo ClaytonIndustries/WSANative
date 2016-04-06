@@ -114,6 +114,7 @@ namespace CI.WSANative.Advertising
         /// <param name="action"></param>
         public static void RaiseActionOnAppThread(Action action)
         {
+#if NETFX_CORE
             UnityEngine.WSA.Application.InvokeOnAppThread(() =>
             {
                 if (action != null)
@@ -121,6 +122,7 @@ namespace CI.WSANative.Advertising
                     action();
                 }
             }, false);
+#endif
         }
     }
 }

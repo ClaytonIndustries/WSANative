@@ -12,6 +12,9 @@ public class ExampleSceneManagerController : MonoBehaviour
 {
     public void Start()
     {
+        // Uncomment these lines when testing in app purchases 
+        // ReloadSimulator will throw an exception if it is not correctly configured - see website for details
+
         //WSANativeStore.EnableTestMode();
 
         //WSANativeStore.ReloadSimulator();
@@ -138,6 +141,9 @@ public class ExampleSceneManagerController : MonoBehaviour
         });
     }
 
+    /// <summary>
+    /// Creates and shows an interstitial ad - see the website for setup details
+    /// </summary>
     public void CreateInterstitialAd()
     {
         WSANativeInterstitialAd.Initialise("d25517cb-12d4-4699-8bdc-52040c712cab", "10042998");
@@ -148,6 +154,9 @@ public class ExampleSceneManagerController : MonoBehaviour
         WSANativeInterstitialAd.RequestAd();
     }
 
+    /// <summary>
+    /// Creates and shows a banner ad - see the website for setup details
+    /// </summary>
     public void CreateBannerAd()
     {
         WSANativeBannerAd.CreatAd("d25517cb-12d4-4699-8bdc-52040c712cab", "10042998", 728, 90, WSAAdPlacement.Top);
