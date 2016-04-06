@@ -74,10 +74,6 @@ private void ConfigureBannerAd()
 	};
 }
 
-// Add reference to advertising sdk
-// Add internet client to appmanifest
-
-
 1) Use Unity to build a windows store visual studio solution
 2) Open the solution and add a reference to the ad sdk - use the one from here
 3) Build the solution (you don't have to but it resolves any references that visual studio says are missing)
