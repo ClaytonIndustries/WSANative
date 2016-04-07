@@ -25,15 +25,30 @@ namespace CI.WSANative.IAPStore
 #endif
 
         /// <summary>
-        /// Shows the store review page for you app
+        /// Shows the store description page for you app
         /// </summary>
         /// <param name="appId">Your apps id - get from Windows Dev Center under Your App -> App Management -> App Identity -> use the the last part of URL for Windows 10</param>
-        public static void ShowAppStorePage(string appId)
+        public static void ShowAppStoreDescriptionPage(string appId)
         {
 #if NETFX_CORE
             UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
             {
                 var uri = new Uri("ms-windows-store://pdp/?ProductId=" + appId);
+                await Windows.System.Launcher.LaunchUriAsync(uri);
+            }, false);
+#endif
+        }
+		
+		/// <summary>
+        /// Shows the store review page for you app
+        /// </summary>
+        /// <param name="appId">Your apps id - get from Windows Dev Center under Your App -> App Management -> App Identity -> use the the last part of URL for Windows 10</param>
+        public static void ShowAppStoreReviewPage(string appId)
+        {
+#if NETFX_CORE
+            UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
+            {
+                var uri = new Uri("ms-windows-store://review/?ProductId=" + appId);
                 await Windows.System.Launcher.LaunchUriAsync(uri);
             }, false);
 #endif
