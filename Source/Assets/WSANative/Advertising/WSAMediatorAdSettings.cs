@@ -1,14 +1,9 @@
 ﻿using CI.WSANative.Advertising;
 
-namespace Assets.WSANative.Advertising
+namespace CI.WSANative.Advertising
 {
     public class WSAMediatorAdSettings
     {
-        public string AppId
-        {
-            get; set;
-        }
-
         public int Width
         {
             get; set;

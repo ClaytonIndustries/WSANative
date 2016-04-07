@@ -161,6 +161,14 @@ public class ExampleSceneManagerController : MonoBehaviour
     {
         WSANativeBannerAd.CreatAd("d25517cb-12d4-4699-8bdc-52040c712cab", "10042998", 728, 90, WSAAdPlacement.Top);
     }
+
+    /// <summary>
+    /// Creates and shows mediated ads - see the website for setup details
+    /// </summary>
+    public void CreateMediatedAd()
+    {
+        WSANativeMediatorAd.CreatAd(728, 90, WSAAdPlacement.Top);
+    }
 }
 
 public class Test

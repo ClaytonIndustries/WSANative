@@ -74,6 +74,45 @@ private void ConfigureBannerAd()
 	};
 }
 
+private void ConfigureMediatorAd()
+{
+	AdMediatorControl adMediatorControl = null;
+
+	WSANativeMediatorAd.Create += (mediatorAdSettings) =>
+	{
+		if (adMediatorControl == null)
+		{
+			adMediatorControl = new AdMediatorControl();
+			adMediatorControl.Id = "AdMediator-Id-D1FDFDA7-EABB-474C-940C-ECA7FBCFF143";
+			adMediatorControl.Height = mediatorAdSettings.Height;
+			adMediatorControl.VerticalAlignment = mediatorAdSettings.Placement == WSAAdPlacement.Top ? VerticalAlignment.Top : VerticalAlignment.Bottom;
+			adMediatorControl.HorizontalAlignment = HorizontalAlignment.Center;
+			adMediatorControl.Width = mediatorAdSettings.Width;
+
+			adMediatorControl.AdSdkError += (s, e) => { WSANativeMediatorAd.RaiseActionOnAppThread(WSANativeMediatorAd.AdSdkError); };
+			adMediatorControl.AdMediatorFilled += (s, e) => { WSANativeMediatorAd.RaiseActionOnAppThread(WSANativeMediatorAd.AdMediatorFilled); };
+			adMediatorControl.AdMediatorError += (s, e) => { WSANativeMediatorAd.RaiseActionOnAppThread(WSANativeMediatorAd.AdMediatorError); };
+			adMediatorControl.AdSdkEvent += (s, e) => { WSANativeMediatorAd.RaiseActionOnAppThread(WSANativeMediatorAd.AdSdkEvent); };
+
+			GetSwapChainPanel().Children.Add(adMediatorControl);
+		}
+	};
+
+	WSANativeBannerAd.Destroy += () =>
+	{
+		foreach (UIElement child in GetSwapChainPanel().Children)
+		{
+			if (child == adMediatorControl)
+			{
+				GetSwapChainPanel().Children.Remove(child);
+				adMediatorControl = null;
+
+				break;
+			}
+		}
+	};
+}
+
 1) Use Unity to build a windows store visual studio solution
 2) Open the solution and add a reference to the ad sdk - use the one from here
 3) Build the solution (you don't have to but it resolves any references that visual studio says are missing)

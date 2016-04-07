@@ -15,7 +15,7 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// Raised when a new ad is received
         /// </summary>
-        public static Action AdRefreshed
+        public static Action AdSdkError
         {
             get; set;
         }
@@ -23,7 +23,7 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// Raised when the user interacts with an ad
         /// </summary>
-        public static Action IsEngagedChanged
+        public static Action AdMediatorFilled
         {
             get; set;
         }
@@ -31,7 +31,15 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// Raised when the ad encounters an error in operations
         /// </summary>
-        public static Action ErrorOccurred
+        public static Action AdMediatorError
+        {
+            get; set;
+        }
+
+        /// <summary>
+        /// Raised when the ad encounters an error in operations
+        /// </summary>
+        public static Action AdSdkEvent
         {
             get; set;
         }
@@ -39,7 +47,7 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// For internal use only
         /// </summary>
-        public static Action<WSABannerAdSettings> Create;
+        public static Action<WSAMediatorAdSettings> Create;
 
         /// <summary>
         /// For internal use only
@@ -54,14 +62,14 @@ namespace CI.WSANative.Advertising
         /// <param name="width">Width of the ad</param>
         /// <param name="height">Height of the ad</param>
         /// <param name="placement">Where should the ad be placed</param>
-        public static void CreatAd(string appId, string adUnitId, int width, int height, WSAAdPlacement placement)
+        public static void CreatAd(int width, int height, WSAAdPlacement placement)
         {
 #if NETFX_CORE
             if (Create != null)
             {
                 UnityEngine.WSA.Application.InvokeOnUIThread(() =>
                 {
-                    Create(new WSAMediatorAdSettings() { AppId = appId, AdUnitId = adUnitId, Width = width, Height = height, Placement = placement });
+                    Create(new WSAMediatorAdSettings() { Width = width, Height = height, Placement = placement });
                 }, false);
         }
 #endif
