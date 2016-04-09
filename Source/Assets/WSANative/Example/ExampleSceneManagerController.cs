@@ -5,6 +5,7 @@ using CI.WSANative.FilePickers;
 using CI.WSANative.FileStorage;
 using CI.WSANative.IAPStore;
 using CI.WSANative.Serialisers;
+using CI.WSANative.Web;
 using UnityEngine;
 
 
@@ -138,6 +139,13 @@ public class ExampleSceneManagerController : MonoBehaviour
                 result.WriteBytes(new byte[2]);
                 result.WriteText("Hello World");
             }
+        });
+    }
+
+    public void WebGet()
+    {
+        WSANativeWeb.GetBytes("http://httpbin.org/encoding/utf8", (success, response) =>
+        {
         });
     }
 

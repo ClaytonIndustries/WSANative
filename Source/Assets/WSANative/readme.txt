@@ -1,4 +1,4 @@
-﻿WSA Native
+﻿Windows Store Native
 
 Thanks for downloading WSA Native we hope you enjoy using it!
 
@@ -13,7 +13,7 @@ Support Email: clayton.inds+support@gmail.com
 Basics - all functions listed below have detailed comments in the code
 
 ***All the functions below except the serialisation functions will only work once you build a windows store solution - however they are safe to use in the editor***
-***Both banner and interstitial ads require additional setup once you have build your windows store solution using unity - please see the website for details***
+***Banner interstitial and mediator ads require additional setup once you have built your windows store solution using unity - please see the website for details***
 
 Show a dialog:
 WSANativeDialog.ShowDialog
@@ -42,7 +42,8 @@ WSANativeStore.GetUnfulfilledConsumableProducts
 WSANativeStore.PurchaseApp
 WSANativeStore.GetLicenseForApp
 WSANativeStore.GetLicenseForProduct
-WSANativeStore.ShowAppStorePage
+WSANativeStore.ShowAppStoreDescriptionPage
+WSANativeStore.ShowAppStoreReviewPage
 
 File Picker:
 WSANativeFilePicker.ShowFileOpenPicker
@@ -50,14 +51,22 @@ WSANativeFilePicker.ShowFileSavePicker
 
 Advertising:
 Banner:
-CreatAd
-DestroyAd
+WSANativeBannerAd.CreatAd
+WSANativeBannerAd.DestroyAd
 Interstitial:
 WSANativeInterstitialAd.Initialise
 WSANativeInterstitialAd.RequestAd
 WSANativeInterstitialAd.ShowAd
 WSANativeInterstitialAd.CloseAd
+Mediator:
+WSANativeMediatorAd.CreatAd
+WSANativeMediatorAd.DestroyAd
 
+Web:
+WSANativeWeb.GetString
+WSANativeWeb.GetBytes
+WSANativeWeb.PostReturnString
+WSANativeWeb.PostReturnBytes
 
 ------------------------------------------------------------------------------------------------------------------------
 Windows Store - Configuring test products
