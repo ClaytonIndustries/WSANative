@@ -154,7 +154,7 @@ public class ExampleSceneManagerController : MonoBehaviour
     /// </summary>
     public void CreateInterstitialAd()
     {
-        WSANativeInterstitialAd.Initialise("d25517cb-12d4-4699-8bdc-52040c712cab", "10042998");
+        WSANativeInterstitialAd.Initialise("d25517cb-12d4-4699-8bdc-52040c712cab", "11389925");
         WSANativeInterstitialAd.AdReady += () =>
         {
             WSANativeInterstitialAd.ShowAd();
