@@ -4,6 +4,7 @@ using CI.WSANative.Dialogs;
 using CI.WSANative.FilePickers;
 using CI.WSANative.FileStorage;
 using CI.WSANative.IAPStore;
+using CI.WSANative.Notification;
 using CI.WSANative.Serialisers;
 using CI.WSANative.Web;
 using UnityEngine;
@@ -57,6 +58,11 @@ public class ExampleSceneManagerController : MonoBehaviour
                 WSANativeDialog.ShowDialog("Cancel Pressed", "Cancel was pressed!");
             }
         });
+    }
+
+    public void CreateToastNotification()
+    {
+        WSANativeNotification.ShowToastNotification("This is a title", "This is a description, This is a description, This is a description");
     }
 
     public void SaveFile()
