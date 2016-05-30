@@ -13,7 +13,7 @@ namespace CI.WSANative.Advertising
     public static class WSANativeMediatorAd
     {
         /// <summary>
-        /// Raised when a new ad is received
+        /// Raised when the ad encounters an error in operations
         /// </summary>
         public static Action AdSdkError
         {
@@ -21,7 +21,7 @@ namespace CI.WSANative.Advertising
         }
 
         /// <summary>
-        /// Raised when the user interacts with an ad
+        /// Raised when a new ad is received
         /// </summary>
         public static Action AdMediatorFilled
         {
@@ -29,7 +29,7 @@ namespace CI.WSANative.Advertising
         }
 
         /// <summary>
-        /// Raised when the ad encounters an error in operations
+        /// Raised when the ad mediator control encounters an error
         /// </summary>
         public static Action AdMediatorError
         {
@@ -37,7 +37,7 @@ namespace CI.WSANative.Advertising
         }
 
         /// <summary>
-        /// Raised when the ad encounters an error in operations
+        /// Raised when the user interacts with an ad
         /// </summary>
         public static Action AdSdkEvent
         {
