@@ -4,11 +4,11 @@ using CI.WSANative.Dialogs;
 using CI.WSANative.FilePickers;
 using CI.WSANative.FileStorage;
 using CI.WSANative.IAPStore;
+using CI.WSANative.Mapping;
 using CI.WSANative.Notification;
 using CI.WSANative.Serialisers;
 using CI.WSANative.Web;
 using UnityEngine;
-
 
 public class ExampleSceneManagerController : MonoBehaviour
 {
@@ -182,6 +182,49 @@ public class ExampleSceneManagerController : MonoBehaviour
     public void CreateMediatedAd()
     {
         WSANativeMediatorAd.CreatAd(728, 90, WSAAdPlacement.Top);
+    }
+
+    /// <summary>
+    /// Create a map
+    /// </summary>
+    public void CreateMap()
+    {
+        int xPos = (Screen.width / 2) - 300;
+        int yPos = (Screen.height / 2) - 300;
+
+        WSANativeMap.CreateMap(string.Empty, 600, 600, new WSAPosition() { X = xPos, Y = yPos }, new WSAGeoPoint() { Latitude = 50, Longitude = 0 }, 6, WSAMapInteractionMode.GestureAndControl);
+    }
+
+    /// <summary>
+    /// Destroy the map
+    /// </summary>
+    public void DestroyMap()
+    {
+        WSANativeMap.DestroyMap();
+    }
+
+    /// <summary>
+    /// Add a point of interest to the map
+    /// </summary>
+    public void AddPOI()
+    {
+        WSANativeMap.AddMapElement("Test", new WSAGeoPoint() { Latitude = 60, Longitude = 10 });
+    }
+
+    /// <summary>
+    /// Clear the map of points of interest
+    /// </summary>
+    public void ClearMap()
+    {
+        WSANativeMap.ClearMap();
+    }
+
+    /// <summary>
+    /// Center the map
+    /// </summary>
+    public void CenterMap()
+    {
+        WSANativeMap.CenterMap(new WSAGeoPoint() { Latitude = 60, Longitude = 10 });
     }
 }
 
