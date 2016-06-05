@@ -3,12 +3,12 @@ namespace CI.WSANative.Mapping
 {
     public class WSAGeoPoint
     {
-        public float Latitude
+        public double Latitude
         {
             get; set;
         }
 
-        public float Longitude
+        public double Longitude
         {
             get; set;
         }
