@@ -3,6 +3,7 @@ using CI.WSANative.Advertising;
 using CI.WSANative.Dialogs;
 using CI.WSANative.FilePickers;
 using CI.WSANative.FileStorage;
+using CI.WSANative.Geolocation;
 using CI.WSANative.IAPStore;
 using CI.WSANative.Mapping;
 using CI.WSANative.Notification;
@@ -225,6 +226,24 @@ public class ExampleSceneManagerController : MonoBehaviour
     public void CenterMap()
     {
         WSANativeMap.CenterMap(new WSAGeoPoint() { Latitude = 60, Longitude = 10 });
+    }
+
+    /// <summary>
+    /// Get my location (Windows 10 only)
+    /// </summary>
+    public void GetMyLocation()
+    {
+        WSANativeGeolocation.GetUsersLocation(10, (response) =>
+        {
+            if (response.Success)
+            {
+                WSANativeDialog.ShowDialog("My Location Is", string.Format("Latitude: {0} Longitude: {1}", response.GeoPosition.Latitude, response.GeoPosition.Longitude));
+            }
+            else
+            {
+                WSANativeDialog.ShowDialog("Failed to get location", string.Format("Access was {0}", response.AccessStatus.ToString()));
+            }
+        });
     }
 }
 

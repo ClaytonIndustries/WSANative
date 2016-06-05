@@ -1,5 +1,5 @@
 ﻿
-namespace CI.WSANative.Location
+namespace CI.WSANative.Geolocation
 {
     public class WSAGeoPosition
     {
