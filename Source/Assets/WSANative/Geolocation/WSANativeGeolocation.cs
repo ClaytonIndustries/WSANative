@@ -19,13 +19,6 @@ namespace CI.WSANative.Geolocation
         public static void GetUsersLocation(int desiredAccuracyInMeters, Action<WSAGetLocationResponse> response)
         {
 #if (NETFX_CORE && UNITY_WSA_10_0)
-            GetUsersLocationAsync(desiredAccuracyInMeters, response);
-#endif
-        }
-
-#if (NETFX_CORE && UNITY_WSA_10_0)
-        private static async void GetUsersLocationAsync(int desiredAccuracyInMeters, Action<WSAGetLocationResponse> response)
-        {
             UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
             {
                 GeolocationAccessStatus accessStatus = await Geolocator.RequestAccessAsync();
@@ -55,8 +48,10 @@ namespace CI.WSANative.Geolocation
                     }
                 }, false);
             }, false);
+#endif
         }
 
+#if (NETFX_CORE && UNITY_WSA_10_0)
         private static void RaiseCallback(bool success, WSAGeolocationAccessStatus accessStatus, WSAGeoPosition geoPosition, Action<WSAGetLocationResponse> response)
         {
             if (response != null)

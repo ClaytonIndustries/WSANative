@@ -1,4 +1,4 @@
-﻿Windows Store Native (v1.5)
+﻿Windows Store Native (v1.6)
 ---------------------------
 
 Thanks for downloading Windows Store Native we hope you enjoy using it!
@@ -14,7 +14,7 @@ Support Email: clayton.inds+support@gmail.com
 Basics - all functions listed below have detailed comments in the code
 
 ***All the functions below except the serialisation functions will only work once you build a windows store solution - however they are safe to use in the editor***
-***Banner, interstitial and mediator ads require additional setup once you have built your windows store solution using unity - please see the website for details***
+***Banner, interstitial and mediator ads as well as maps require additional setup once you have built your windows store solution using unity - please see the website for details***
 
 Show a dialog:
 WSANativeDialog.ShowDialog
@@ -71,6 +71,16 @@ WSANativeWeb.PostReturnBytes
 
 Notification:
 WSANativeNotification.ShowToastNotification
+
+Mapping:
+WSANativeMap.CreateMap
+WSANativeMap.CenterMap
+WSANativeMap.AddMapElement
+WSANativeMap.ClearMap
+WSANativeMap.DestroyMap
+
+Geolocation:
+WSANativeGeolocation.GetUsersLocation
 
 ------------------------------------------------------------------------------------------------------------------------
 Windows Store - Configuring test products
