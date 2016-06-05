@@ -190,10 +190,10 @@ public class ExampleSceneManagerController : MonoBehaviour
     /// </summary>
     public void CreateMap()
     {
-        int xPos = (Screen.width / 2) - 300;
-        int yPos = (Screen.height / 2) - 300;
+        int xPos = (Screen.width / 2) - 350;
+        int yPos = (Screen.height / 2) - 350;
 
-        WSANativeMap.CreateMap(string.Empty, 600, 600, new WSAPosition() { X = xPos, Y = yPos }, new WSAGeoPoint() { Latitude = 50, Longitude = 0 }, 6, WSAMapInteractionMode.GestureAndControl);
+        WSANativeMap.CreateMap(string.Empty, 700, 700, new WSAPosition() { X = xPos, Y = yPos }, new WSAGeoPoint() { Latitude = 50, Longitude = 0 }, 6, WSAMapInteractionMode.GestureAndControl);
     }
 
     /// <summary>
@@ -209,7 +209,7 @@ public class ExampleSceneManagerController : MonoBehaviour
     /// </summary>
     public void AddPOI()
     {
-        WSANativeMap.AddMapElement("Test", new WSAGeoPoint() { Latitude = 60, Longitude = 10 });
+        WSANativeMap.AddMapElement("You are here", new WSAGeoPoint() { Latitude = 52, Longitude = 5 });
     }
 
     /// <summary>
@@ -225,7 +225,7 @@ public class ExampleSceneManagerController : MonoBehaviour
     /// </summary>
     public void CenterMap()
     {
-        WSANativeMap.CenterMap(new WSAGeoPoint() { Latitude = 60, Longitude = 10 });
+        WSANativeMap.CenterMap(new WSAGeoPoint() { Latitude = 52, Longitude = 5 });
     }
 
     /// <summary>
