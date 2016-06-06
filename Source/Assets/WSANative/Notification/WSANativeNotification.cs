@@ -1,7 +1,12 @@
 ﻿#if NETFX_CORE
+using System.Collections.Generic;
 using Windows.Data.Xml.Dom;
+using System.Net.Http;
+using Windows.Networking.PushNotifications;
 using Windows.UI.Notifications;
 #endif
+
+using System;
 
 namespace CI.WSANative.Notification
 {
@@ -29,5 +34,99 @@ namespace CI.WSANative.Notification
             }
 #endif
         }
+
+        /// <summary>
+        /// Attempts to create a push notification channel - response will be null if it fails
+        /// </summary>
+        /// <param name="response">The push notification channel</param>
+        public static void CreatePushNotificationChannel(Action<WSAPushNotificationChannel> response)
+        {
+#if NETFX_CORE
+            CreatePushNotificationChannelAsync(response);
+#endif
+        }
+
+#if NETFX_CORE
+        private static async void CreatePushNotificationChannelAsync(Action<WSAPushNotificationChannel> response)
+        {
+            PushNotificationChannel channel = null;
+
+            try
+            {
+                PushNotificationChannel channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
+            }
+            catch
+            {
+            }
+
+            if(channel != null)
+            {
+                WSAPushNotificationChannel wsaChannel = new WSAPushNotificationChannel();
+                wsaChannel.Initialise(channel);
+
+                response(new WSAPushNotificationChannel(wsaChannel));
+            }
+            else
+            {
+                response(null);
+            }
+        }
+#endif
+
+        /// <summary>
+        /// Register this instance to received push notifications from your server, it is recommended that your server be using HTTPS and that information is sent in a secure manner.
+        /// The channelUri is posted with content type x-www-form-urlencoded in the form { key:ChannelUri, value:channelUri }
+        /// </summary>
+        /// <param name="serverUrl">The url on your server that you want to post to</param>
+        /// <param name="channelUri">The uri received from CreatePushNotificationChannel</param>
+        /// <param name="authorisation">An optional code to authenticate this app when it hits your server. Specify empty string to ignore otherwise the Authorization header will be added</param>
+        /// <param name="response">Indicates whether the request was successful along with any text response the server sends</param>
+        public static void SendPushNotificationUriToServer(string serverUrl, string channelUri, string authorisation, Action<bool, string> response)
+        {
+#if NETFX_CORE
+            SendPushNotificationUriToServerAsync(serverUrl, channelUri, authorisation, response);
+#endif
+        }
+
+#if NETFX_CORE
+        private static async void SendPushNotificationUriToServerAsync(string serverUrl, string channelUri, string authorisation, Action<bool, string> response)
+        {
+            string result = string.Empty;
+            bool isSuccess = false;
+            
+            using(HttpClient client = new HttpClient())
+            {
+                if(!string.IsNullOrEmpty(authorisation))
+                {
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.Add("Authorization", authorisation);
+                }
+
+                try
+                {
+                    FormUrlEncodedContent content = new FormUrlEncodedContent(new[]
+                    {
+                        new KeyValuePair<string, string>("ChannelUri", channelUri)
+                    });
+
+                    HttpResponseMessage responseMessage = await client.PostAsync(serverUrl, content);
+        
+                    if(responseMessage.IsSuccessStatusCode)
+                    {
+                        result = await responseMessage.Content.ReadAsStringAsync();
+                        isSuccess = true;
+                    } 
+                }
+                catch
+                {
+                }
+
+                if(response != null)
+                {
+                    response(isSuccess, result);
+                }
+            }
+        }
+#endif
     }
 }
