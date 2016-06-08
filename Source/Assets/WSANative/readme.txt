@@ -1,4 +1,4 @@
-﻿Windows Store Native (v1.6)
+﻿Windows Store Native (v1.7)
 ---------------------------
 
 Thanks for downloading Windows Store Native we hope you enjoy using it!
@@ -71,6 +71,8 @@ WSANativeWeb.PostReturnBytes
 
 Notification:
 WSANativeNotification.ShowToastNotification
+WSANativeNotification.CreatePushNotificationChannel
+WSANativeNotification.SendPushNotificationUriToServer
 
 Mapping:
 WSANativeMap.CreateMap
