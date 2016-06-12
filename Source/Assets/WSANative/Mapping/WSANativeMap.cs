@@ -113,13 +113,13 @@ namespace CI.WSANative.Mapping
         public static void DestroyMap()
         {
 #if NETFX_CORE
-            UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+            if (Destroy != null)
             {
-                if (Destroy != null)
+                UnityEngine.WSA.Application.InvokeOnUIThread(() =>
                 {
                     Destroy();
-                }
-            }, false);
+                }, false);
+            }
 #endif
         }
     }

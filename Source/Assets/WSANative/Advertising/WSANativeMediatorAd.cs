@@ -71,7 +71,7 @@ namespace CI.WSANative.Advertising
                 {
                     Create(new WSAMediatorAdSettings() { Width = width, Height = height, Placement = placement });
                 }, false);
-        }
+            }
 #endif
         }
 
@@ -81,13 +81,13 @@ namespace CI.WSANative.Advertising
         public static void DestroyAd()
         {
 #if NETFX_CORE
-            UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+            if (Destroy != null)
             {
-                if (Destroy != null)
+                UnityEngine.WSA.Application.InvokeOnUIThread(() =>
                 {
                     Destroy();
-                }
-            }, false);
+                }, false);
+            }
 #endif
         }
 
@@ -98,13 +98,13 @@ namespace CI.WSANative.Advertising
         public static void RaiseActionOnAppThread(Action action)
         {
 #if NETFX_CORE
-            UnityEngine.WSA.Application.InvokeOnAppThread(() =>
+            if (action != null)
             {
-                if (action != null)
+                UnityEngine.WSA.Application.InvokeOnAppThread(() =>
                 {
                     action();
-                }
-            }, false);
+                }, false);
+            }
 #endif
         }
     }
