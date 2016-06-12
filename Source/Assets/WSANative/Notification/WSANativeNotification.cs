@@ -53,7 +53,7 @@ namespace CI.WSANative.Notification
 
             try
             {
-                PushNotificationChannel channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
+                channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
             }
             catch
             {
@@ -61,10 +61,7 @@ namespace CI.WSANative.Notification
 
             if(channel != null)
             {
-                WSAPushNotificationChannel wsaChannel = new WSAPushNotificationChannel();
-                wsaChannel.Initialise(channel);
-
-                response(new WSAPushNotificationChannel(wsaChannel));
+                response(new WSAPushNotificationChannel(channel));
             }
             else
             {

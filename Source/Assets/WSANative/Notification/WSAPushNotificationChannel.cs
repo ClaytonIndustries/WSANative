@@ -11,7 +11,7 @@ namespace CI.WSANative.Notification
 #if NETFX_CORE
         private PushNotificationChannel _pushNotificationChannel;
 
-        public void Initialise(PushNotificationChannel pushNotificationChannel)
+        public WSAPushNotificationChannel(PushNotificationChannel pushNotificationChannel)
         {
             _pushNotificationChannel = pushNotificationChannel;
             _pushNotificationChannel.PushNotificationReceived += (s,e) => { if(PushNotificationReceived != null) { PushNotificationReceived(); } };
