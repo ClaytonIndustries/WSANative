@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using CI.WSANative.Advertising;
+using CI.WSANative.Device;
 using CI.WSANative.Dialogs;
 using CI.WSANative.FilePickers;
 using CI.WSANative.FileStorage;
@@ -244,6 +245,22 @@ public class ExampleSceneManagerController : MonoBehaviour
                 WSANativeDialog.ShowDialog("Failed to get location", string.Format("Access was {0}", response.AccessStatus.ToString()));
             }
         });
+    }
+
+    /// <summary>
+    /// Enable the flashlight
+    /// </summary>
+    public void EnableFlashlight()
+    {
+        WSANativeDevice.EnableFlashlight(new WSANativeColour() { Red = 0, Green = 0, Blue = 255 });
+    }
+
+    /// <summary>
+    /// Disable the flashlight
+    /// </summary>
+    public void DisableFlashlight()
+    {
+        WSANativeDevice.DisableFlashlight();
     }
 }
 

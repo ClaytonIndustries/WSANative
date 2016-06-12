@@ -43,8 +43,6 @@ WSANativeStore.GetUnfulfilledConsumableProducts
 WSANativeStore.PurchaseApp
 WSANativeStore.GetLicenseForApp
 WSANativeStore.GetLicenseForProduct
-WSANativeStore.ShowAppStoreDescriptionPage
-WSANativeStore.ShowAppStoreReviewPage
 
 File Picker:
 WSANativeFilePicker.ShowFileOpenPicker
@@ -83,6 +81,15 @@ WSANativeMap.DestroyMap
 
 Geolocation:
 WSANativeGeolocation.GetUsersLocation
+
+Social:
+WSANativeSocial.ShowAppStoreDescriptionPage
+WSANativeSocial.ShowAppStoreReviewPage
+WSANativeSocial.ComposeEmail
+
+Device:
+WSANativeDevice.EnableFlashlight
+WSANativeDevice.DisableFlashlight
 
 ------------------------------------------------------------------------------------------------------------------------
 Windows Store - Configuring test products
