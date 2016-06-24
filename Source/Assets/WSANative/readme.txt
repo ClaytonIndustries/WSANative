@@ -1,4 +1,4 @@
-﻿Windows Store Native (v1.7)
+﻿Windows Store Native (v1.8)
 ---------------------------
 
 Thanks for downloading Windows Store Native we hope you enjoy using it!
@@ -90,6 +90,12 @@ WSANativeSocial.ComposeEmail
 Device:
 WSANativeDevice.EnableFlashlight
 WSANativeDevice.DisableFlashlight
+
+Security:
+WSANativeSecurity.SymmetricEncrypt
+WSANativeSecurity.SymmetricDecrypt
+WSANativeSecurity.EncodeBase64
+WSANativeSecurity.DecodeBase64
 
 ------------------------------------------------------------------------------------------------------------------------
 Windows Store - Configuring test products

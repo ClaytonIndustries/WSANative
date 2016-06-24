@@ -8,6 +8,7 @@ using CI.WSANative.Geolocation;
 using CI.WSANative.IAPStore;
 using CI.WSANative.Mapping;
 using CI.WSANative.Notification;
+using CI.WSANative.Security;
 using CI.WSANative.Serialisers;
 using CI.WSANative.Web;
 using UnityEngine;
@@ -261,6 +262,16 @@ public class ExampleSceneManagerController : MonoBehaviour
     public void DisableFlashlight()
     {
         WSANativeDevice.DisableFlashlight();
+    }
+
+    /// <summary>
+    /// Securely encrypt data using aes and then decrypt it
+    /// </summary>
+    public void EncryptDecrypt()
+    {
+        string encrypted = WSANativeSecurity.SymmetricEncrypt("ffffffffffffffffffffffffffffffff", "aaaaaaaaaaaaaaaa", "Tesing123");
+
+        WSANativeSecurity.SymmetricDecrypt("ffffffffffffffffffffffffffffffff", "aaaaaaaaaaaaaaaa", encrypted);
     }
 }
 
