@@ -276,11 +276,11 @@ public class ExampleSceneManagerController : MonoBehaviour
     }
 
     /// <summary>
-    /// Display the facebook login dialog
+    /// Display the facebook login dialog and then fetch user details
     /// </summary>
     public void FacebookLogin()
     {
-        WSANativeFacebook.Initialise("1845143379042815", "s-1-15-2-1919543423-3016402611-2340898811-153489413-1418537941-2584784249-474421339");
+        WSANativeFacebook.Initialise("facebookId", "packageSID");
         WSANativeFacebook.Login(new List<string>() { "public_profile", "email", "user_birthday" }, (success) =>
         {
             if (success)

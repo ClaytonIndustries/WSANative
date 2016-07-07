@@ -22,14 +22,14 @@ namespace CI.WSANative.Facebook
         }
 
         /// <summary>
-        /// Initialise the facebook api - this must be called first
+        /// Initialise the facebook api - this must be called first - see the website for additional information
         /// </summary>
         /// <param name="facebookAppId">Your apps facebook id</param>
-        /// <param name="windowsSID">Your apps SID</param>
-        public static void Initialise(string facebookAppId, string windowsSID)
+        /// <param name="packageSID">Your apps SID</param>
+        public static void Initialise(string facebookAppId, string packageSID)
         {
 #if NETFX_CORE
-            _facebookApi.Initialise(facebookAppId, windowsSID);
+            _facebookApi.Initialise(facebookAppId, packageSID);
 #endif
         }
 

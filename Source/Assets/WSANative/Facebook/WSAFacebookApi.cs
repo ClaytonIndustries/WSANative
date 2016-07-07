@@ -15,7 +15,7 @@ namespace CI.WSANative.Facebook
         public bool IsLoggedIn { get; private set; }
 
         private string _facebookAppId;
-        private string _windowsSID;
+        private string _packageSID;
         private string _accessToken;
 
         private const string _facebookGraphUri = "https://graph.facebook.com/v2.6/";
@@ -42,10 +42,10 @@ namespace CI.WSANative.Facebook
             }
         }
 
-        public void Initialise(string facebookAppId, string windowsSID)
+        public void Initialise(string facebookAppId, string packageSID)
         {
             _facebookAppId = facebookAppId;
-            _windowsSID = windowsSID;
+            _packageSID = packageSID;
         }
 
         public async Task<bool> Login(List<string> permissions)
@@ -59,7 +59,7 @@ namespace CI.WSANative.Facebook
                     requestPermissions = string.Join(",", permissions);
                 }
 
-                Uri appCallbackUri = new Uri("ms-app://" + _windowsSID);
+                Uri appCallbackUri = new Uri("ms-app://" + _packageSID);
 
                 Uri requestUri = new Uri(
                     string.Format("https://www.facebook.com/dialog/oauth?client_id={0}&response_type=token&redirect_uri={1}&scope={2}", _facebookAppId, appCallbackUri, requestPermissions));

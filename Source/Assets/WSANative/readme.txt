@@ -1,4 +1,4 @@
-﻿Windows Store Native (v1.8)
+﻿Windows Store Native (v1.9)
 ---------------------------
 
 Thanks for downloading Windows Store Native we hope you enjoy using it!
@@ -7,14 +7,14 @@ A demo scene is included that shows how to use most features
 Full documentation can be found on the website or if you need additional support please contact us at the address below
 If you would like to see any features added please get in touch
 
-Support Website: http://claytonindustries.16mb.com/
+Support Website: http://www.claytoninds.com/
 Support Email: clayton.inds+support@gmail.com
 
 ------------------------------------------------------------------------------------------------------------------------
 Basics - all functions listed below have detailed comments in the code
 
 ***All the functions below except the serialisation functions will only work once you build a windows store solution - however they are safe to use in the editor***
-***Banner, interstitial and mediator ads as well as maps require additional setup once you have built your windows store solution using unity - please see the website for details***
+***Banner, interstitial and mediator ads as well as maps and facebook require additional setup - please see the website for details***
 
 Show a dialog:
 WSANativeDialog.ShowDialog
@@ -96,6 +96,12 @@ WSANativeSecurity.SymmetricEncrypt
 WSANativeSecurity.SymmetricDecrypt
 WSANativeSecurity.EncodeBase64
 WSANativeSecurity.DecodeBase64
+
+Facebook:
+WSANativeFacebook.Initialise
+WSANativeFacebook.Login
+WSANativeFacebook.Logout
+WSANativeFacebook.GetUserDetails
 
 ------------------------------------------------------------------------------------------------------------------------
 Windows Store - Configuring test products
