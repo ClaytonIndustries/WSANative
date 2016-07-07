@@ -2,6 +2,7 @@
 using CI.WSANative.Advertising;
 using CI.WSANative.Device;
 using CI.WSANative.Dialogs;
+using CI.WSANative.Facebook;
 using CI.WSANative.FilePickers;
 using CI.WSANative.FileStorage;
 using CI.WSANative.Geolocation;
@@ -272,6 +273,27 @@ public class ExampleSceneManagerController : MonoBehaviour
         string encrypted = WSANativeSecurity.SymmetricEncrypt("ffffffffffffffffffffffffffffffff", "aaaaaaaaaaaaaaaa", "Tesing123");
 
         WSANativeSecurity.SymmetricDecrypt("ffffffffffffffffffffffffffffffff", "aaaaaaaaaaaaaaaa", encrypted);
+    }
+
+    /// <summary>
+    /// Display the facebook login dialog
+    /// </summary>
+    public void FacebookLogin()
+    {
+        WSANativeFacebook.Initialise("1845143379042815", "s-1-15-2-1919543423-3016402611-2340898811-153489413-1418537941-2584784249-474421339");
+        WSANativeFacebook.Login(new List<string>() { "public_profile", "email", "user_birthday" }, (success) =>
+        {
+            if (success)
+            {
+                WSANativeFacebook.GetUserDetails((response) =>
+                {
+                    if (response.Success)
+                    {
+                        WSAFacebookUser user = response.Data;
+                    }
+                });
+            }
+        });
     }
 }
 
