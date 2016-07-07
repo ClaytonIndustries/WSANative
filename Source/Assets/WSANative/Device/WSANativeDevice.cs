@@ -1,4 +1,12 @@
-﻿#if NETFX_CORE && UNITY_WSA_10_0
+﻿////////////////////////////////////////////////////////////////////////////////
+//  
+// @module WSA Native for Unity3D 
+// @author Michael Clayton
+// @support clayton.inds+support@gmail.com 
+//
+////////////////////////////////////////////////////////////////////////////////
+
+#if NETFX_CORE && UNITY_WSA_10_0
 using System;
 using System.Linq;
 using Windows.Devices.Enumeration;
