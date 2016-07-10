@@ -1,4 +1,4 @@
-﻿Windows Store Native (v1.9)
+﻿Windows Store Native (v1.10)
 ---------------------------
 
 Thanks for downloading Windows Store Native we hope you enjoy using it!
@@ -51,6 +51,7 @@ WSANativeFilePicker.ShowFileSavePicker
 Advertising:
 Banner:
 WSANativeBannerAd.CreatAd
+WSANativeBannerAd.SetVisibility
 WSANativeBannerAd.DestroyAd
 Interstitial:
 WSANativeInterstitialAd.Initialise
@@ -59,6 +60,7 @@ WSANativeInterstitialAd.ShowAd
 WSANativeInterstitialAd.CloseAd
 Mediator:
 WSANativeMediatorAd.CreatAd
+WSANativeMediatorAd.SetVisibility
 WSANativeMediatorAd.DestroyAd
 
 Web:
