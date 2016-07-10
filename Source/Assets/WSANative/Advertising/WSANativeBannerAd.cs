@@ -44,6 +44,11 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// For internal use only
         /// </summary>
+        public static Action<bool> SetVisiblity;
+
+        /// <summary>
+        /// For internal use only
+        /// </summary>
         public static Action Destroy;
 
         /// <summary>
@@ -62,6 +67,23 @@ namespace CI.WSANative.Advertising
                 UnityEngine.WSA.Application.InvokeOnUIThread(() =>
                 {
                     Create(new WSABannerAdSettings() { AppId = appId, AdUnitId = adUnitId, Width = width, Height = height, Placement = placement });
+                }, false);
+            }
+#endif
+        }
+
+        /// <summary>
+        /// Show or hide the banner ad
+        /// </summary>
+        /// <param name="visible">Should the ad be visible</param>
+        public static void SetAdVisibility(bool visible)
+        {
+#if NETFX_CORE
+            if (SetVisiblity != null)
+            {
+                UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+                {
+                    SetVisiblity(visible);
                 }, false);
             }
 #endif

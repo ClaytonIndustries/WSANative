@@ -159,9 +159,6 @@ public class ExampleSceneManagerController : MonoBehaviour
         });
     }
 
-    /// <summary>
-    /// Creates and shows an interstitial ad - see the website for setup details
-    /// </summary>
     public void CreateInterstitialAd()
     {
         WSANativeInterstitialAd.Initialise("d25517cb-12d4-4699-8bdc-52040c712cab", "11389925");
@@ -172,25 +169,16 @@ public class ExampleSceneManagerController : MonoBehaviour
         WSANativeInterstitialAd.RequestAd();
     }
 
-    /// <summary>
-    /// Creates and shows a banner ad - see the website for setup details
-    /// </summary>
     public void CreateBannerAd()
     {
         WSANativeBannerAd.CreatAd("d25517cb-12d4-4699-8bdc-52040c712cab", "10042998", 728, 90, WSAAdPlacement.Top);
     }
 
-    /// <summary>
-    /// Creates and shows mediated ads - see the website for setup details
-    /// </summary>
     public void CreateMediatedAd()
     {
         WSANativeMediatorAd.CreatAd(728, 90, WSAAdPlacement.Top);
     }
 
-    /// <summary>
-    /// Create a map
-    /// </summary>
     public void CreateMap()
     {
         int xPos = (Screen.width / 2) - 350;
@@ -199,41 +187,26 @@ public class ExampleSceneManagerController : MonoBehaviour
         WSANativeMap.CreateMap(string.Empty, 700, 700, new WSAPosition() { X = xPos, Y = yPos }, new WSAGeoPoint() { Latitude = 50, Longitude = 0 }, 6, WSAMapInteractionMode.GestureAndControl);
     }
 
-    /// <summary>
-    /// Destroy the map
-    /// </summary>
     public void DestroyMap()
     {
         WSANativeMap.DestroyMap();
     }
 
-    /// <summary>
-    /// Add a point of interest to the map
-    /// </summary>
     public void AddPOI()
     {
         WSANativeMap.AddMapElement("You are here", new WSAGeoPoint() { Latitude = 52, Longitude = 5 });
     }
 
-    /// <summary>
-    /// Clear the map of points of interest
-    /// </summary>
     public void ClearMap()
     {
         WSANativeMap.ClearMap();
     }
 
-    /// <summary>
-    /// Center the map
-    /// </summary>
     public void CenterMap()
     {
         WSANativeMap.CenterMap(new WSAGeoPoint() { Latitude = 52, Longitude = 5 });
     }
 
-    /// <summary>
-    /// Get my location (Windows 10 only)
-    /// </summary>
     public void GetMyLocation()
     {
         WSANativeGeolocation.GetUsersLocation(10, (response) =>
@@ -249,25 +222,16 @@ public class ExampleSceneManagerController : MonoBehaviour
         });
     }
 
-    /// <summary>
-    /// Enable the flashlight
-    /// </summary>
     public void EnableFlashlight()
     {
         WSANativeDevice.EnableFlashlight(new WSANativeColour() { Red = 0, Green = 0, Blue = 255 });
     }
 
-    /// <summary>
-    /// Disable the flashlight
-    /// </summary>
     public void DisableFlashlight()
     {
         WSANativeDevice.DisableFlashlight();
     }
 
-    /// <summary>
-    /// Securely encrypt data using aes and then decrypt it
-    /// </summary>
     public void EncryptDecrypt()
     {
         string encrypted = WSANativeSecurity.SymmetricEncrypt("ffffffffffffffffffffffffffffffff", "aaaaaaaaaaaaaaaa", "Tesing123");
@@ -275,9 +239,6 @@ public class ExampleSceneManagerController : MonoBehaviour
         WSANativeSecurity.SymmetricDecrypt("ffffffffffffffffffffffffffffffff", "aaaaaaaaaaaaaaaa", encrypted);
     }
 
-    /// <summary>
-    /// Display the facebook login dialog and then fetch user details
-    /// </summary>
     public void FacebookLogin()
     {
         WSANativeFacebook.Initialise("facebookId", "packageSID");

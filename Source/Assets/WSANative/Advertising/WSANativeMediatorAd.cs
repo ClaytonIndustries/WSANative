@@ -52,10 +52,15 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// For internal use only
         /// </summary>
+        public static Action<bool> SetVisiblity;
+
+        /// <summary>
+        /// For internal use only
+        /// </summary>
         public static Action Destroy;
 
         /// <summary>
-        /// Create a banner ad
+        /// Create a mediator ad
         /// </summary>
         /// <param name="appId">Your apps id</param>
         /// <param name="adUnitId">Your ad unit id</param>
@@ -76,7 +81,24 @@ namespace CI.WSANative.Advertising
         }
 
         /// <summary>
-        /// Destroy the banner ad
+        /// Show or hide the medaitor ad
+        /// </summary>
+        /// <param name="visible">Should the ad be visible</param>
+        public static void SetAdVisibility(bool visible)
+        {
+#if NETFX_CORE
+            if (SetVisiblity != null)
+            {
+                UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+                {
+                    SetVisiblity(visible);
+                }, false);
+            }
+#endif
+        }
+
+        /// <summary>
+        /// Destroy the mediator ad
         /// </summary>
         public static void DestroyAd()
         {
