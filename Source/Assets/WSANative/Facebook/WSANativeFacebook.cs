@@ -113,7 +113,7 @@ namespace CI.WSANative.Facebook
         }
 
 #if NETFX_CORE
-        private static void HasUserLikedPageAsync(string pageId, Action<WSAFacebookResponse<List<string>>> response)
+        private static async void HasUserLikedPageAsync(string pageId, Action<WSAFacebookResponse<bool>> response)
         {
             WSAFacebookResponse<bool> result = await _facebookApi.HasUserLikedPage(pageId);
 
