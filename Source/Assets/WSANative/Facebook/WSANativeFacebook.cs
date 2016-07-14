@@ -46,7 +46,7 @@ namespace CI.WSANative.Facebook
         /// If login is successful an access token will be generated and automatically stored.
         /// The token normally last for about 60 days at which point the user will have to be re-authenticated
         /// </summary>
-        /// <param name="permissions">Any combination of "public_profile, email, user_birthday" - only request what you need</param>
+        /// <param name="permissions">Any combination of "public_profile, email, user_birthday, user_likes" - only request what you need</param>
         /// <param name="response">Did the login request succeed</param>
         public static void Login(List<string> permissions, Action<bool> response)
         {
@@ -92,6 +92,30 @@ namespace CI.WSANative.Facebook
         private static async void GetUserDetailsAsync(Action<WSAFacebookResponse<WSAFacebookUser>> response)
         {
             WSAFacebookResponse<WSAFacebookUser> result = await _facebookApi.GetUserDetails();
+
+            if (response != null)
+            {
+                response(result);
+            }
+        }
+#endif
+
+        /// <summary>
+        /// Determines whether the user has liked a page - you must have requested the permissiom user_likes at login
+        /// </summary>
+        /// <param name="pageId">The id of the page</param>
+        /// <param name="response">Response indicating whether the user has liked the page</param>
+        public static void HasUserLikedPage(string pageId, Action<WSAFacebookResponse<bool>> response)
+        {
+#if NETFX_CORE
+            HasUserLikedPageAsync(pageId, response);
+#endif
+        }
+
+#if NETFX_CORE
+        private static void HasUserLikedPageAsync(string pageId, Action<WSAFacebookResponse<List<string>>> response)
+        {
+            WSAFacebookResponse<bool> result = await _facebookApi.HasUserLikedPage(pageId);
 
             if (response != null)
             {

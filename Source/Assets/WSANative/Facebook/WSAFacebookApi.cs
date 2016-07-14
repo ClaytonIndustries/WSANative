@@ -12,9 +12,10 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Windows.Security.Authentication.Web;
 using Windows.Storage;
+using CI.WSANative.Facebook.Core;
+using Newtonsoft.Json;
 
 namespace CI.WSANative.Facebook
 {
@@ -187,6 +188,55 @@ namespace CI.WSANative.Facebook
 
             return userDetailsResponse;
         }
+    }
+
+    public async Task<WSAFacebookResponse<bool>> HasUserLikedPage(string pageId)
+    {
+        WSAFacebookResponse<bool> hasUserLikedPageResponse = new WSAFacebookResponse<bool>();
+
+        if (IsLoggedIn)
+        {
+            Uri requestUri = new Uri(string.Format("{0}me/likes/{1}?access_token={2}", _facebookGraphUri, pageId, _accessToken));
+
+            using (HttpClient client = new HttpClient())
+            {
+                HttpResponseMessage response = await client.GetAsync(requestUri);
+
+                string responseAsString = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    WSAFacebookDataResponse parsedResponse = JsonConvert.DeserializeObject<WSAFacebookDataResponse>(responseAsString);
+
+                    hasUserLikedPageResponse.Data = parsedResponse.Data != null;
+                    hasUserLikedPageResponse.Success = true;
+                }
+                else
+                {
+                    WSAFacebookError errorMessage = JsonConvert.DeserializeObject<WSAFacebookError>(responseAsString);
+
+                    if (errorMessage.Code == _authenticationErrorCode)
+                    {
+                        IsLoggedIn = false;
+                        _accessToken = null;
+                        errorMessage.AccessTokenExpired = true;
+                    }
+
+                    hasUserLikedPageResponse.Success = false;
+                    hasUserLikedPageResponse.Error = errorMessage;
+                }
+            }
+        }
+        else
+        {
+            hasUserLikedPageResponse.Success = false;
+            hasUserLikedPageResponse.Error = new WSAFacebookError()
+            {
+                AccessTokenExpired = true
+            };
+        }
+
+        return hasUserLikedPageResponse;
     }
 }
 #endif
