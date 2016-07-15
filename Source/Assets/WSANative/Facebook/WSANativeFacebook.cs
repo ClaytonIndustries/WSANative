@@ -46,7 +46,7 @@ namespace CI.WSANative.Facebook
         /// If login is successful an access token will be generated and automatically stored.
         /// The token normally last for about 60 days at which point the user will have to be re-authenticated
         /// </summary>
-        /// <param name="permissions">Any combination of "public_profile, email, user_birthday, user_likes" - only request what you need</param>
+        /// <param name="permissions">Any combination of "public_profile, email, user_birthday, user_likes, publish_actions" - only request what you need</param>
         /// <param name="response">Did the login request succeed</param>
         public static void Login(List<string> permissions, Action<bool> response)
         {
@@ -116,6 +116,31 @@ namespace CI.WSANative.Facebook
         private static async void HasUserLikedPageAsync(string pageId, Action<WSAFacebookResponse<bool>> response)
         {
             WSAFacebookResponse<bool> result = await _facebookApi.HasUserLikedPage(pageId);
+
+            if (response != null)
+            {
+                response(result);
+            }
+        }
+#endif
+
+        /// <summary>
+        /// Post a photo to the users timeline - you must have requested the permission publish_actions at login
+        /// </summary>
+        /// <param name="caption">Caption for the photo</param>
+        /// <param name="photo">The photo</param>
+        /// <param name="response">Response indicating whether the photo was posted successfuly</param>
+        public static void PostPhotoToTimeline(string caption, byte[] photo, Action<WSAFacebookResponse<bool>> response)
+        {
+#if NETFX_CORE
+            PostPhotoToTimelineAsync(caption, photo, response);
+#endif
+        }
+
+#if NETFX_CORE
+        private static async void PostPhotoToTimelineAsync(string caption, byte[] photo, Action<WSAFacebookResponse<bool>> response)
+        {
+            WSAFacebookResponse<bool> result = await _facebookApi.PostPhotoToTimeline(caption, photo);
 
             if (response != null)
             {
