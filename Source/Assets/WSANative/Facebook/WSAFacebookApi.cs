@@ -266,8 +266,8 @@ namespace CI.WSANative.Facebook
                     using (HttpClient client = new HttpClient())
                     {
                         MultipartFormDataContent content = new MultipartFormDataContent();
-                        content.Add(new StringContent(caption));
-                        content.Add(new ByteArrayContent(photo));
+                        content.Add(new StringContent(caption), "caption");
+                        content.Add(new ByteArrayContent(photo), "source");
 
                         HttpResponseMessage response = await client.PostAsync(requestUri, content);
 
