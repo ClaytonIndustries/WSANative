@@ -104,6 +104,8 @@ WSANativeFacebook.Initialise
 WSANativeFacebook.Login
 WSANativeFacebook.Logout
 WSANativeFacebook.GetUserDetails
+WSANativeFacebook.HasUserLikedPage
+WSANativeFacebook.GraphApiRead
 
 ------------------------------------------------------------------------------------------------------------------------
 Windows Store - Configuring test products
