@@ -103,7 +103,7 @@ namespace CI.WSANative.Facebook
         /// <summary>
         /// Determines whether the user has liked a page - you must have requested the permissiom user_likes at login
         /// </summary>
-        /// <param name="pageId">The id of the page</param>
+        /// <param name="pageId">The id of the page - see the documentation for details on how to find this</param>
         /// <param name="response">Response indicating whether the user has liked the page</param>
         public static void HasUserLikedPage(string pageId, Action<WSAFacebookResponse<bool>> response)
         {
