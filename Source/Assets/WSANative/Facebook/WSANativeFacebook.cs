@@ -123,5 +123,31 @@ namespace CI.WSANative.Facebook
             }
         }
 #endif
+
+        /// <summary>
+        /// Allows you to read from the facebook graph api - see the facebook developer guide for a full list of available actions
+        /// </summary>
+        /// <typeparam name="T">A type that will contain the serialised response - see WSAFacebookUser for an example and also check the facebook developer guide for details on what each call returns</typeparam>
+        /// <param name="edge">The api edge e.g me/photos</param>
+        /// <param name="parameters">Parameters to include in the request - null or empty if none</param>
+        /// <param name="response">A callback containing the response</param>
+        public static void GraphApiRead<T>(string edge, Dictionary<string, string> parameters, Action<WSAFacebookResponse<T>> response)
+        {
+#if NETFX_CORE
+            GraphApiReadAsync<T>(edge, parameters, response);
+#endif
+        }
+
+#if NETFX_CORE
+        private static async void GraphApiReadAsync<T>(string edge, Dictionary<string, string> parameters, Action<WSAFacebookResponse<T>> response)
+        {
+            WSAFacebookResponse<T> result = await _facebookApi.GraphApiRead<T>(edge, parameters);
+
+            if (response != null)
+            {
+                response(result);
+            }
+        }
+#endif
     }
 }

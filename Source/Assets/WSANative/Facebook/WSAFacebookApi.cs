@@ -9,6 +9,7 @@
 #if NETFX_CORE
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -251,6 +252,67 @@ namespace CI.WSANative.Facebook
             }
 
             return hasUserLikedPageResponse;
+        }
+
+        public async Task<WSAFacebookResponse<T>> GraphApiRead<T>(string edge, Dictionary<string, string> parameters)
+        {
+            WSAFacebookResponse<T> graphApiReadResponse = new WSAFacebookResponse<T>();
+
+            if (IsLoggedIn)
+            {
+                string fields = string.Empty;
+
+                if(parameters != null && parameters.Count > 0)
+                {
+                    fields = parameters.Aggregate(string.Empty, (total, next) => total += (next.Key + "=" + next.Value + "&"));
+                }
+
+                Uri requestUri = new Uri(string.Format("{0}{1}?{2}access_token={3}", _facebookGraphUri, edge, fields, _accessToken));
+
+                try
+                {
+                    using (HttpClient client = new HttpClient())
+                    {
+                        HttpResponseMessage response = await client.GetAsync(requestUri);
+
+                        string responseAsString = await response.Content.ReadAsStringAsync();
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            graphApiReadResponse.Data = JsonConvert.DeserializeObject<T>(responseAsString);
+                            graphApiReadResponse.Success = true;
+                        }
+                        else
+                        {
+                            WSAFacebookError errorMessage = JsonConvert.DeserializeObject<WSAFacebookError>(responseAsString);
+
+                            if (errorMessage.Code == _authenticationErrorCode)
+                            {
+                                IsLoggedIn = false;
+                                _accessToken = null;
+                                errorMessage.AccessTokenExpired = true;
+                            }
+
+                            graphApiReadResponse.Success = false;
+                            graphApiReadResponse.Error = errorMessage;
+                        }
+                    }
+                }
+                catch
+                {
+                    graphApiReadResponse.Success = false;
+                }
+            }
+            else
+            {
+                graphApiReadResponse.Success = false;
+                graphApiReadResponse.Error = new WSAFacebookError()
+                {
+                    AccessTokenExpired = true
+                };
+            }
+
+            return graphApiReadResponse;
         }
     }
 }
