@@ -13,6 +13,8 @@ using Windows.Devices.Enumeration;
 using Windows.Devices.Lights;
 #endif
 
+using UnityEngine;
+
 namespace CI.WSANative.Device
 {
     public static class WSANativeDevice
@@ -70,6 +72,18 @@ namespace CI.WSANative.Device
                 _lamp = null;
             }
 #endif
+        }
+
+        /// <summary>
+        /// Captures the contents of the screen buffer and converts it to png - you should call this after "yield return new WaitForEndOfFrame();" to ensure that rendering is completed first
+        /// </summary>
+        /// <returns>An array containing the image data</returns>
+        public static byte[] CaptureScreenshot()
+        {
+            Texture2D texture = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
+            texture.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
+            texture.Apply();
+            return texture.EncodeToPNG();
         }
     }
 }
