@@ -8,6 +8,7 @@
 
 #if NETFX_CORE
 using System;
+using Windows.ApplicationModel.DataTransfer;
 #endif
 
 namespace CI.WSANative.Social
@@ -56,6 +57,29 @@ namespace CI.WSANative.Social
                 var uri = new Uri("mailto:" + emailAddress);
                 await Windows.System.Launcher.LaunchUriAsync(uri);
             }, false);
+#endif
+        }
+
+        /// <summary>
+        /// Launch the native share dialog to share content using another app
+        /// </summary>
+        /// <typeparam name="T">The type of content to share - currently supports string to share text, byte[] to share a picture and Uri to share a link</typeparam>
+        /// <param name="title">Title to display on the dialog</param>
+        /// <param name="description">Description to display on the dialog</param>
+        /// <param name="content">Content to share</param>
+        public static void Share<T>(string title, string description, T content)
+        {
+#if NETFX_CORE
+            DataTransferManager.GetForCurrentView().DataRequested += (s, a) =>
+            {
+                DataRequest request = a.Request;
+
+                request.Data.SetText("Hello World!");
+                request.Data.Properties.Title = title;
+                request.Data.Properties.Description = description;
+            };
+
+            DataTransferManager.ShowShareUI();
 #endif
         }
     }
