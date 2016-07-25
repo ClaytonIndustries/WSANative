@@ -88,8 +88,8 @@ namespace CI.WSANative.Social
                 else if(T is byte[])
                 {
                     InMemoryRandomAccessStream memoryStream = new InMemoryRandomAccessStream();
-                    await memoryStream.WriteAsync(content.AsBuffer());
-                    RandomAccessStreamReference randomAccessStream = RandomAccessStreamReference.CreateFromStream(memoryStream.GetInputStreamAt(0));
+                    memoryStream.WriteAsync(content.AsBuffer()).Wait();
+                    RandomAccessStreamReference randomAccessStream = RandomAccessStreamReference.CreateFromStream(memoryStream);
 
                     request.Data.SetBitmap(randomAccessStream);
                 }
