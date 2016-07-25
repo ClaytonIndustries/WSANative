@@ -77,18 +77,18 @@ namespace CI.WSANative.Social
                 request.Data.Properties.Title = title;
                 request.Data.Properties.Description = description;
 
-                if(T is string)
+                if (content is string)
                 {
-                    request.Data.SetText(content);
+                    request.Data.SetText(content as string);
                 }
-                else if(T is Uri)
+                else if (content is Uri)
                 {
-                    request.Data.SetWebLink(content);
+                    request.Data.SetWebLink(content as Uri);
                 }
-                else if(T is byte[])
+                else if (content is byte[])
                 {
                     InMemoryRandomAccessStream memoryStream = new InMemoryRandomAccessStream();
-                    memoryStream.WriteAsync(content.AsBuffer()).Wait();
+                    memoryStream.WriteAsync((content as byte[]).AsBuffer()).AsTask().Wait();
                     RandomAccessStreamReference randomAccessStream = RandomAccessStreamReference.CreateFromStream(memoryStream);
 
                     request.Data.SetBitmap(randomAccessStream);
