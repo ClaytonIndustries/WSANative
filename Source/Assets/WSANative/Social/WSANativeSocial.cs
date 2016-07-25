@@ -74,9 +74,25 @@ namespace CI.WSANative.Social
             {
                 DataRequest request = a.Request;
 
-                request.Data.SetText("Hello World!");
                 request.Data.Properties.Title = title;
                 request.Data.Properties.Description = description;
+
+                if(T is string)
+                {
+                    request.Data.SetText(content);
+                }
+                else if(T is Uri)
+                {
+                    request.Data.SetWebLink(content);
+                }
+                else if(T is byte[])
+                {
+                    InMemoryRandomAccessStream memoryStream = new InMemoryRandomAccessStream();
+                    await memoryStream.WriteAsync(content.AsBuffer());
+                    RandomAccessStreamReference randomAccessStream = RandomAccessStreamReference.CreateFromStream(memoryStream.GetInputStreamAt(0));
+
+                    request.Data.SetBitmap(randomAccessStream);
+                }
             };
 
             DataTransferManager.ShowShareUI();
