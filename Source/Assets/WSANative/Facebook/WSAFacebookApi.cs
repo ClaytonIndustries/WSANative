@@ -28,7 +28,6 @@ namespace CI.WSANative.Facebook
         private string _packageSID;
         private string _accessToken;
 
-        private const string _facebookGraphUri = "https://graph.facebook.com/v2.7/";
         private const string _savedDataFilename = "FacebookData.sav";
         private const string _authenticationErrorCode = "190";
 
@@ -111,7 +110,7 @@ namespace CI.WSANative.Facebook
                     try
                     {
                         Uri requestUri = new Uri(
-                                string.Format("{0}me/permissions?access_token={1}", _facebookGraphUri, _accessToken));
+                                string.Format("{0}me/permissions?access_token={1}", WSAFacebookConstants.GraphApiUri, _accessToken));
 
                         using (HttpClient client = new HttpClient())
                         {
@@ -149,7 +148,7 @@ namespace CI.WSANative.Facebook
                 string fields = "id,age_range,birthday,email,first_name,gender,last_name,link,locale,name,picture,timezone";
 
                 Uri requestUri = new Uri(
-                    string.Format("{0}me?fields={1}&access_token={2}", _facebookGraphUri, fields, _accessToken));
+                    string.Format("{0}me?fields={1}&access_token={2}", WSAFacebookConstants.GraphApiUri, fields, _accessToken));
 
 
                 try
@@ -204,7 +203,7 @@ namespace CI.WSANative.Facebook
 
             if (IsLoggedIn)
             {
-                Uri requestUri = new Uri(string.Format("{0}me/likes/{1}?access_token={2}", _facebookGraphUri, pageId, _accessToken));
+                Uri requestUri = new Uri(string.Format("{0}me/likes/{1}?access_token={2}", WSAFacebookConstants.GraphApiUri, pageId, _accessToken));
 
                 try
                 {
@@ -267,7 +266,7 @@ namespace CI.WSANative.Facebook
                     fields = parameters.Aggregate(string.Empty, (total, next) => total += (next.Key + "=" + next.Value + "&"));
                 }
 
-                Uri requestUri = new Uri(string.Format("{0}{1}?{2}access_token={3}", _facebookGraphUri, edge, fields, _accessToken));
+                Uri requestUri = new Uri(string.Format("{0}{1}?{2}access_token={3}", WSAFacebookConstants.GraphApiUri, edge, fields, _accessToken));
 
                 try
                 {
@@ -313,6 +312,25 @@ namespace CI.WSANative.Facebook
             }
 
             return graphApiReadResponse;
+        }
+
+        public async void ShowFeedDialog(string link, string picture, string source, string name, string caption, string description)
+        {
+            FacebookDialog feedControl = new FacebookDialog();
+
+            ContentDialog contentDialog = new ContentDialog()
+            {
+                Title = "Post to Facebook",
+                Content = feedControl
+            };
+
+            string feedUri = string.Format("{0}?app_id={1}&display=popup&redirect_url={2}", WSAFacebookConstants.FeedApiUri, _facebookAppId, WSAFacebookConstants.WebRedirectUri);
+
+            // Need to url encode all the params
+
+            feedControl.InitialiseFeed(feedUri, link, picture, source, name, caption, description, contentDialog);
+
+            await contentDialog.ShowAsync();
         }
     }
 }
