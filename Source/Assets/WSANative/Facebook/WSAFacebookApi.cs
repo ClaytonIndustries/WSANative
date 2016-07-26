@@ -314,23 +314,13 @@ namespace CI.WSANative.Facebook
             return graphApiReadResponse;
         }
 
-        public async void ShowFeedDialog(string link, string picture, string source, string name, string caption, string description)
+        public void ShowFeedDialog(string link, string picture, string source, string name, string caption, string description)
         {
-            FacebookDialog feedControl = new FacebookDialog();
+            FacebookDialog feedControl = new FacebookDialog(width, height);
 
-            ContentDialog contentDialog = new ContentDialog()
-            {
-                Title = "Post to Facebook",
-                Content = feedControl
-            };
+            string feedBaseUri = string.Format("{0}?app_id={1}&display=popup&redirect_url={2}", WSAFacebookConstants.FeedApiUri, _facebookAppId, WSAFacebookConstants.WebRedirectUri);
 
-            string feedUri = string.Format("{0}?app_id={1}&display=popup&redirect_url={2}", WSAFacebookConstants.FeedApiUri, _facebookAppId, WSAFacebookConstants.WebRedirectUri);
-
-            // Need to url encode all the params
-
-            feedControl.InitialiseFeed(feedUri, link, picture, source, name, caption, description, contentDialog);
-
-            await contentDialog.ShowAsync();
+            feedControl.InitialiseFeed(feedBaseUri, link, picture, source, name, caption, description, WSAFacebookConstants.WebRedirectUri, null);
         }
     }
 }

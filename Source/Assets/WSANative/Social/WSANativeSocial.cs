@@ -8,7 +8,9 @@
 
 #if NETFX_CORE
 using System;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Storage.Streams;
 #endif
 
 namespace CI.WSANative.Social
@@ -90,6 +92,8 @@ namespace CI.WSANative.Social
                     InMemoryRandomAccessStream memoryStream = new InMemoryRandomAccessStream();
                     memoryStream.WriteAsync((content as byte[]).AsBuffer()).AsTask().Wait();
                     RandomAccessStreamReference randomAccessStream = RandomAccessStreamReference.CreateFromStream(memoryStream);
+
+                    request.Data.Properties.Thumbnail = randomAccessStream;
 
                     request.Data.SetBitmap(randomAccessStream);
                 }
