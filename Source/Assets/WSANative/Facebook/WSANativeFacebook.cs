@@ -42,11 +42,11 @@ namespace CI.WSANative.Facebook
         }
 
         /// <summary>
-        /// Show the login dialog to the user and request permissions.
+        /// Shows the login dialog to the user and request permissions.
         /// If login is successful an access token will be generated and automatically stored.
-        /// The token normally last for about 60 days at which point the user will have to be re-authenticated
+        /// The token normally lasts for about 60 days at which point the user will have to be re-authenticated
         /// </summary>
-        /// <param name="permissions">Any combination of "public_profile, email, user_birthday, user_likes" - only request what you need</param>
+        /// <param name="permissions">Any combination of permissions eg "public_profile, email, user_birthday, user_likes" etc - only request what you need</param>
         /// <param name="response">Did the login request succeed</param>
         public static void Login(List<string> permissions, Action<bool> response)
         {
