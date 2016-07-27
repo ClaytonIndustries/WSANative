@@ -6,6 +6,10 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+#if NETFX_CORE
+using Windows.UI.Xaml.Controls;
+#endif
+
 using System;
 using System.Collections.Generic;
 
@@ -40,6 +44,13 @@ namespace CI.WSANative.Facebook
             _facebookApi.Initialise(facebookAppId, packageSID);
 #endif
         }
+
+#if NETFX_CORE
+        public static void ConfigureDialogs(Grid dxSwapChainPanel)
+        {
+            _facebookApi.ConfigureDialogs(dxSwapChain);
+        }
+#endif
 
         /// <summary>
         /// Shows the login dialog to the user and request permissions.
@@ -151,7 +162,8 @@ namespace CI.WSANative.Facebook
 #endif
 
         /// <summary>
-        /// Allows a user to publish a story to their timeline - You don't need to specify all of the following parameters, null the ones you don't want
+        /// Allows a user to publish a story to their timeline - this does not require any special permissions nor does it require the user to be currently logged in.
+        /// You don't need to specify all of the following parameters, null the ones you don't want
         /// </summary>
         /// <param name="link">The link attached to this post</param>
         /// <param name="picture">The URL of a picture attached to this post. The picture must be at least 200px by 200px</param>
@@ -162,7 +174,10 @@ namespace CI.WSANative.Facebook
         public static void ShowFeedDialog(string link, string picture, string source, string name, string caption, string description)
         {
 #if NETFX_CORE
-            _facebookApi.ShowFeedDialog(link, picture, source, name, caption, description);
+            UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
+            {
+                _facebookApi.ShowFeedDialog(link, picture, source, name, caption, description);
+            }, false);
 #endif
         }
     }

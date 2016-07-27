@@ -15,8 +15,10 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Security.Authentication.Web;
 using Windows.Storage;
+using Windows.UI.Xaml.Controls;
 using CI.WSANative.Facebook.Core;
 using Newtonsoft.Json;
+using UnityEngine;
 
 namespace CI.WSANative.Facebook
 {
@@ -27,6 +29,7 @@ namespace CI.WSANative.Facebook
         private string _facebookAppId;
         private string _packageSID;
         private string _accessToken;
+        private Grid _dxSwapChainPanel;
 
         private const string _savedDataFilename = "FacebookData.sav";
         private const string _authenticationErrorCode = "190";
@@ -55,6 +58,11 @@ namespace CI.WSANative.Facebook
         {
             _facebookAppId = facebookAppId;
             _packageSID = packageSID;
+        }
+
+        public void ConfigureDialogs(Grid dxSwapChainPanel)
+        {
+            _dxSwapChainPanel = dxSwapChainPanel;
         }
 
         public async Task<bool> Login(List<string> permissions)
@@ -316,11 +324,11 @@ namespace CI.WSANative.Facebook
 
         public void ShowFeedDialog(string link, string picture, string source, string name, string caption, string description)
         {
-            FacebookDialog feedControl = new FacebookDialog(width, height);
+            FacebookDialog feedControl = new FacebookDialog(Screen.width, Screen.height);
 
             string feedBaseUri = string.Format("{0}?app_id={1}&display=popup", WSAFacebookConstants.FeedApiUri, _facebookAppId);
 
-            feedControl.InitialiseFeed(feedBaseUri, link, picture, source, name, caption, description, WSAFacebookConstants.WebRedirectUri, null);
+            feedControl.InitialiseFeed(feedBaseUri, link, picture, source, name, caption, description, WSAFacebookConstants.WebRedirectUri, _dxSwapChainPanel);
         }
     }
 }
