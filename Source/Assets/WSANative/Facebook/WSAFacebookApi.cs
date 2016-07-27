@@ -318,7 +318,7 @@ namespace CI.WSANative.Facebook
         {
             FacebookDialog feedControl = new FacebookDialog(width, height);
 
-            string feedBaseUri = string.Format("{0}?app_id={1}&display=popup&redirect_url={2}", WSAFacebookConstants.FeedApiUri, _facebookAppId, WSAFacebookConstants.WebRedirectUri);
+            string feedBaseUri = string.Format("{0}?app_id={1}&display=popup", WSAFacebookConstants.FeedApiUri, _facebookAppId);
 
             feedControl.InitialiseFeed(feedBaseUri, link, picture, source, name, caption, description, WSAFacebookConstants.WebRedirectUri, null);
         }

@@ -29,11 +29,15 @@ namespace CI.WSANative.Facebook.Core
             AddChild(_iFrame);
         }
 
-        public void InitialiseFeed(string feedBaseUri, string link, string picture, string source, string name, string caption, string description, string redirectUri, Grid parent)
+        public void InitialiseFeed(string feedUri, string link, string picture, string source, string name, string caption, string description, string redirectUri, Grid parent)
         {
-            // Escape all params
-
-            Uri fullFeedUri = new Uri(string.Format("{0}&link={1}", feedBaseUri, Uri.EscapeUriString(link)));
+            feedUri = AddParameter(feedUri, "redirect_url", redirectUri);
+            feedUri = AddParameter(feedUri, "link", link);
+            feedUri = AddParameter(feedUri, "picture", picture);
+            feedUri = AddParameter(feedUri, "source", source);
+            feedUri = AddParameter(feedUri, "name", name);
+            feedUri = AddParameter(feedUri, "caption", caption);
+            feedUri = AddParameter(feedUri, "description", description);
 
             _iFrame.NavigationStarting += (s, e) =>
             {
@@ -43,9 +47,19 @@ namespace CI.WSANative.Facebook.Core
                 }
             };
 
-            _iFrame.Navigate(fullFeedUri);
+            _iFrame.Navigate(new Uri(feedUri));
 
             parent.Children.Add(this);
+        }
+
+        private string AddParameter(string currentUri, string parameterName, string parameterValue)
+        {
+            if(!string.IsNullOrEmpty(parameterValue))
+            {
+                return string.Format("{0}&{1}={2}", currentUri, parameterName, Uri.EscapeUriString(parameterValue));
+            }
+
+            return currentUri;
         }
     }
 }
