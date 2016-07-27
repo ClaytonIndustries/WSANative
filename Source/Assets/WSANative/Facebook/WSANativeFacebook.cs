@@ -48,7 +48,7 @@ namespace CI.WSANative.Facebook
 #if NETFX_CORE
         public static void ConfigureDialogs(Grid dxSwapChainPanel)
         {
-            _facebookApi.ConfigureDialogs(dxSwapChain);
+            _facebookApi.ConfigureDialogs(dxSwapChainPanel);
         }
 #endif
 
@@ -174,7 +174,7 @@ namespace CI.WSANative.Facebook
         public static void ShowFeedDialog(string link, string picture, string source, string name, string caption, string description)
         {
 #if NETFX_CORE
-            UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
+            UnityEngine.WSA.Application.InvokeOnUIThread(() =>
             {
                 _facebookApi.ShowFeedDialog(link, picture, source, name, caption, description);
             }, false);
