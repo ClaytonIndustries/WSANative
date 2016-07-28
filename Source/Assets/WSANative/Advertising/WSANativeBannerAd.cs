@@ -52,6 +52,11 @@ namespace CI.WSANative.Advertising
         public static Action Destroy;
 
         /// <summary>
+        /// For internal use only
+        /// </summary>
+        public static Func<bool> IsShowingAd;
+
+        /// <summary>
         /// Create a banner ad
         /// </summary>
         /// <param name="appId">Your apps id</param>
@@ -103,6 +108,20 @@ namespace CI.WSANative.Advertising
                 }, false);
             }
 #endif
+        }
+
+        /// <summary>
+        /// Is an ad currently being displayed
+        /// </summary>
+        /// <returns>Value indicating whether an ad is being shown</returns>
+        public static bool HasAd()
+        {
+            if (IsShowingAd != null)
+            {
+                return IsShowingAd();
+            }
+
+            return false;
         }
 
         /// <summary>
