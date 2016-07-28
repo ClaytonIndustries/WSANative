@@ -33,6 +33,15 @@ namespace CI.WSANative.Facebook
 #endif
         }
 
+        public static bool IsDialogOpen
+        {
+#if NETFX_CORE
+            get { return _facebookApi.IsDialogOpen; }
+#else
+            get { return false; }
+#endif
+        }
+
         /// <summary>
         /// Initialise the facebook api - this must be called first - see the website for additional information
         /// </summary>
@@ -171,12 +180,13 @@ namespace CI.WSANative.Facebook
         /// <param name="name">The name of the link attachment</param>
         /// <param name="caption">The caption of the link (appears beneath the link name). If not specified, this field is automatically populated with the URL of the link</param>
         /// <param name="description">The description of the link (appears beneath the link caption). If not specified, this field is automatically populated by information scraped from the link, typically the title of the page</param>
-        public static void ShowFeedDialog(string link, string picture, string source, string name, string caption, string description)
+        /// <param name="closed">A callback indicating that the dialog has closed</param>
+        public static void ShowFeedDialog(string link, string picture, string source, string name, string caption, string description, Action closed)
         {
 #if NETFX_CORE
             UnityEngine.WSA.Application.InvokeOnUIThread(() =>
             {
-                _facebookApi.ShowFeedDialog(link, picture, source, name, caption, description);
+                _facebookApi.ShowFeedDialog(link, picture, source, name, caption, description, closed);
             }, false);
 #endif
         }
@@ -186,12 +196,13 @@ namespace CI.WSANative.Facebook
         /// </summary>
         /// <param name="title">The title for the Dialog. Maximum length is 50 characters.</param>
         /// <param name="message">A plain-text message to be sent as part of the request. This text will surface in the App Center view of the request, but not on the notification jewel</param>
-        public static void ShowRequestDialog(string title, string message)
+        /// <param name="closed">A callback indicating that the dialog has closed</param>
+        public static void ShowRequestDialog(string title, string message, Action closed)
         {
 #if NETFX_CORE
             UnityEngine.WSA.Application.InvokeOnUIThread(() =>
             {
-                _facebookApi.ShowRequestDialog(title, message);
+                _facebookApi.ShowRequestDialog(title, message, closed);
             }, false);
 #endif
         }

@@ -19,6 +19,8 @@ namespace CI.WSANative.Facebook.Core
 {
     public sealed class FacebookDialog : UserControl
     {
+        public Action Closed { get; set; }
+
         private readonly WebView _iFrame;
         private readonly Button _closeButton;
 
@@ -59,7 +61,7 @@ namespace CI.WSANative.Facebook.Core
             Content = container;
         }
 
-        public void Initialise(string feedUri, Dictionary<string,string> parameters, string responseUri, Grid parent)
+        public void Show(string feedUri, Dictionary<string,string> parameters, string responseUri, Grid parent)
         {
             feedUri = parameters.Aggregate(feedUri, (total, current) => total = AddParameter(total, current.Key, current.Value));
 
@@ -67,13 +69,13 @@ namespace CI.WSANative.Facebook.Core
             {
                 if (e.Uri.AbsolutePath == responseUri)
                 {
-                    parent.Children.Remove(this);
+                    Close(parent);
                 }
             };
 
             _closeButton.Click += (s, e) =>
             {
-                parent.Children.Remove(this);
+                Close(parent);
             };
 
             _iFrame.Navigate(new Uri(feedUri));
@@ -89,6 +91,16 @@ namespace CI.WSANative.Facebook.Core
             }
 
             return currentUri;
+        }
+
+        private void Close(Grid parent)
+        {
+            parent.Children.Remove(this);
+
+            if(Closed != null)
+            {
+                Closed();
+            }
         }
     }
 }

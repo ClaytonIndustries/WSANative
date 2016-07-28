@@ -25,6 +25,7 @@ namespace CI.WSANative.Facebook
     public class WSAFacebookApi
     {
         public bool IsLoggedIn { get; private set; }
+        public bool IsDialogOpen { get; private set; }
 
         private string _facebookAppId;
         private string _packageSID;
@@ -322,43 +323,69 @@ namespace CI.WSANative.Facebook
             return graphApiReadResponse;
         }
 
-        public void ShowFeedDialog(string link, string picture, string source, string name, string caption, string description)
+        public void ShowFeedDialog(string link, string picture, string source, string name, string caption, string description, Action closed)
         {
-            FacebookDialog feedControl = new FacebookDialog(Screen.width, Screen.height);
-
-            Dictionary<string, string> parameters = new Dictionary<string, string>()
+            if (!IsDialogOpen)
             {
-                { "link", link },
-                { "picture", picture },
-                { "source", source },
-                { "name", name },
-                { "caption", caption },
-                { "description", description }
-            };
+                FacebookDialog feedControl = new FacebookDialog(Screen.width, Screen.height);
 
-            string feedBaseUri = string.Format("{0}?app_id={1}&display=popup&redirect_url={2}", WSAFacebookConstants.FeedDialogUri, _facebookAppId, WSAFacebookConstants.WebRedirectUri);
+                Dictionary<string, string> parameters = new Dictionary<string, string>()
+                {
+                    { "link", link },
+                    { "picture", picture },
+                    { "source", source },
+                    { "name", name },
+                    { "caption", caption },
+                    { "description", description }
+                };
 
-            if (_dxSwapChainPanel != null)
-            {
-                feedControl.Initialise(feedBaseUri, parameters, WSAFacebookConstants.FeedDialogResponseUri, _dxSwapChainPanel);
+                string feedBaseUri = string.Format("{0}?app_id={1}&display=popup&redirect_url={2}", WSAFacebookConstants.FeedDialogUri, _facebookAppId, WSAFacebookConstants.WebRedirectUri);
+
+                if (_dxSwapChainPanel != null)
+                {
+                    IsDialogOpen = true;
+
+                    if (closed != null)
+                    {
+                        UnityEngine.WSA.Application.InvokeOnAppThread(() =>
+                        {
+                            feedControl.Closed += () => { IsDialogOpen = false; closed(); };
+                        }, false);
+                    }
+
+                    feedControl.Show(feedBaseUri, parameters, WSAFacebookConstants.FeedDialogResponseUri, _dxSwapChainPanel);
+                }
             }
         }
 
-        public void ShowRequestDialog(string title, string message)
+        public void ShowRequestDialog(string title, string message, Action closed)
         {
-            FacebookDialog requestControl = new FacebookDialog(Screen.width, Screen.height);
-
-            Dictionary<string, string> parameters = new Dictionary<string, string>()
+            if (!IsDialogOpen)
             {
-                { "title", title },
-                { "message", message },
-            };
+                FacebookDialog requestControl = new FacebookDialog(Screen.width, Screen.height);
 
-            string requestBaseUri = string.Format("{0}?app_id={1}&display=popup&redirect_uri={2}", WSAFacebookConstants.RequestDialogUri, _facebookAppId, WSAFacebookConstants.WebRedirectUri);
+                Dictionary<string, string> parameters = new Dictionary<string, string>()
+                {
+                    { "title", title },
+                    { "message", message },
+                };
 
-            if (_dxSwapChainPanel != null)
-            {
-                requestControl.Initialise(requestBaseUri, parameters, WSAFacebookConstants.RequestDialogResponseUri, _dxSwapChainPanel);
+                string requestBaseUri = string.Format("{0}?app_id={1}&display=popup&redirect_uri={2}", WSAFacebookConstants.RequestDialogUri, _facebookAppId, WSAFacebookConstants.WebRedirectUri);
+
+                if (_dxSwapChainPanel != null)
+                {
+                    IsDialogOpen = true;
+
+                    if(closed != null)
+                    {
+                        UnityEngine.WSA.Application.InvokeOnAppThread(() =>
+                        {
+                            requestControl.Closed += () => { IsDialogOpen = false; closed(); };
+                        }, false);
+                    }
+
+                    requestControl.Show(requestBaseUri, parameters, WSAFacebookConstants.RequestDialogResponseUri, _dxSwapChainPanel);
+                }
             }
         }
     }
