@@ -180,5 +180,20 @@ namespace CI.WSANative.Facebook
             }, false);
 #endif
         }
+
+        /// <summary>
+        /// Allows the user to send invites / requests to their Facebook friends
+        /// </summary>
+        /// <param name="title">The title for the Dialog. Maximum length is 50 characters.</param>
+        /// <param name="message">A plain-text message to be sent as part of the request. This text will surface in the App Center view of the request, but not on the notification jewel</param>
+        public static void ShowRequestDialog(string title, string message)
+        {
+#if NETFX_CORE
+            UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+            {
+                _facebookApi.ShowRequestDialog(title, message);
+            }, false);
+#endif
+        }
     }
 }

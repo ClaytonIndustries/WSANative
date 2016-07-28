@@ -6,7 +6,11 @@ namespace CI.WSANative.Facebook.Core
         public const string ApiVersionNumber = "v2.7";
 
         public static string GraphApiUri { get { return string.Format("https://graph.facebook.com/{0}/", ApiVersionNumber); } }
-        public static string FeedApiUri { get { return string.Format("https://www.facebook.com/{0}/dialog/feed", ApiVersionNumber); } }
-        public static string WebRedirectUri { get { return "http://www.facebook.com/connect/login_success.html"; } }
+        public static string FeedDialogUri { get { return string.Format("https://www.facebook.com/{0}/dialog/feed", ApiVersionNumber); } }
+        public static string RequestDialogUri { get { return string.Format("https://www.facebook.com/{0}/dialog/apprequests", ApiVersionNumber); } }
+
+        public const string WebRedirectUri = "http://www.facebook.com/connect/login_success.html";
+        public const string FeedDialogResponseUri = "/dialog/return/close";
+        public const string RequestDialogResponseUri = "/connect/login_success.html";
     }
 }

@@ -8,6 +8,8 @@
 
 #if NETFX_CORE
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -19,8 +21,6 @@ namespace CI.WSANative.Facebook.Core
     {
         private readonly WebView _iFrame;
         private readonly Button _closeButton;
-
-        private const string _responseAbsolutePath = "/dialog/return/close";
 
         public FacebookDialog(int screenWidth, int screenHeight)
         {
@@ -59,26 +59,13 @@ namespace CI.WSANative.Facebook.Core
             Content = container;
         }
 
-        public void InitialiseFeed(string feedUri, string link, string picture, string source, string name, string caption, string description, Grid parent)
+        public void Initialise(string feedUri, Dictionary<string,string> parameters, string responseUri, Grid parent)
         {
-            feedUri = AddParameter(feedUri, "link", link);
-            feedUri = AddParameter(feedUri, "picture", picture);
-            feedUri = AddParameter(feedUri, "source", source);
-            feedUri = AddParameter(feedUri, "name", name);
-            feedUri = AddParameter(feedUri, "caption", caption);
-            feedUri = AddParameter(feedUri, "description", description);
+            feedUri = parameters.Aggregate(feedUri, (total, current) => total = AddParameter(total, current.Key, current.Value));
 
             _iFrame.NavigationStarting += (s, e) =>
             {
-                if (e.Uri.AbsolutePath == _responseAbsolutePath)
-                {
-                    parent.Children.Remove(this);
-                }
-            };
-
-            _iFrame.FrameNavigationCompleted += (s, e) =>
-            {
-                if(!e.IsSuccess)
+                if (e.Uri.AbsolutePath == responseUri)
                 {
                     parent.Children.Remove(this);
                 }

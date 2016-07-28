@@ -326,9 +326,40 @@ namespace CI.WSANative.Facebook
         {
             FacebookDialog feedControl = new FacebookDialog(Screen.width, Screen.height);
 
-            string feedBaseUri = string.Format("{0}?app_id={1}&display=popup&redirect_url={2}", WSAFacebookConstants.FeedApiUri, _facebookAppId, WSAFacebookConstants.WebRedirectUri);
+            Dictionary<string, string> parameters = new Dictionary<string, string>()
+            {
+                { "link", link },
+                { "picture", picture },
+                { "source", source },
+                { "name", name },
+                { "caption", caption },
+                { "description", description }
+            };
 
-            feedControl.InitialiseFeed(feedBaseUri, link, picture, source, name, caption, description, _dxSwapChainPanel);
+            string feedBaseUri = string.Format("{0}?app_id={1}&display=popup&redirect_url={2}", WSAFacebookConstants.FeedDialogUri, _facebookAppId, WSAFacebookConstants.WebRedirectUri);
+
+            if (_dxSwapChainPanel != null)
+            {
+                feedControl.Initialise(feedBaseUri, parameters, WSAFacebookConstants.FeedDialogResponseUri, _dxSwapChainPanel);
+            }
+        }
+
+        public void ShowRequestDialog(string title, string message)
+        {
+            FacebookDialog requestControl = new FacebookDialog(Screen.width, Screen.height);
+
+            Dictionary<string, string> parameters = new Dictionary<string, string>()
+            {
+                { "title", title },
+                { "message", message },
+            };
+
+            string requestBaseUri = string.Format("{0}?app_id={1}&display=popup&redirect_uri={2}", WSAFacebookConstants.RequestDialogUri, _facebookAppId, WSAFacebookConstants.WebRedirectUri);
+
+            if (_dxSwapChainPanel != null)
+            {
+                requestControl.Initialise(requestBaseUri, parameters, WSAFacebookConstants.RequestDialogResponseUri, _dxSwapChainPanel);
+            }
         }
     }
 }
