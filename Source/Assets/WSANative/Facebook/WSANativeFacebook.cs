@@ -192,7 +192,7 @@ namespace CI.WSANative.Facebook
         }
 
         /// <summary>
-        /// Allows the user to send invites / requests to their Facebook friends
+        /// Allows the user to send invites / requests to their Facebook friends - this does not require any special permissions nor does it require the user to be currently logged in
         /// </summary>
         /// <param name="title">The title for the Dialog. Maximum length is 50 characters.</param>
         /// <param name="message">A plain-text message to be sent as part of the request. This text will surface in the App Center view of the request, but not on the notification jewel</param>
