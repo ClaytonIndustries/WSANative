@@ -1,4 +1,4 @@
-﻿Windows Store Native (v1.10)
+﻿Windows Store Native (v1.11)
 ---------------------------
 
 Thanks for downloading Windows Store Native we hope you enjoy using it!
@@ -53,6 +53,7 @@ Banner:
 WSANativeBannerAd.CreatAd
 WSANativeBannerAd.SetVisibility
 WSANativeBannerAd.DestroyAd
+WSANativeBannerAd.HasAd
 Interstitial:
 WSANativeInterstitialAd.Initialise
 WSANativeInterstitialAd.RequestAd
@@ -88,10 +89,12 @@ Social:
 WSANativeSocial.ShowAppStoreDescriptionPage
 WSANativeSocial.ShowAppStoreReviewPage
 WSANativeSocial.ComposeEmail
+WSANativeSocial.Share
 
 Device:
 WSANativeDevice.EnableFlashlight
 WSANativeDevice.DisableFlashlight
+WSANativeDevice.CaptureScreenshot
 
 Security:
 WSANativeSecurity.SymmetricEncrypt
@@ -106,6 +109,8 @@ WSANativeFacebook.Logout
 WSANativeFacebook.GetUserDetails
 WSANativeFacebook.HasUserLikedPage
 WSANativeFacebook.GraphApiRead
+WSANativeFacebook.ShowFeedDialog
+WSANativeFacebook.ShowRequestDialog
 
 ------------------------------------------------------------------------------------------------------------------------
 Windows Store - Configuring test products
