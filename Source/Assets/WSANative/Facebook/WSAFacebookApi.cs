@@ -357,7 +357,7 @@ namespace CI.WSANative.Facebook
         {
             Dictionary<string, string> parameters = new Dictionary<string, string>()
             {
-                { "title", link }
+                { "link", link }
             };
 
             string sendBaseUri = string.Format("{0}?app_id={1}&display=popup&redirect_uri={2}", WSAFacebookConstants.SendDialogUri, _facebookAppId, WSAFacebookConstants.WebRedirectUri);
