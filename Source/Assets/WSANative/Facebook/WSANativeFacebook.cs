@@ -171,7 +171,7 @@ namespace CI.WSANative.Facebook
 #endif
 
         /// <summary>
-        /// Allows a user to publish a story to their timeline - this does not require any special permissions nor does it require the user to be currently logged in.
+        /// Allows the user to publish a story to their timeline - this does not require any special permissions nor does it require the user to be currently logged in.
         /// You don't need to specify all of the following parameters, null the ones you don't want
         /// </summary>
         /// <param name="link">The link attached to this post</param>
@@ -203,6 +203,21 @@ namespace CI.WSANative.Facebook
             UnityEngine.WSA.Application.InvokeOnUIThread(() =>
             {
                 _facebookApi.ShowRequestDialog(title, message, closed);
+            }, false);
+#endif
+        }
+
+        /// <summary>
+        /// Allows the user to send a private message to Facebook friends that contains a link - this does not require any special permissions nor does it require the user to be currently logged in
+        /// </summary>
+        /// <param name="link">The link to send</param>
+        /// <param name="closed">A callback indicating that the dialog has closed</param>
+        public static void ShowSendDialog(string link, Action closed)
+        {
+#if NETFX_CORE
+            UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+            {
+                _facebookApi.ShowSendDialog(link, closed);
             }, false);
 #endif
         }
