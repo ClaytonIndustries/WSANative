@@ -208,7 +208,7 @@ namespace CI.WSANative.Facebook
         }
 
         /// <summary>
-        /// Allows the user to send a private message to Facebook friends that contains a link - this does not require any special permissions nor does it require the user to be currently logged in
+        /// Allows the user to send a private message to their Facebook friends that contains a link - this does not require any special permissions nor does it require the user to be currently logged in
         /// </summary>
         /// <param name="link">The link to send</param>
         /// <param name="closed">A callback indicating that the dialog has closed</param>
