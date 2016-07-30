@@ -111,6 +111,7 @@ WSANativeFacebook.HasUserLikedPage
 WSANativeFacebook.GraphApiRead
 WSANativeFacebook.ShowFeedDialog
 WSANativeFacebook.ShowRequestDialog
+WSANativeFacebook.ShowSendDialog
 
 ------------------------------------------------------------------------------------------------------------------------
 Windows Store - Configuring test products
