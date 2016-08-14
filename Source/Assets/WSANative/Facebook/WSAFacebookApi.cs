@@ -337,7 +337,7 @@ namespace CI.WSANative.Facebook
 
             string feedBaseUri = string.Format("{0}?app_id={1}&display=popup&redirect_url={2}", WSAFacebookConstants.FeedDialogUri, _facebookAppId, WSAFacebookConstants.WebRedirectUri);
 
-            ShowDialog(parameters, feedBaseUri, closed);
+            ShowDialog(parameters, feedBaseUri, WSAFacebookConstants.FeedDialogResponseUri, closed);
         }
 
         public void ShowRequestDialog(string title, string message, Action closed)
@@ -350,7 +350,7 @@ namespace CI.WSANative.Facebook
 
             string requestBaseUri = string.Format("{0}?app_id={1}&display=popup&redirect_uri={2}", WSAFacebookConstants.RequestDialogUri, _facebookAppId, WSAFacebookConstants.WebRedirectUri);
 
-            ShowDialog(parameters, requestBaseUri, closed);
+            ShowDialog(parameters, requestBaseUri, WSAFacebookConstants.RequestDialogResponseUri, closed);
         }
 
         public void ShowSendDialog(string link, Action closed)
@@ -362,10 +362,10 @@ namespace CI.WSANative.Facebook
 
             string sendBaseUri = string.Format("{0}?app_id={1}&display=popup&redirect_uri={2}", WSAFacebookConstants.SendDialogUri, _facebookAppId, WSAFacebookConstants.WebRedirectUri);
 
-            ShowDialog(parameters, sendBaseUri, closed);
+            ShowDialog(parameters, sendBaseUri, WSAFacebookConstants.SendDialogResponseUri, closed);
         }
 
-        private void ShowDialog(Dictionary<string, string> parameters, string baseUri, Action closed)
+        private void ShowDialog(Dictionary<string, string> parameters, string baseUri, string responseUri, Action closed)
         {
             if (!IsDialogOpen)
             {
@@ -383,7 +383,7 @@ namespace CI.WSANative.Facebook
                         }, false);
                     }
 
-                    dialog.Show(baseUri, parameters, WSAFacebookConstants.SendDialogResponseUri, _dxSwapChainPanel);
+                    dialog.Show(baseUri, parameters, responseUri, _dxSwapChainPanel);
                 }
             }
             else
