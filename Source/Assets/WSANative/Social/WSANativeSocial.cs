@@ -72,34 +72,37 @@ namespace CI.WSANative.Social
         public static void Share<T>(string title, string description, T content)
         {
 #if NETFX_CORE
-            DataTransferManager.GetForCurrentView().DataRequested += (s, a) =>
+            UnityEngine.WSA.Application.InvokeOnUIThread(() =>
             {
-                DataRequest request = a.Request;
-
-                request.Data.Properties.Title = title;
-                request.Data.Properties.Description = description;
-
-                if (content is string)
+                DataTransferManager.GetForCurrentView().DataRequested += (s, a) =>
                 {
-                    request.Data.SetText(content as string);
-                }
-                else if (content is Uri)
-                {
-                    request.Data.SetWebLink(content as Uri);
-                }
-                else if (content is byte[])
-                {
-                    InMemoryRandomAccessStream memoryStream = new InMemoryRandomAccessStream();
-                    memoryStream.WriteAsync((content as byte[]).AsBuffer()).AsTask().Wait();
-                    RandomAccessStreamReference randomAccessStream = RandomAccessStreamReference.CreateFromStream(memoryStream);
+                    DataRequest request = a.Request;
 
-                    request.Data.Properties.Thumbnail = randomAccessStream;
+                    request.Data.Properties.Title = title;
+                    request.Data.Properties.Description = description;
 
-                    request.Data.SetBitmap(randomAccessStream);
-                }
-            };
+                    if (content is string)
+                    {
+                        request.Data.SetText(content as string);
+                    }
+                    else if (content is Uri)
+                    {
+                        request.Data.SetWebLink(content as Uri);
+                    }
+                    else if (content is byte[])
+                    {
+                        InMemoryRandomAccessStream memoryStream = new InMemoryRandomAccessStream();
+                        memoryStream.WriteAsync((content as byte[]).AsBuffer()).AsTask().Wait();
+                        RandomAccessStreamReference randomAccessStream = RandomAccessStreamReference.CreateFromStream(memoryStream);
 
-            DataTransferManager.ShowShareUI();
+                        request.Data.Properties.Thumbnail = randomAccessStream;
+
+                        request.Data.SetBitmap(randomAccessStream);
+                    }
+                };
+
+                DataTransferManager.ShowShareUI();
+            }, false);
 #endif
         }
     }
