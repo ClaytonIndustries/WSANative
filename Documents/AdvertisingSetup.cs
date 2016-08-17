@@ -5,15 +5,13 @@ private void ConfigureInterstitalAd()
 {
 	InterstitialAd interstitialAd = new InterstitialAd();
 	interstitialAd.AdReady += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.AdReady); };
-	interstitialAd.ErrorOccurred += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.ErrorOcurred); };
+	interstitialAd.ErrorOccurred += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.ErrorOccurred); };
 	interstitialAd.Completed += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.Completed); };
 	interstitialAd.Cancelled += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.Cancelled); };
-
 	WSANativeInterstitialAd.Request += (appId, addUnitId) =>
 	{
 		interstitialAd.RequestAd(AdType.Video, appId, addUnitId);
 	};
-
 	WSANativeInterstitialAd.Show += () =>
 	{
 		AppCallbacks.Instance.InvokeOnUIThread(() =>
@@ -24,7 +22,6 @@ private void ConfigureInterstitalAd()
 			}
 		}, false);
 	};
-
 	WSANativeInterstitialAd.Close += () =>
 	{
 		if (interstitialAd.State == InterstitialAdState.Showing)
@@ -36,81 +33,101 @@ private void ConfigureInterstitalAd()
 
 private void ConfigureBannerAd()
 {
-	AdControl adControl = null;
-	
-	WSANativeBannerAd.Create += (bannerAdSettings) =>
-	{
-		if(adControl == null)
-		{
-			adControl = new AdControl();
-			adControl.ApplicationId = bannerAdSettings.AppId;
-			adControl.AdUnitId = bannerAdSettings.AdUnitId;
-			adControl.Height = bannerAdSettings.Height;
-			adControl.VerticalAlignment = bannerAdSettings.Placement == WSAAdPlacement.Top ? VerticalAlignment.Top : VerticalAlignment.Bottom;
-			adControl.HorizontalAlignment = HorizontalAlignment.Center;
-			adControl.Width = bannerAdSettings.Width;
-			adControl.IsAutoRefreshEnabled = true;
-			
-			adControl.AdRefreshed += (s, e) => { WSANativeBannerAd.RaiseActionOnAppThread(WSANativeBannerAd.AdRefreshed); };
-			adControl.IsEngagedChanged += (s, e) => { WSANativeBannerAd.RaiseActionOnAppThread(WSANativeBannerAd.IsEngagedChanged); };
-			adControl.ErrorOccurred += (s, e) => { WSANativeBannerAd.RaiseActionOnAppThread(WSANativeBannerAd.ErrorOccurred); };
-			
-			GetSwapChainPanel().Children.Add(adControl);
-		}
-	};
-	
-	WSANativeBannerAd.Destroy += () =>
-	{
-		foreach (UIElement child in GetSwapChainPanel().Children)
-		{
-			if (child == adControl)
-			{
-				GetSwapChainPanel().Children.Remove(child);
-				adControl = null;
-
-				break;
-			}
-		}
-	};
+    AdControl adControl = null;
+    WSANativeBannerAd.Create += (bannerAdSettings) =>
+    {
+        if (adControl == null)
+        {
+            adControl = new AdControl();
+            adControl.ApplicationId = bannerAdSettings.AppId;
+            adControl.AdUnitId = bannerAdSettings.AdUnitId;
+            adControl.Height = bannerAdSettings.Height;
+            adControl.VerticalAlignment = bannerAdSettings.VerticalPlacement == WSAAdVerticalPlacement.Top ? VerticalAlignment.Top 
+				: bannerAdSettings.VerticalPlacement == WSAAdVerticalPlacement.Bottom ? VerticalAlignment.Bottom : VerticalAlignment.Center;
+            adControl.HorizontalAlignment = bannerAdSettings.HorizontalPlacement == WSAAdHorizontalPlacement.Left ? HorizontalAlignment.Left
+				: bannerAdSettings.HorizontalPlacement == WSAAdHorizontalPlacement.Right ? HorizontalAlignment.Right
+				: bannerAdSettings.HorizontalPlacement == WSAAdHorizontalPlacement.Centre ? HorizontalAlignment.Center : HorizontalAlignment.Stretch;
+            adControl.Width = bannerAdSettings.Width;
+            adControl.IsAutoRefreshEnabled = true;
+            adControl.AdRefreshed += (s, e) => { WSANativeBannerAd.RaiseActionOnAppThread(WSANativeBannerAd.AdRefreshed); };
+            adControl.IsEngagedChanged += (s, e) => { WSANativeBannerAd.RaiseActionOnAppThread(WSANativeBannerAd.IsEngagedChanged); };
+            adControl.ErrorOccurred += (s, e) => { WSANativeBannerAd.RaiseActionOnAppThread(WSANativeBannerAd.ErrorOccurred); };
+            GetSwapChainPanel().Children.Add(adControl);
+        }
+    };
+    WSANativeBannerAd.SetVisiblity += (visible) =>
+    {
+        if (adControl != null)
+        {
+            adControl.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+        }
+    };
+    WSANativeBannerAd.Destroy += () =>
+    {
+        if (adControl != null)
+        {
+            foreach (UIElement child in GetSwapChainPanel().Children)
+            {
+                if (child == adControl)
+                {
+                    GetSwapChainPanel().Children.Remove(child);
+                    adControl = null;
+                    break;
+                }
+            }
+        }
+    };
+    WSANativeBannerAd.IsShowingAd += () =>
+    {
+        return adControl.HasAd;
+    };
 }
 
 private void ConfigureMediatorAd()
 {
-	AdMediatorControl adMediatorControl = null;
-
-	WSANativeMediatorAd.Create += (mediatorAdSettings) =>
-	{
-		if (adMediatorControl == null)
-		{
-			adMediatorControl = new AdMediatorControl();
-			adMediatorControl.Id = "AdMediator-Id-D1FDFDA7-EABB-474C-940C-ECA7FBCFF143";
-			adMediatorControl.Height = mediatorAdSettings.Height;
-			adMediatorControl.VerticalAlignment = mediatorAdSettings.Placement == WSAAdPlacement.Top ? VerticalAlignment.Top : VerticalAlignment.Bottom;
-			adMediatorControl.HorizontalAlignment = HorizontalAlignment.Center;
-			adMediatorControl.Width = mediatorAdSettings.Width;
-
-			adMediatorControl.AdSdkError += (s, e) => { WSANativeMediatorAd.RaiseActionOnAppThread(WSANativeMediatorAd.AdSdkError); };
-			adMediatorControl.AdMediatorFilled += (s, e) => { WSANativeMediatorAd.RaiseActionOnAppThread(WSANativeMediatorAd.AdMediatorFilled); };
-			adMediatorControl.AdMediatorError += (s, e) => { WSANativeMediatorAd.RaiseActionOnAppThread(WSANativeMediatorAd.AdMediatorError); };
-			adMediatorControl.AdSdkEvent += (s, e) => { WSANativeMediatorAd.RaiseActionOnAppThread(WSANativeMediatorAd.AdSdkEvent); };
-
-			GetSwapChainPanel().Children.Add(adMediatorControl);
-		}
-	};
-
-	WSANativeBannerAd.Destroy += () =>
-	{
-		foreach (UIElement child in GetSwapChainPanel().Children)
-		{
-			if (child == adMediatorControl)
-			{
-				GetSwapChainPanel().Children.Remove(child);
-				adMediatorControl = null;
-
-				break;
-			}
-		}
-	};
+    AdMediatorControl adMediatorControl = null;
+    WSANativeMediatorAd.Create += (mediatorAdSettings) =>
+    {
+        if (adMediatorControl == null)
+        {
+            adMediatorControl = new AdMediatorControl();
+            adMediatorControl.Id = "AdMediator-Id-D1FDFDA7-EABB-474C-940C-ECA7FBCFF143";
+            adMediatorControl.Height = mediatorAdSettings.Height;
+            adMediatorControl.VerticalAlignment = mediatorAdSettings.VerticalPlacement == WSAAdVerticalPlacement.Top ? VerticalAlignment.Top 
+				: mediatorAdSettings.VerticalPlacement == WSAAdVerticalPlacement.Bottom ? VerticalAlignment.Bottom : VerticalAlignment.Center;
+            adMediatorControl.HorizontalAlignment = mediatorAdSettings.HorizontalPlacement == WSAAdHorizontalPlacement.Left ? HorizontalAlignment.Left
+				: mediatorAdSettings.HorizontalPlacement == WSAAdHorizontalPlacement.Right ? HorizontalAlignment.Right
+				: mediatorAdSettings.HorizontalPlacement == WSAAdHorizontalPlacement.Centre ? HorizontalAlignment.Center : HorizontalAlignment.Stretch;
+            adMediatorControl.Width = mediatorAdSettings.Width;
+            adMediatorControl.AdSdkError += (s, e) => { WSANativeMediatorAd.RaiseActionOnAppThread(WSANativeMediatorAd.AdSdkError); };
+            adMediatorControl.AdMediatorFilled += (s, e) => { WSANativeMediatorAd.RaiseActionOnAppThread(WSANativeMediatorAd.AdMediatorFilled); };
+            adMediatorControl.AdMediatorError += (s, e) => { WSANativeMediatorAd.RaiseActionOnAppThread(WSANativeMediatorAd.AdMediatorError); };
+            adMediatorControl.AdSdkEvent += (s, e) => { WSANativeMediatorAd.RaiseActionOnAppThread(WSANativeMediatorAd.AdSdkEvent); };
+            GetSwapChainPanel().Children.Add(adMediatorControl);
+        }
+    };
+    WSANativeMediatorAd.SetVisiblity += (visible) =>
+    {
+        if (adMediatorControl != null)
+        {
+            adMediatorControl.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+        }
+    };
+    WSANativeMediatorAd.Destroy += () =>
+    {
+        if (adMediatorControl != null)
+        {
+            foreach (UIElement child in GetSwapChainPanel().Children)
+            {
+                if (child == adMediatorControl)
+                {
+                    GetSwapChainPanel().Children.Remove(child);
+                    adMediatorControl = null;
+                    break;
+                }
+            }
+        }
+    };
 }
 
 1) Use Unity to build a windows store visual studio solution
