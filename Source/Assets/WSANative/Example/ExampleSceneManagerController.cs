@@ -171,12 +171,12 @@ public class ExampleSceneManagerController : MonoBehaviour
 
     public void CreateBannerAd()
     {
-        WSANativeBannerAd.CreatAd("d25517cb-12d4-4699-8bdc-52040c712cab", "10042998", 728, 90, WSAAdPlacement.Top);
+        WSANativeBannerAd.CreatAd("d25517cb-12d4-4699-8bdc-52040c712cab", "10042998", 728, 90, WSAAdVerticalPlacement.Top, WSAAdHorizontalPlacement.Centre);
     }
 
     public void CreateMediatedAd()
     {
-        WSANativeMediatorAd.CreatAd(728, 90, WSAAdPlacement.Top);
+        WSANativeMediatorAd.CreatAd(728, 90, WSAAdVerticalPlacement.Top, WSAAdHorizontalPlacement.Centre);
     }
 
     public void CreateMap()

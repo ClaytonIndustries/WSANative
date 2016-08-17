@@ -8,9 +8,10 @@
 
 namespace CI.WSANative.Advertising
 {
-    public enum WSAAdPlacement
+    public enum WSAAdVerticalPlacement
     {
         Top,
-        Bottom
+        Bottom,
+        Centre
     }
 }

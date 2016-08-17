@@ -30,7 +30,12 @@ namespace CI.WSANative.Advertising
             get; set;
         }
 
-        public WSAAdPlacement Placement
+        public WSAAdVerticalPlacement VerticalPlacement
+        {
+            get; set;
+        }
+
+        public WSAAdHorizontalPlacement HorizontalPlacement
         {
             get; set;
         }

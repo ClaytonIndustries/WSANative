@@ -66,15 +66,16 @@ namespace CI.WSANative.Advertising
         /// <param name="adUnitId">Your ad unit id</param>
         /// <param name="width">Width of the ad</param>
         /// <param name="height">Height of the ad</param>
-        /// <param name="placement">Where should the ad be placed</param>
-        public static void CreatAd(int width, int height, WSAAdPlacement placement)
+        /// <param name="verticalPlacement">Where should the ad be placed vertically</param>
+        /// <param name="horizontalPlacement">Where should the ad be placed horizontally</param>
+        public static void CreatAd(int width, int height, WSAAdVerticalPlacement verticalPlacement, WSAAdHorizontalPlacement horizontalPlacement)
         {
 #if NETFX_CORE
             if (Create != null)
             {
                 UnityEngine.WSA.Application.InvokeOnUIThread(() =>
                 {
-                    Create(new WSAMediatorAdSettings() { Width = width, Height = height, Placement = placement });
+                    Create(new WSAMediatorAdSettings() { Width = width, Height = height, VerticalPlacement = verticalPlacement, HorizontalPlacement = horizontalPlacement });
                 }, false);
             }
 #endif
