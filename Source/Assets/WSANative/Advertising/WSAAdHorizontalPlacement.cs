@@ -12,7 +12,6 @@ namespace CI.WSANative.Advertising
     {
         Left,
         Right,
-        Centre,
-        Stretch
+        Centre
     }
 }
