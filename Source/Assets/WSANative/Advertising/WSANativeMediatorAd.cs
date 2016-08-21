@@ -13,33 +13,17 @@ namespace CI.WSANative.Advertising
     public static class WSANativeMediatorAd
     {
         /// <summary>
-        /// Raised when the ad encounters an error in operations
-        /// </summary>
-        public static Action AdSdkError
-        {
-            get; set;
-        }
-
-        /// <summary>
         /// Raised when a new ad is received
         /// </summary>
-        public static Action AdMediatorFilled
+        public static Action AdRefreshed
         {
             get; set;
         }
 
         /// <summary>
-        /// Raised when the ad mediator control encounters an error
+        /// Raised when the ad encounters an error in operations
         /// </summary>
-        public static Action AdMediatorError
-        {
-            get; set;
-        }
-
-        /// <summary>
-        /// Raised when the user interacts with an ad
-        /// </summary>
-        public static Action AdSdkEvent
+        public static Action ErrorOccured
         {
             get; set;
         }
@@ -60,22 +44,26 @@ namespace CI.WSANative.Advertising
         public static Action Destroy;
 
         /// <summary>
-        /// Create a mediator ad
+        /// Create a mediator ad (Microsoft and AdDuplex) - Use WSANativeBannerAd if you only require Microsoft
         /// </summary>
-        /// <param name="appId">Your apps id</param>
-        /// <param name="adUnitId">Your ad unit id</param>
+        /// <param name="wAppid">Your Windows app id (null or empty for Windows 8.1)</param>
+        /// <param name="wAdUnitId">Your Windows ad unit id (null or empty for Windows 8.1)</param>
+        /// <param name="AdDuplexAppKey">Your AdDuplex app key (null or empty for Windows 8.1)</param>
+        /// <param name="AdDuplexAdUnitId">Your AdDuplex ad unit id (null or empty for Windows 8.1)</param>
         /// <param name="width">Width of the ad</param>
         /// <param name="height">Height of the ad</param>
-        /// <param name="verticalPlacement">Where should the ad be placed vertically</param>
+        /// <param name="verticalPlacement">>Where should the ad be placed vertically</param>
         /// <param name="horizontalPlacement">Where should the ad be placed horizontally</param>
-        public static void CreatAd(int width, int height, WSAAdVerticalPlacement verticalPlacement, WSAAdHorizontalPlacement horizontalPlacement)
+        public static void CreatAd(string wAppid, string wAdUnitId, string AdDuplexAppKey, string AdDuplexAdUnitId, int width, int height, 
+            WSAAdVerticalPlacement verticalPlacement, WSAAdHorizontalPlacement horizontalPlacement)
         {
 #if NETFX_CORE
             if (Create != null)
             {
                 UnityEngine.WSA.Application.InvokeOnUIThread(() =>
                 {
-                    Create(new WSAMediatorAdSettings() { Width = width, Height = height, VerticalPlacement = verticalPlacement, HorizontalPlacement = horizontalPlacement });
+                    Create(new WSAMediatorAdSettings() { WAppId = wAppid, WAdUnitId = wAdUnitId, AdDuplexAppKey = AdDuplexAppKey, AdDuplexAdUnitId = AdDuplexAdUnitId, 
+                        Width = width, Height = height, VerticalPlacement = verticalPlacement, HorizontalPlacement = horizontalPlacement });
                 }, false);
             }
 #endif

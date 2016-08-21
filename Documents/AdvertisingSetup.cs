@@ -97,10 +97,9 @@ private void ConfigureMediatorAd()
             adMediatorControl.HorizontalAlignment = mediatorAdSettings.HorizontalPlacement == WSAAdHorizontalPlacement.Left ? HorizontalAlignment.Left
 				: mediatorAdSettings.HorizontalPlacement == WSAAdHorizontalPlacement.Right ? HorizontalAlignment.Right : HorizontalAlignment.Center;
             adMediatorControl.Width = mediatorAdSettings.Width;
-            adMediatorControl.AdSdkError += (s, e) => { WSANativeMediatorAd.RaiseActionOnAppThread(WSANativeMediatorAd.AdSdkError); };
-            adMediatorControl.AdMediatorFilled += (s, e) => { WSANativeMediatorAd.RaiseActionOnAppThread(WSANativeMediatorAd.AdMediatorFilled); };
-            adMediatorControl.AdMediatorError += (s, e) => { WSANativeMediatorAd.RaiseActionOnAppThread(WSANativeMediatorAd.AdMediatorError); };
-            adMediatorControl.AdSdkEvent += (s, e) => { WSANativeMediatorAd.RaiseActionOnAppThread(WSANativeMediatorAd.AdSdkEvent); };
+            adMediatorControl.AdSdkError += (s, e) => { WSANativeMediatorAd.RaiseActionOnAppThread(WSANativeMediatorAd.ErrorOccured); };
+            adMediatorControl.AdMediatorFilled += (s, e) => { WSANativeMediatorAd.RaiseActionOnAppThread(WSANativeMediatorAd.AdRefreshed); };
+            adMediatorControl.AdMediatorError += (s, e) => { WSANativeMediatorAd.RaiseActionOnAppThread(WSANativeMediatorAd.ErrorOccured); };
             GetSwapChainPanel().Children.Add(adMediatorControl);
         }
     };
@@ -126,6 +125,34 @@ private void ConfigureMediatorAd()
             }
         }
     };
+}
+
+private void ConfigureMediatorAd()
+{
+	MediatorAdManager manager = new MediatorAdManager();
+
+	WSANativeBannerAd.Create += (bannerAdSettings) =>
+	{
+		VerticalAlignment vertialAlignment = bannerAdSettings.VerticalPlacement == WSAAdVerticalPlacement.Top ? VerticalAlignment.Top
+			: bannerAdSettings.VerticalPlacement == WSAAdVerticalPlacement.Bottom ? VerticalAlignment.Bottom : VerticalAlignment.Center;
+
+		HorizontalAlignment horizontalAlignment = bannerAdSettings.HorizontalPlacement == WSAAdHorizontalPlacement.Left ? HorizontalAlignment.Left
+			: bannerAdSettings.HorizontalPlacement == WSAAdHorizontalPlacement.Right ? HorizontalAlignment.Right : HorizontalAlignment.Center;
+
+		manager.Initialise(GetSwapChainPanel(), bannerAdSettings.Width, bannerAdSettings.Height, vertialAlignment, horizontalAlignment, 
+			bannerAdSettings.AppId, bannerAdSettings.AdUnitId, "", "");
+
+		manager.AdRefreshed += () => { WSANativeBannerAd.RaiseActionOnAppThread(WSANativeBannerAd.AdRefreshed); };
+		manager.ErrorOccured += () => { WSANativeBannerAd.RaiseActionOnAppThread(WSANativeBannerAd.ErrorOccurred); };
+	};
+	WSANativeBannerAd.SetVisiblity += (visible) =>
+	{
+		manager.SetVisiblity(visible);
+	};
+	WSANativeBannerAd.Destroy += () =>
+	{
+		manager.Destroy();
+	};
 }
 
 1) Use Unity to build a windows store visual studio solution

@@ -10,6 +10,26 @@ namespace CI.WSANative.Advertising
 {
     public class WSAMediatorAdSettings
     {
+        public string WAppId
+        {
+            get; set;
+        }
+
+        public string WAdUnitId
+        {
+            get; set;
+        }
+
+        public string AdDuplexAppKey
+        {
+            get; set;
+        }
+
+        public string AdDuplexAdUnitId
+        {
+            get; set;
+        }
+
         public int Width
         {
             get; set;
