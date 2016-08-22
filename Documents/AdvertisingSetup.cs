@@ -128,32 +128,32 @@ private void ConfigureMediatorAd()
 }
 
 private void ConfigureMediatorAd()
-{
-	MediatorAdManager manager = new MediatorAdManager();
+        {
+            MediatorAdManager manager = new MediatorAdManager();
 
-	WSANativeBannerAd.Create += (bannerAdSettings) =>
-	{
-		VerticalAlignment vertialAlignment = bannerAdSettings.VerticalPlacement == WSAAdVerticalPlacement.Top ? VerticalAlignment.Top
-			: bannerAdSettings.VerticalPlacement == WSAAdVerticalPlacement.Bottom ? VerticalAlignment.Bottom : VerticalAlignment.Center;
+            WSANativeMediatorAd.Create += (mediatorAdSettings) =>
+            {
+                VerticalAlignment vertialAlignment = mediatorAdSettings.VerticalPlacement == WSAAdVerticalPlacement.Top ? VerticalAlignment.Top
+                    : mediatorAdSettings.VerticalPlacement == WSAAdVerticalPlacement.Bottom ? VerticalAlignment.Bottom : VerticalAlignment.Center;
 
-		HorizontalAlignment horizontalAlignment = bannerAdSettings.HorizontalPlacement == WSAAdHorizontalPlacement.Left ? HorizontalAlignment.Left
-			: bannerAdSettings.HorizontalPlacement == WSAAdHorizontalPlacement.Right ? HorizontalAlignment.Right : HorizontalAlignment.Center;
+                HorizontalAlignment horizontalAlignment = mediatorAdSettings.HorizontalPlacement == WSAAdHorizontalPlacement.Left ? HorizontalAlignment.Left
+                    : mediatorAdSettings.HorizontalPlacement == WSAAdHorizontalPlacement.Right ? HorizontalAlignment.Right : HorizontalAlignment.Center;
 
-		manager.Initialise(GetSwapChainPanel(), bannerAdSettings.Width, bannerAdSettings.Height, vertialAlignment, horizontalAlignment, 
-			bannerAdSettings.AppId, bannerAdSettings.AdUnitId, "", "");
+                manager.Initialise(GetSwapChainPanel(), mediatorAdSettings.Width, mediatorAdSettings.Height, vertialAlignment, horizontalAlignment,
+                    mediatorAdSettings.WAppId, mediatorAdSettings.WAdUnitId, mediatorAdSettings.AdDuplexAppKey, mediatorAdSettings.AdDuplexAdUnitId, mediatorAdSettings.AdDuplexWeight);
 
-		manager.AdRefreshed += () => { WSANativeBannerAd.RaiseActionOnAppThread(WSANativeBannerAd.AdRefreshed); };
-		manager.ErrorOccured += () => { WSANativeBannerAd.RaiseActionOnAppThread(WSANativeBannerAd.ErrorOccurred); };
-	};
-	WSANativeBannerAd.SetVisiblity += (visible) =>
-	{
-		manager.SetVisiblity(visible);
-	};
-	WSANativeBannerAd.Destroy += () =>
-	{
-		manager.Destroy();
-	};
-}
+                manager.AdRefreshed += () => { WSANativeMediatorAd.RaiseActionOnAppThread(WSANativeMediatorAd.AdRefreshed); };
+                manager.ErrorOccured += () => { WSANativeMediatorAd.RaiseActionOnAppThread(WSANativeMediatorAd.ErrorOccurred); };
+            };
+            WSANativeMediatorAd.SetVisiblity += (visible) =>
+            {
+                manager.SetVisiblity(visible);
+            };
+            WSANativeMediatorAd.Destroy += () =>
+            {
+                manager.Destroy();
+            };
+        }
 
 1) Use Unity to build a windows store visual studio solution
 2) Open the solution and add a reference to the ad sdk - use the one from here

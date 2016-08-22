@@ -24,13 +24,13 @@ namespace CI.WSANative.Advertising
         private string _wAdUnitId;
         private string _adDuplexAppKey;
         private string _adDuplexAdUnitId;
+        private int _adDuplexWeight;
 
         private const int MAX_ERRORS_PER_REFRESH = 3;
         private const int AD_REFRESH_SECONDS = 35;
-        private const int ADDUPLEX_WEIGHT = 0;
 
         public void Initialise(SwapChainPanel dxSwapChainPannel, int width, int height, VerticalAlignment verticalAlignment, HorizontalAlignment horizontalAlignment,
-            string wApplicationId, string wAdUnitId, string adDuplexAppKey, string adDuplexAdUnitId)
+            string wApplicationId, string wAdUnitId, string adDuplexAppKey, string adDuplexAdUnitId, int adDuplexWeight)
         {
             _dxSwapChainPannel = dxSwapChainPannel;
             _adWidth = width;
@@ -39,6 +39,7 @@ namespace CI.WSANative.Advertising
             _wAdUnitId = wAdUnitId;
             _adDuplexAppKey = adDuplexAppKey;
             _adDuplexAdUnitId = adDuplexAdUnitId;
+            _adDuplexWeight = adDuplexWeight;
 
             _container = new Grid();
             _container.HorizontalAlignment = horizontalAlignment;
@@ -91,7 +92,7 @@ namespace CI.WSANative.Advertising
 
             int wight = _randomGenerator.Next(0, 100);
 
-            if (wight < ADDUPLEX_WEIGHT)
+            if (wight < _adDuplexWeight)
             {
                 ActivateAdDuplexBanner();
             }
