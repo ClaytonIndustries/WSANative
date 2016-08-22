@@ -23,7 +23,7 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// Raised when the ad encounters an error in operations
         /// </summary>
-        public static Action ErrorOccured
+        public static Action ErrorOccurred
         {
             get; set;
         }
@@ -48,13 +48,14 @@ namespace CI.WSANative.Advertising
         /// </summary>
         /// <param name="wAppid">Your Windows app id (null or empty for Windows 8.1)</param>
         /// <param name="wAdUnitId">Your Windows ad unit id (null or empty for Windows 8.1)</param>
-        /// <param name="AdDuplexAppKey">Your AdDuplex app key (null or empty for Windows 8.1)</param>
-        /// <param name="AdDuplexAdUnitId">Your AdDuplex ad unit id (null or empty for Windows 8.1)</param>
+        /// <param name="adDuplexAppKey">Your AdDuplex app key (null or empty for Windows 8.1)</param>
+        /// <param name="adDuplexAdUnitId">Your AdDuplex ad unit id (null or empty for Windows 8.1)</param>
+        /// <param name="adDuplexWeight">Percentage chance of an AdDuplex ad being shown - e.g 50 for equal split with Windows</param>
         /// <param name="width">Width of the ad</param>
         /// <param name="height">Height of the ad</param>
         /// <param name="verticalPlacement">>Where should the ad be placed vertically</param>
         /// <param name="horizontalPlacement">Where should the ad be placed horizontally</param>
-        public static void CreatAd(string wAppid, string wAdUnitId, string AdDuplexAppKey, string AdDuplexAdUnitId, int width, int height, 
+        public static void CreatAd(string wAppid, string wAdUnitId, string adDuplexAppKey, string adDuplexAdUnitId, int adDuplexWeight, int width, int height, 
             WSAAdVerticalPlacement verticalPlacement, WSAAdHorizontalPlacement horizontalPlacement)
         {
 #if NETFX_CORE
@@ -62,8 +63,8 @@ namespace CI.WSANative.Advertising
             {
                 UnityEngine.WSA.Application.InvokeOnUIThread(() =>
                 {
-                    Create(new WSAMediatorAdSettings() { WAppId = wAppid, WAdUnitId = wAdUnitId, AdDuplexAppKey = AdDuplexAppKey, AdDuplexAdUnitId = AdDuplexAdUnitId, 
-                        Width = width, Height = height, VerticalPlacement = verticalPlacement, HorizontalPlacement = horizontalPlacement });
+                    Create(new WSAMediatorAdSettings() { WAppId = wAppid, WAdUnitId = wAdUnitId, AdDuplexAppKey = adDuplexAppKey, AdDuplexAdUnitId = adDuplexAdUnitId, 
+                        AdDuplexWeight = adDuplexWeight, Width = width, Height = height, VerticalPlacement = verticalPlacement, HorizontalPlacement = horizontalPlacement });
                 }, false);
             }
 #endif

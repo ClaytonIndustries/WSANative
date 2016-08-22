@@ -30,6 +30,11 @@ namespace CI.WSANative.Advertising
             get; set;
         }
 
+        public int AdDuplexWeight
+        {
+            get; set;
+        }
+
         public int Width
         {
             get; set;
