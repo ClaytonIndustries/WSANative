@@ -50,7 +50,7 @@ namespace CI.WSANative.Advertising
         /// <param name="wAdUnitId">Your Windows ad unit id (null or empty for Windows 8.1)</param>
         /// <param name="adDuplexAppKey">Your AdDuplex app key (null or empty for Windows 8.1)</param>
         /// <param name="adDuplexAdUnitId">Your AdDuplex ad unit id (null or empty for Windows 8.1)</param>
-        /// <param name="adDuplexWeight">Percentage chance of an AdDuplex ad being shown - e.g 50 for equal split with Windows</param>
+        /// <param name="adDuplexWeight">Percentage chance of an AdDuplex ad being shown - e.g 50 for equal split with Windows (0 for Windows 8.1)</param>
         /// <param name="width">Width of the ad</param>
         /// <param name="height">Height of the ad</param>
         /// <param name="verticalPlacement">>Where should the ad be placed vertically</param>
