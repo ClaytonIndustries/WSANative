@@ -16,7 +16,7 @@ namespace CI.WSANative.Advertising
         private Random _randomGenerator;
         private int _errorCountCurrentRefresh;
         private AdControl _microsoftBanner;
-        private AdDuplex.AdControl _AdDuplexBanner;
+        private AdDuplex.AdControl _adDuplexBanner;
 
         private int _adWidth;
         private int _adHeight;
@@ -78,7 +78,7 @@ namespace CI.WSANative.Advertising
                         _adRefreshTimer.Stop();
                         _adRefreshTimer = null;
                         _microsoftBanner = null;
-                        _AdDuplexBanner = null;
+                        _adDuplexBanner = null;
                         _container = null;
                         break;
                     }
@@ -110,9 +110,9 @@ namespace CI.WSANative.Advertising
                 return;
             }
 
-            if (_AdDuplexBanner != null)
+            if (_adDuplexBanner != null)
             {
-                _AdDuplexBanner.Visibility = Visibility.Collapsed;
+                _adDuplexBanner.Visibility = Visibility.Collapsed;
             }
 
             if (_microsoftBanner == null)
@@ -147,24 +147,24 @@ namespace CI.WSANative.Advertising
                _microsoftBanner.Visibility = Visibility.Collapsed;
             }
 
-            if (_AdDuplexBanner == null)
+            if (_adDuplexBanner == null)
             {
-                _AdDuplexBanner = new AdDuplex.AdControl();
-                _AdDuplexBanner.AppKey = _adDuplexAppKey;
-                _AdDuplexBanner.AdUnitId = _adDuplexAdUnitId;
-                _AdDuplexBanner.Width = _adWidth;
-                _AdDuplexBanner.Height = _adHeight;
-                _AdDuplexBanner.RefreshInterval = AD_REFRESH_SECONDS;
+                _adDuplexBanner = new AdDuplex.AdControl();
+                _adDuplexBanner.AppKey = _adDuplexAppKey;
+                _adDuplexBanner.AdUnitId = _adDuplexAdUnitId;
+                _adDuplexBanner.Width = _adWidth;
+                _adDuplexBanner.Height = _adHeight;
+                _adDuplexBanner.RefreshInterval = AD_REFRESH_SECONDS;
 
-                _AdDuplexBanner.AdLoaded += (s,e) => { RaiseEvent(AdRefreshed); };
-                _AdDuplexBanner.AdCovered += (s, e) => { _errorCountCurrentRefresh++; ActivateMicrosoftBanner(); RaiseEvent(ErrorOccured); };
-                _AdDuplexBanner.AdLoadingError += (s, e) => { _errorCountCurrentRefresh++; ActivateMicrosoftBanner(); RaiseEvent(ErrorOccured); };
-                _AdDuplexBanner.NoAd += (s, e) => { _errorCountCurrentRefresh++; ActivateMicrosoftBanner(); RaiseEvent(ErrorOccured); };
+                _adDuplexBanner.AdLoaded += (s,e) => { RaiseEvent(AdRefreshed); };
+                _adDuplexBanner.AdCovered += (s, e) => { _errorCountCurrentRefresh++; ActivateMicrosoftBanner(); RaiseEvent(ErrorOccured); };
+                _adDuplexBanner.AdLoadingError += (s, e) => { _errorCountCurrentRefresh++; ActivateMicrosoftBanner(); RaiseEvent(ErrorOccured); };
+                _adDuplexBanner.NoAd += (s, e) => { _errorCountCurrentRefresh++; ActivateMicrosoftBanner(); RaiseEvent(ErrorOccured); };
 
-                _container.Children.Add(_AdDuplexBanner);
+                _container.Children.Add(_adDuplexBanner);
             }
 
-            _AdDuplexBanner.Visibility = Visibility.Visible;
+            _adDuplexBanner.Visibility = Visibility.Visible;
         }
 
         private void RaiseEvent(Action action)
