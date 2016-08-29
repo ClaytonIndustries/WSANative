@@ -36,7 +36,8 @@ namespace CI.WSANative.Facebook.Core
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 Background = new SolidColorBrush(Colors.White),
                 BorderBrush = new SolidColorBrush(Colors.Black),
-                BorderThickness = new Thickness(0, 1, 0, 0)
+                BorderThickness = new Thickness(0, 1, 0, 0),
+                Foreground = new SolidColorBrush(Colors.Black)
             };
 
             _closeButton.SetValue(Grid.RowProperty, 1);
