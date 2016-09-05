@@ -259,7 +259,7 @@ namespace CI.WSANative.Facebook
 
             if (IsLoggedIn)
             {
-                Uri requestUri = new Uri(string.Format("{0}me/photos", _facebookGraphUri));
+                Uri requestUri = new Uri(string.Format("{0}me/photos?access_token={1}", _facebookGraphUri, _accessToken));
 
                 try
                 {
@@ -268,7 +268,6 @@ namespace CI.WSANative.Facebook
                         MultipartFormDataContent content = new MultipartFormDataContent();
                         content.Add(new StringContent(caption), "caption");
                         content.Add(new ByteArrayContent(photo), "source");
-                        content.Add(new StringContent(_accessToken), "access_token");
 
                         HttpResponseMessage response = await client.PostAsync(requestUri, content);
 
