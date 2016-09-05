@@ -252,66 +252,6 @@ namespace CI.WSANative.Facebook
 
             return hasUserLikedPageResponse;
         }
-
-        public async Task<WSAFacebookResponse<bool>> PostPhotoToTimeline(string caption, byte[] photo)
-        {
-            WSAFacebookResponse<bool> postPhotoResponse = new WSAFacebookResponse<bool>();
-
-            if (IsLoggedIn)
-            {
-                Uri requestUri = new Uri(string.Format("{0}me/photos?access_token={1}", _facebookGraphUri, _accessToken));
-
-                try
-                {
-                    using (HttpClient client = new HttpClient())
-                    {
-                        MultipartFormDataContent content = new MultipartFormDataContent();
-                        content.Add(new StringContent(caption));
-                        content.Add(new ByteArrayContent(photo));
-
-                        HttpResponseMessage response = await client.PostAsync(requestUri, content);
-
-                        string responseAsString = await response.Content.ReadAsStringAsync();
-
-                        if (response.IsSuccessStatusCode)
-                        {
-                            WSAFacebookDataResponse parsedResponse = JsonConvert.DeserializeObject<WSAFacebookDataResponse>(responseAsString);
-
-                            postPhotoResponse.Data = parsedResponse.Data != null;
-                            postPhotoResponse.Success = true;
-                        }
-                        else
-                        {
-                            WSAFacebookError errorMessage = JsonConvert.DeserializeObject<WSAFacebookError>(responseAsString);
-
-                            if (errorMessage.Code == _authenticationErrorCode)
-                            {
-                                IsLoggedIn = false;
-                                _accessToken = null;
-                                errorMessage.AccessTokenExpired = true;
-                            }
-
-                            postPhotoResponse.Success = false;
-                            postPhotoResponse.Error = errorMessage;
-                        }
-                    }
-                }
-                catch
-                {
-                    postPhotoResponse.Success = false;
-                }
-            }
-            else
-            {
-                postPhotoResponse.Success = false;
-                postPhotoResponse.Error = new WSAFacebookError()
-                {
-                    AccessTokenExpired = true
-                };
-            }
-
-            return postPhotoResponse;
-        }
     }
 }
 #endif
