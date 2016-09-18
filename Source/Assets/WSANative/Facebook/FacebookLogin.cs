@@ -8,8 +8,7 @@
 
 #if NETFX_CORE
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -18,13 +17,13 @@ using Windows.UI.Xaml.Media;
 
 namespace CI.WSANative.Facebook.Core
 {
-    public sealed class FacebookAuthentication : UserControl
+    public sealed class FacebookLogin : UserControl
     {
         private readonly WebView _iFrame;
         private readonly Button _closeButton;		
-		private readonly TaskCompletionSource<bool> _taskCompletionSource;
+		private readonly TaskCompletionSource<string> _taskCompletionSource;
 
-        public FacebookAuthentication(int screenWidth, int screenHeight)
+        public FacebookLogin(int screenWidth, int screenHeight)
         {
             _iFrame = new WebView();
             _iFrame.SetValue(Grid.RowProperty, 0);
@@ -42,7 +41,7 @@ namespace CI.WSANative.Facebook.Core
 
             _closeButton.SetValue(Grid.RowProperty, 1);
 			
-			_taskCompletionSource = new TaskCompletionSource<bool>();
+			_taskCompletionSource = new TaskCompletionSource<string>();
 
             int horizontalMargin = (screenWidth / 100) * 2;
             int verticalMargin = (screenHeight / 100) * 5;
@@ -64,31 +63,37 @@ namespace CI.WSANative.Facebook.Core
             Content = container;
         }
 
-        public async Task<bool> Show(string requestUri, string responseUri, Grid parent)
+        Uri _uri = null;
+
+        public async Task<string> Show(string requestUri, string responseUri, Grid parent)
         {
             _iFrame.NavigationStarting += (s, e) =>
             {
+                System.Diagnostics.Debug.WriteLine(e.Uri.AbsoluteUri);
+
+                _uri = e.Uri;
+
                 if (e.Uri.AbsolutePath == responseUri)
                 {
-					// Parse response here to determine if success
-				
-                    Close(parent, true);
+                    Match match = Regex.Match(e.Uri.Fragment, "access_token=(.+)&");
+
+                    Close(parent, match.Groups.Count >= 2 ? match.Groups[1].Value : string.Empty);
                 }
             };
 
             _closeButton.Click += (s, e) =>
             {
-                Close(parent, false);
+                Close(parent, string.Empty);
             };
 
             _iFrame.Navigate(new Uri(requestUri));
 
             parent.Children.Add(this);
-			
-			return _taskCompletionSource.Task;
+
+            return await _taskCompletionSource.Task;
         }
 
-        private void Close(Grid parent, bool result)
+        private void Close(Grid parent, string result)
         {
             parent.Children.Remove(this);
 			

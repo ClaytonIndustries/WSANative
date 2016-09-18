@@ -14,5 +14,6 @@ namespace CI.WSANative.Facebook.Core
         public const string FeedDialogResponseUri = "/dialog/return/close";
         public const string RequestDialogResponseUri = "/connect/login_success.html";
         public const string SendDialogResponseUri = "/connect/login_success.html";
+        public const string LoginDialogResponseUri = "/connect/login_success.html";
     }
 }

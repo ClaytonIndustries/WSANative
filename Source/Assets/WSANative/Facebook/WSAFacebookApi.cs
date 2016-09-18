@@ -11,14 +11,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Windows.Security.Authentication.Web;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 using CI.WSANative.Facebook.Core;
 using Newtonsoft.Json;
 using UnityEngine;
+
+#if UNITY_WSA_10_0
+using System.Text.RegularExpressions;
+using Windows.Security.Authentication.Web;
+#endif
 
 namespace CI.WSANative.Facebook
 {
@@ -70,6 +73,8 @@ namespace CI.WSANative.Facebook
         {
             try
             {
+                Logout(false);
+
                 string requestPermissions = "public_profile";
 
                 if (permissions != null && permissions.Count > 0)
@@ -77,10 +82,14 @@ namespace CI.WSANative.Facebook
                     requestPermissions = string.Join(",", permissions);
                 }
 
+                string accessToken = string.Empty;
+
+#if UNITY_WSA_10_0
                 Uri appCallbackUri = new Uri("ms-app://" + _packageSID);
 
                 Uri requestUri = new Uri(
-                    string.Format("https://www.facebook.com/dialog/oauth?client_id={0}&response_type=token&redirect_uri={1}&scope={2}", _facebookAppId, appCallbackUri, requestPermissions));
+                    string.Format("https://www.facebook.com/dialog/oauth?client_id={0}&response_type=token&redirect_uri={1}&scope={2}", 
+                                    _facebookAppId, appCallbackUri, requestPermissions));
 
                 WebAuthenticationResult result = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, requestUri, appCallbackUri);
 
@@ -88,7 +97,23 @@ namespace CI.WSANative.Facebook
                 {
                     Match match = Regex.Match(result.ResponseData, "access_token=(.+)&");
 
-                    _accessToken = match.Groups[1].Value;
+                    accessToken = match.Groups[1].Value;
+                }
+#else
+                if (_dxSwapChainPanel != null)
+                {
+                     string requestUri = string.Format("https://www.facebook.com/dialog/oauth?client_id={0}&response_type=token&redirect_uri={1}&scope={2}", 
+                                                        _facebookAppId, WSAFacebookConstants.WebRedirectUri, requestPermissions);
+
+                    FacebookLogin dialog = new FacebookLogin(Screen.width, Screen.height);
+
+                    accessToken = await dialog.Show(requestUri, WSAFacebookConstants.LoginDialogResponseUri, _dxSwapChainPanel);
+                }
+#endif
+
+                if (!string.IsNullOrEmpty(accessToken))
+                {
+                    _accessToken = accessToken;
                     IsLoggedIn = true;
 
                     try
@@ -179,8 +204,7 @@ namespace CI.WSANative.Facebook
 
                             if (errorMessage.Code == _authenticationErrorCode)
                             {
-                                IsLoggedIn = false;
-                                _accessToken = null;
+                                Logout(false);
                                 errorMessage.AccessTokenExpired = true;
                             }
 
@@ -235,8 +259,7 @@ namespace CI.WSANative.Facebook
 
                             if (errorMessage.Code == _authenticationErrorCode)
                             {
-                                IsLoggedIn = false;
-                                _accessToken = null;
+                                Logout(false);
                                 errorMessage.AccessTokenExpired = true;
                             }
 
@@ -296,8 +319,7 @@ namespace CI.WSANative.Facebook
 
                             if (errorMessage.Code == _authenticationErrorCode)
                             {
-                                IsLoggedIn = false;
-                                _accessToken = null;
+                                Logout(false);
                                 errorMessage.AccessTokenExpired = true;
                             }
 
