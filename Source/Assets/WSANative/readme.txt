@@ -1,7 +1,7 @@
-﻿Windows Store Native (v1.14)
----------------------------
+﻿Windows Store Native (v1.15)
+----------------------------
 
-Thanks for downloading Windows Store Native we hope you enjoy using it!
+Thank you for downloading Windows Store Native we hope you enjoy using it!
 
 A demo scene is included that shows how to use most features
 Full documentation can be found on the website or if you need additional support please contact us at the address below
@@ -13,8 +13,8 @@ Support Email: clayton.inds+support@gmail.com
 ------------------------------------------------------------------------------------------------------------------------
 Basics - all functions listed below have detailed comments in the code
 
-***All the functions below except the serialisation functions will only work once you build a windows store solution - however they are safe to use in the editor***
-***Banner, interstitial and mediator ads as well as maps and facebook require additional setup - please see the website for details***
+***All the functions below except the serialisation functions will only work once you build a Windows Store Solution - however they are safe to use in the editor***
+***Banner, interstitial and mediator ads as well as maps, Facebook and Feedback Hub require additional setup - please see the website for details***
 
 Show a dialog:
 WSANativeDialog.ShowDialog
@@ -112,6 +112,10 @@ WSANativeFacebook.GraphApiRead
 WSANativeFacebook.ShowFeedDialog
 WSANativeFacebook.ShowRequestDialog
 WSANativeFacebook.ShowSendDialog
+
+Engagement:
+WSANativeEngagement.IsFeedbackHubSupported
+WSANativeEngagement.ShowFeedbackHub
 
 ------------------------------------------------------------------------------------------------------------------------
 Windows Store - Configuring test products
