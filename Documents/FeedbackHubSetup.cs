@@ -1,10 +1,10 @@
 private void InitialiseFeedbackHub()
 {
-	WSANativeSocial._IsFeedbackHubSupported += () => 
+	WSANativeEngagement._IsFeedbackHubSupported += () => 
 	{
 		return StoreServicesFeedbackLauncher.IsSupported();
 	};
-	WSANativeSocial._ShowFeedbackHub += async (feedbackProperties) =>
+	WSANativeEngagement._ShowFeedbackHub += async (feedbackProperties) =>
 	{
 		if (StoreServicesFeedbackLauncher.IsSupported())
 		{

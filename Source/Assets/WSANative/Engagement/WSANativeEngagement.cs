@@ -45,7 +45,7 @@ namespace CI.WSANative.Engagement
 #if UNITY_WSA_10_0
             if (_ShowFeedbackHub != null)
             {
-                UnityEngine.WSA.Application.InvokeOnUIThread(() =>git 
+                UnityEngine.WSA.Application.InvokeOnUIThread(() =>
                 {
                     _ShowFeedbackHub(feedbackProperties);
                 }, false);
