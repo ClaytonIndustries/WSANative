@@ -1,32 +1,75 @@
 using Microsoft.Advertising.WinRT.UI;
 using CI.WSANative.Advertising;
 
-private void ConfigureInterstitalAd()
+private void ConfigureMicrosoftInterstitalAd()
 {
 	InterstitialAd interstitialAd = new InterstitialAd();
-	interstitialAd.AdReady += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.AdReady); };
-	interstitialAd.ErrorOccurred += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.ErrorOccurred); };
-	interstitialAd.Completed += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.Completed); };
-	interstitialAd.Cancelled += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.Cancelled); };
-	WSANativeInterstitialAd.Request += (appId, addUnitId) =>
+	interstitialAd.AdReady += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.AdReady, WSAInterstitialAdType.Microsoft); };
+	interstitialAd.ErrorOccurred += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.ErrorOccurred, WSAInterstitialAdType.Microsoft); };
+	interstitialAd.Completed += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.Completed, WSAInterstitialAdType.Microsoft); };
+	interstitialAd.Cancelled += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.Cancelled, WSAInterstitialAdType.Microsoft); };
+	WSANativeInterstitialAd._Request += (appId, adUnitId, adType) =>
 	{
-		interstitialAd.RequestAd(AdType.Video, appId, addUnitId);
-	};
-	WSANativeInterstitialAd.Show += () =>
-	{
-		AppCallbacks.Instance.InvokeOnUIThread(() =>
+		if (adType == WSAInterstitialAdType.Microsoft)
 		{
-			if (interstitialAd.State == InterstitialAdState.Ready)
+			interstitialAd.RequestAd(AdType.Video, appId, adUnitId);
+		}
+	};
+	WSANativeInterstitialAd._Show += (adType) =>
+	{
+		if (adType == WSAInterstitialAdType.Microsoft && interstitialAd.State == InterstitialAdState.Ready)
+		{
+			AppCallbacks.Instance.InvokeOnUIThread(() =>
 			{
 				interstitialAd.Show();
-			}
-		}, false);
+			}, false);
+		}
 	};
-	WSANativeInterstitialAd.Close += () =>
+}
+
+private void ConfigureVungleInterstitalAd()
+{
+	VungleAd interstitialAd = null;
+	WSANativeInterstitialAd._Request += (appId, adUnitId, adType) =>
 	{
-		if (interstitialAd.State == InterstitialAdState.Showing)
+		if(adType == WSAInterstitialAdType.Vungle && interstitialAd == null)
 		{
-			interstitialAd.Close();
+			interstitialAd = AdFactory.GetInstance(appId);
+			interstitialAd.OnAdPlayableChanged += (s, e) =>
+			{
+				if (e.AdPlayable)
+				{
+					WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.AdReady, WSAInterstitialAdType.Vungle);
+				}
+			};
+			interstitialAd.OnVideoView += (s, e) =>
+			{
+				if (e.IsCompletedView)
+				{
+					WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.Completed, WSAInterstitialAdType.Vungle);
+				}
+				else
+				{
+					WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.Cancelled, WSAInterstitialAdType.Vungle);
+				}
+			};
+			interstitialAd.Diagnostic += (s, e) =>
+			{
+				if(e.Level == DiagnosticLogLevel.Error || e.Level == DiagnosticLogLevel.Fatal)
+				{
+					WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.ErrorOccurred, WSAInterstitialAdType.Vungle);
+				}
+			};
+		}
+	};
+	WSANativeInterstitialAd._Show += (adType) =>
+	{
+		if (adType == WSAInterstitialAdType.Vungle && interstitialAd != null && interstitialAd.AdPlayable)
+		{
+			AppCallbacks.Instance.InvokeOnUIThread(async () =>
+			{
+				await interstitialAd.PlayAdAsync(new AdConfig());
+			}, false);
 		}
 	};
 }
@@ -161,6 +204,7 @@ private void ConfigureMediatorAd()
 4) Open MainPage.xaml.cs and add the following using statements
 using Microsoft.Advertising.WinRT.UI;
 using CI.WSANative.Advertising;
+using VungleSDK;
 5) Copy the below function and add it just below the MainPage constructor
 6) Call the function we just added from the bottom of the MainPage constructor
 7) Open the apps manifest file and add the internet client capability (you must do this or the ads won't show)

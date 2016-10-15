@@ -15,7 +15,7 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// Raised when the interstitial ad is ready to be shown
         /// </summary>
-        public static Action AdReady
+        public static Action<WSAInterstitialAdType> AdReady
         {
             get; set;
         }
@@ -23,7 +23,7 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// Raised when the user cancels the interstitial ad before it is considered complete
         /// </summary>
-        public static Action Cancelled
+        public static Action<WSAInterstitialAdType> Cancelled
         {
             get; set;
         }
@@ -31,7 +31,7 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// Raised when the interstitial ad has been closed and the experience is considered complete
         /// </summary>
-        public static Action Completed
+        public static Action<WSAInterstitialAdType> Completed
         {
             get; set;
         }
@@ -39,7 +39,7 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// Raised when the interstitial ad encounters an operational error
         /// </summary>
-        public static Action ErrorOccurred
+        public static Action<WSAInterstitialAdType> ErrorOccurred
         {
             get; set;
         }
@@ -47,64 +47,69 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// For internal use only
         /// </summary>
-        public static Action<string, string> Request;
+        public static Action<string, string, WSAInterstitialAdType> _Request;
 
         /// <summary>
         /// For internal use only
         /// </summary>
-        public static Action Show;
+        public static Action<WSAInterstitialAdType> _Show;
+
+        private static string _msAppId;
+        private static string _msAdUnitId;
+
+        private static string _vungleAppId;
 
         /// <summary>
-        /// For internal use only
-        /// </summary>
-        public static Action Close;
-
-        private static string _appId;
-        private static string _adUnitId;
-
-        /// <summary>
-        /// Initialise the interstitial ad
+        /// Initialise the Microsoft interstitial ad
         /// </summary>
         /// <param name="appId">Your apps id</param>
         /// <param name="adUnitId">Your ad unit id</param>
-        public static void Initialise(string appId, string adUnitId)
+        public static void InitialiseMicrosoft(string appId, string adUnitId)
         {
-            _appId = appId;
-            _adUnitId = adUnitId;
+            _msAppId = appId;
+            _msAdUnitId = adUnitId;
         }
 
         /// <summary>
-        /// Requests an interstitial ad from the server
-        /// The AdReady event will fire when the request completes successfully
+        /// Initialise the Vungle interstitial ad
         /// </summary>
-        public static void RequestAd()
+        /// <param name="appId">Your apps id</param>
+        public static void InitialiseVungle(string appId)
         {
-            if(Request != null)
+            _vungleAppId = appId;
+        }
+
+        /// <summary>
+        /// Requests an interstitial ad from the server.
+        /// The AdReady event will fire when the request completes successfully.
+        /// Only needs to be called once for Vungle ads (ads will be automatically fetched after the first time)
+        /// </summary>
+        /// <param name="adType">The type of ad to request</param>
+        public static void RequestAd(WSAInterstitialAdType adType)
+        {
+            if(_Request != null)
             {
-                Request(_appId, _adUnitId);
+                if (adType == WSAInterstitialAdType.Microsoft)
+                {
+                    _Request(_msAppId, _msAdUnitId, adType);
+                }
+                else
+                {
+                    _Request(_vungleAppId, string.Empty, adType);
+                }
             }
         }
 
         /// <summary>
-        /// Shows the interstitial ad if it is ready
+        /// Shows the interstitial ad if it is ready.
         /// It is recommended that you have at least a 60 second gap between ads
         /// </summary>
-        public static void ShowAd()
+        /// <param name="adType">The type of ad to show</param>
+        public static void ShowAd(WSAInterstitialAdType adType)
         {
-            if(Show != null)
+            if(_Show != null)
             {
-                Show();
-            }
-        }
-
-        /// <summary>
-        /// Closes the interstitial ad that is showing
-        /// </summary>
-        public static void CloseAd()
-        {
-            if(Close != null)
-            {
-                Close();
+                _Show(adType);
             }
         }
 
@@ -112,14 +117,15 @@ namespace CI.WSANative.Advertising
         /// For internal use only
         /// </summary>
         /// <param name="action"></param>
-        public static void RaiseActionOnAppThread(Action action)
+        /// <param name="adType"></param>
+        public static void RaiseActionOnAppThread(Action<WSAInterstitialAdType> action, WSAInterstitialAdType adType)
         {
 #if NETFX_CORE
             if (action != null)
             {
                 UnityEngine.WSA.Application.InvokeOnAppThread(() =>
                 {
-                    action();
+                    action(adType);
                 }, false);
             }
 #endif
