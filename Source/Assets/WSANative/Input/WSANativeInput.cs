@@ -20,6 +20,6 @@ namespace CI.WSANative.Input
         /// <summary>
         /// Raised when a pointer is released
         /// </summary>
-        public static Action<WSAPointerProperties> PointReleased { get; set; }
+        public static Action<WSAPointerProperties> PointerReleased { get; set; }
     }
 }

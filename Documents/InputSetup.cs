@@ -24,7 +24,7 @@ private void DXSwapChainPanel_PointerReleased(object sender, PointerRoutedEventA
 	{
 		PointerPointProperties pointerProperties = e.GetCurrentPoint(DXSwapChainPanel).Properties;
 
-		WSANativeInput.PointReleased(new WSAPointerProperties()
+		WSANativeInput.PointerReleased(new WSAPointerProperties()
 		{
 			InputType = e.Pointer.PointerDeviceType == PointerDeviceType.Touch ? WSAInputType.Touch :
 				e.Pointer.PointerDeviceType == PointerDeviceType.Pen ? WSAInputType.Pen : WSAInputType.Mouse,

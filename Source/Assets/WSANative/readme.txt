@@ -1,4 +1,4 @@
-﻿Windows Store Native (v1.15)
+﻿Windows Store Native (v1.16)
 ----------------------------
 
 Thank you for downloading Windows Store Native we hope you enjoy using it!
@@ -14,7 +14,16 @@ Support Email: clayton.inds+support@gmail.com
 Basics - all functions listed below have detailed comments in the code
 
 ***All the functions below except the serialisation functions will only work once you build a Windows Store Solution - however they are safe to use in the editor***
-***Banner, interstitial and mediator ads as well as maps, Facebook and Feedback Hub require additional setup - please see the website for details***
+***Banner, interstitial and mediator ads as well as maps, Facebook, Feedback Hub and input require additional setup - please see the website for details***
+
+------------------------------------------------------------------------------------------------------------------------
+Windows Store - Configuring test products
+
+When in test mode products and info about your app are defined in an xml file called WindowsStoreProxy.xml which can be found at C:\Users\<username>\AppData\Local\Packages\<app package folder>\LocalState\Microsoft\Windows Store\ApiData\WindowsStoreProxy.xml. If the file isn't there you can copy one from the website.
+Once you have build your windows store solution you can copy the file to the Assets folder (this is the Assets folder in the solution that is created when you do a build from Unity).
+Then call WSANativeStore.ReloadSimulator when you app starts up to configure the simulated store.
+
+------------------------------------------------------------------------------------------------------------------------
 
 Show a dialog:
 WSANativeDialog.ShowDialog
@@ -35,7 +44,7 @@ WSANativeStorage.GetAllFiles
 
 Interface with the Windows Store:
 WSANativeStore.EnableTestMode
-WSANativeStore.EnableTestMode
+WSANativeStore.ReloadSimulator
 WSANativeStore.GetProductListings
 WSANativeStore.PurchaseProduct
 WSANativeStore.ReportConsumableProductFulfillment
@@ -58,7 +67,6 @@ Interstitial:
 WSANativeInterstitialAd.Initialise
 WSANativeInterstitialAd.RequestAd
 WSANativeInterstitialAd.ShowAd
-WSANativeInterstitialAd.CloseAd
 Mediator:
 WSANativeMediatorAd.CreatAd
 WSANativeMediatorAd.SetVisibility
@@ -117,12 +125,9 @@ Engagement:
 WSANativeEngagement.IsFeedbackHubSupported
 WSANativeEngagement.ShowFeedbackHub
 
-------------------------------------------------------------------------------------------------------------------------
-Windows Store - Configuring test products
-
-When in test mode products and info about your app are defined in an xml file called WindowsStoreProxy.xml which can be found at C:\Users\<username>\AppData\Local\Packages\<app package folder>\LocalState\Microsoft\Windows Store\ApiData\WindowsStoreProxy.xml. If the file isn't there you can copy one from the website.
-Once you have build your windows store solution you can copy the file to the Assets folder (this is the Assets folder in the solution that is created when you do a build from Unity).
-Then call WSANativeStore.ReloadSimulator when you app starts up to configure the simulated store.
+Input:
+WSANativeInput.PointerPressed
+WSANativeInput.PointerReleased
 
 ------------------------------------------------------------------------------------------------------------------------
 WSANative makes use of JSON.NET and is used under the following license

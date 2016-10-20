@@ -60,23 +60,22 @@ namespace CI.WSANative.Advertising
         private static string _vungleAppId;
 
         /// <summary>
-        /// Initialise the Microsoft interstitial ad
+        /// Initialise the interstitial ad for the specified provider
         /// </summary>
+		/// <param name="adType">Your apps id</param>
         /// <param name="appId">Your apps id</param>
-        /// <param name="adUnitId">Your ad unit id</param>
-        public static void InitialiseMicrosoft(string appId, string adUnitId)
+        /// <param name="adUnitId">Your apps ad unit id (null or empty for Vungle)</param>
+        public static void Initialise(WSAInterstitialAdType adType, string appId, string adUnitId)
         {
-            _msAppId = appId;
-            _msAdUnitId = adUnitId;
-        }
-
-        /// <summary>
-        /// Initialise the Vungle interstitial ad
-        /// </summary>
-        /// <param name="appId">Your apps id</param>
-        public static void InitialiseVungle(string appId)
-        {
-            _vungleAppId = appId;
+			if(adType == WSAInterstitialAdType.Microsoft)
+			{
+				_msAppId = appId;
+				_msAdUnitId = adUnitId;
+			}
+			else
+			{
+				_vungleAppId = appId;
+			}
         }
 
         /// <summary>
