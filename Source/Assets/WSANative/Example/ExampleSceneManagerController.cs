@@ -161,7 +161,7 @@ public class ExampleSceneManagerController : MonoBehaviour
 
     public void CreateInterstitialAd()
     {
-        WSANativeInterstitialAd.InitialiseMicrosoft("d25517cb-12d4-4699-8bdc-52040c712cab", "11389925");
+        WSANativeInterstitialAd.Initialise(WSAInterstitialAdType.Microsoft, "d25517cb-12d4-4699-8bdc-52040c712cab", "11389925");
         WSANativeInterstitialAd.AdReady += (adType) =>
         {
             WSANativeInterstitialAd.ShowAd(WSAInterstitialAdType.Microsoft);
