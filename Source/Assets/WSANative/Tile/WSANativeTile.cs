@@ -9,24 +9,50 @@ namespace CI.WSANative.Tile
     public static class WSANativeTile
     {
         /// <summary>
-        /// Displays the pin to start flyout which allows the user to decide if they want to create the seconday tile
+        /// Displays the pin to start flyout which allows the user to decide if they want to create a seconday tile
         /// </summary>
         /// <param name="tileId">A unique id for this tile</param>
         /// <param name="displayName">Name to display on the tile</param>
         /// <param name="Square150x150Logo">Uri of the image file in the built uwp solution e.g ms-appx:///Assets/Square150x150Logo.png</param>
-        /// <param name="ShowNameOnSquare150x150Logo">Should the display name be shown on the tile</param>
-        public static void CreateSecondaryTile(string tileId, string displayName, Uri Square150x150Logo, bool ShowNameOnSquare150x150Logo)
+        /// <param name="ShowNameOnSquare150x150Logo">Should the display name be shown on this tile size</param>
+        /// <param name="additionalTilesSizes">Additional sizes for the secondary tile - all are optional</param>
+        public static void CreateSecondaryTile(string tileId, string displayName, Uri Square150x150Logo, bool ShowNameOnSquare150x150Logo, WSATileData additionalTilesSizes = null)
         {
 #if NETFX_CORE
             SecondaryTile secondaryTile = new SecondaryTile()
             {
                 TileId = tileId,
                 DisplayName = displayName,
-                Arguments = " "
+                Arguments = string.Format("Activated by tile {0}", tileId)
             };
 
             secondaryTile.VisualElements.Square150x150Logo = Square150x150Logo;
             secondaryTile.VisualElements.ShowNameOnSquare150x150Logo = ShowNameOnSquare150x150Logo;
+
+            if(additionalTilesSizes != null)
+            {
+                if (additionalTilesSizes.Square310x310Logo != null)
+                {
+                    secondaryTile.VisualElements.Square310x310Logo = additionalTilesSizes.Square310x310Logo;
+                    secondaryTile.VisualElements.ShowNameOnSquare310x310Logo = additionalTilesSizes.ShowNameOnSquare310x310Logo;
+                }
+
+                if (additionalTilesSizes.Square44x44Logo != null)
+                {
+                    secondaryTile.VisualElements.Square44x44Logo = additionalTilesSizes.Square44x44Logo;
+                }
+
+                if (additionalTilesSizes.Square71x71Logo != null)
+                {
+                    secondaryTile.VisualElements.Square71x71Logo = additionalTilesSizes.Square71x71Logo;
+                }
+
+                if (additionalTilesSizes.Wide310x150Logo != null)
+                {
+                    secondaryTile.VisualElements.Wide310x150Logo = additionalTilesSizes.Wide310x150Logo;
+                    secondaryTile.VisualElements.ShowNameOnWide310x150Logo = additionalTilesSizes.ShowNameOnWide310x150Logo;
+                }
+            }
 
             UnityPlayer.AppCallbacks.Instance.InvokeOnUIThread(async () =>
             {
