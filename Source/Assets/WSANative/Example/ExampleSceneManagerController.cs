@@ -134,8 +134,10 @@ public class ExampleSceneManagerController : MonoBehaviour
         {
             if (result != null)
             {
+#pragma warning disable 0219
                 byte[] fileBytes = result.ReadBytes();
                 string fileString = result.ReadText();
+#pragma warning restore 0219
             }
         });
     }
