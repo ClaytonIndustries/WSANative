@@ -1,0 +1,64 @@
+﻿using System;
+
+#if NETFX_CORE
+using Windows.UI.StartScreen;
+#endif
+
+namespace CI.WSANative.Tile
+{
+    public static class WSANativeTile
+    {
+        /// <summary>
+        /// Displays the pin to start flyout which allows the user to decide if they want to create the seconday tile
+        /// </summary>
+        /// <param name="tileId">A unique id for this tile</param>
+        /// <param name="displayName">Name to display on the tile</param>
+        /// <param name="Square150x150Logo">Uri of the image file in the built uwp solution e.g ms-appx:///Assets/Square150x150Logo.png</param>
+        /// <param name="ShowNameOnSquare150x150Logo">Should the display name be shown on the tile</param>
+        public static void CreateSecondaryTile(string tileId, string displayName, Uri Square150x150Logo, bool ShowNameOnSquare150x150Logo)
+        {
+#if NETFX_CORE
+            SecondaryTile secondaryTile = new SecondaryTile()
+            {
+                TileId = tileId,
+                DisplayName = displayName,
+                Arguments = " "
+            };
+
+            secondaryTile.VisualElements.Square150x150Logo = Square150x150Logo;
+            secondaryTile.VisualElements.ShowNameOnSquare150x150Logo = ShowNameOnSquare150x150Logo;
+
+            UnityPlayer.AppCallbacks.Instance.InvokeOnUIThread(async () =>
+            {
+                await secondaryTile.RequestCreateAsync();
+            }, false);
+#endif
+        }
+
+        /// <summary>
+        /// Deletes a secondary tile if it exists
+        /// </summary>
+        /// <param name="tileId">Id of the secondary tile to delete</param>
+        public static void RemoveSecondaryTile(string tileId)
+        {
+#if NETFX_CORE
+            RemoveSecondaryTileAsync(tileId);
+#endif
+        }
+
+#if NETFX_CORE
+        private static async void RemoveSecondaryTileAsync(string tileId)
+        {
+            if (SecondaryTile.Exists(tileId))
+            {
+                SecondaryTile secondaryTile = new SecondaryTile()
+                {
+                    TileId = tileId
+                };
+
+                await secondaryTile.RequestDeleteAsync();
+            }
+        }
+#endif
+    }
+}
