@@ -20,7 +20,7 @@ private void DXSwapChainPanel_PointerPressed(object sender, PointerRoutedEventAr
 
 private void DXSwapChainPanel_PointerReleased(object sender, PointerRoutedEventArgs e)
 {
-	if (WSANativeInput.PointReleased != null)
+	if (WSANativeInput.PointerReleased != null)
 	{
 		PointerPointProperties pointerProperties = e.GetCurrentPoint(DXSwapChainPanel).Properties;
 
