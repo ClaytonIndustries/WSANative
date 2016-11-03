@@ -66,7 +66,7 @@ public class ExampleSceneManagerController : MonoBehaviour
 
     public void CreateToastNotification()
     {
-        WSANativeNotification.ShowToastNotification("This is a title", "This is a description, This is a description, This is a description");
+        WSANativeNotification.ShowToastNotification("This is a title", "This is a description, This is a description, This is a description", null);
     }
 
     public void SaveFile()
