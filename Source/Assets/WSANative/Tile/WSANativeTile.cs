@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 #if NETFX_CORE
 using Windows.UI.StartScreen;
@@ -11,7 +12,7 @@ namespace CI.WSANative.Tile
         /// <summary>
         /// Displays the pin to start flyout which allows the user to decide if they want to create a seconday tile
         /// </summary>
-        /// <param name="tileId">A unique id for this tile</param>
+        /// <param name="tileId">A unique id for this tile (no spaces)</param>
         /// <param name="displayName">Name to display on the tile</param>
         /// <param name="Square150x150Logo">Uri of the image file in the built uwp solution e.g ms-appx:///Assets/Square150x150Logo.png</param>
         /// <param name="ShowNameOnSquare150x150Logo">Should the display name be shown on this tile size</param>
@@ -86,5 +87,25 @@ namespace CI.WSANative.Tile
             }
         }
 #endif
+
+        /// <summary>
+        /// Find the tile ids of all secondary tiles associated with this app
+        /// </summary>
+        /// <returns>A collection of tile ids</returns>
+        public static IEnumerable<string> FindAllSecondaryTiles()
+        {
+            IEnumerable<string> existingTiles = new List<string>();
+
+#if NETFX_CORE
+            IReadOnlyList<SecondaryTile> tiles = SecondaryTile.FindAllAsync().GetResults();
+
+            if (tiles != null)
+            {
+                existingTiles = tiles.Select(x => x.TileId);
+            }
+#endif
+
+            return existingTiles;
+        }
     }
 }

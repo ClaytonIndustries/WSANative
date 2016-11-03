@@ -129,6 +129,7 @@ WSANativeStore.GetLicenseForProduct
 Tile:
 WSANativeTile.CreateSecondaryTile
 WSANativeTile.RemoveSecondaryTile
+WSANativeTile.FindAllSecondaryTiles
 
 Web:
 WSANativeWeb.GetString
