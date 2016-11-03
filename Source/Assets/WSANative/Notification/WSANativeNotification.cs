@@ -21,49 +21,110 @@ namespace CI.WSANative.Notification
     public static class WSANativeNotification
     {
         /// <summary>
-        /// Shows a toast notfication with the specified title and text
+        /// Shows a toast notfication
         /// </summary>
         /// <param name="title">Title for the toast notification</param>
         /// <param name="text">Text to show on the toast notification</param>
-        public static void ShowToastNotification(string title, string text)
+        /// <param name="tag">Optional tag, toast notifications with the same tag will overwrite each other in the action centre (null or empty if not needed)</param>
+        /// <param name="image">Image to show on the toast notification - specified as the location in the built uwp solution e.g ms-appx:///Assets/Square150x150Logo.png 
+        /// (optional and will not show on Windows Phone 8.1)</param>
+        public static void ShowToastNotification(string title, string text, string tag, Uri image = null)
         {
 #if NETFX_CORE
-            XmlDocument toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
+            XmlDocument toastXml = null;
+
+            if (image != null)
+            {
+                toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastImageAndText02);
+
+                XmlNodeList imageElements = toastXml.GetElementsByTagName("image");
+
+                if (imageElements != null && imageElements.Length >= 1)
+                {
+                    ((XmlElement)imageElements[0]).SetAttribute("src", image.OriginalString);
+                }
+            }
+            else
+            {
+                toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
+            }
 
             XmlNodeList stringElements = toastXml.GetElementsByTagName("text");
 
-            if(stringElements != null && stringElements.Length >= 2)
+            if (stringElements != null && stringElements.Length >= 2)
             {
                 stringElements[0].AppendChild(toastXml.CreateTextNode(title));
                 stringElements[1].AppendChild(toastXml.CreateTextNode(text));
 
                 ToastNotification toast = new ToastNotification(toastXml);
+
+                if(!string.IsNullOrEmpty(tag))
+                {
+                    toast.Tag = tag;
+                }
+
                 ToastNotificationManager.CreateToastNotifier().Show(toast);
             }
 #endif
         }
 
         /// <summary>
-        /// Shows a toast notification with the specified title and text at a specific time
+        /// Shows a toast notification at a specific date and time
         /// </summary>
         /// <param name="title">Title for the toast notification</param>
         /// <param name="text">Text to show on the toast notification</param>
         /// <param name="deliveryTime">The date and time that the toast notification should be displayed </param>
-        public static void ShowScheduledToastNotification(string title, string text, DateTime deliveryTime)
+        /// <param name="tag">Optional tag, toast notifications with the same tag will overwrite each other in the action centre (null or empty if not needed)</param>
+        /// <param name="image">Image to show on the toast notification - specified as the location in the built uwp solution e.g ms-appx:///Assets/Square150x150Logo.png 
+        /// (optional and will not show on Windows Phone 8.1)</param>
+        public static void ShowScheduledToastNotification(string title, string text, DateTime deliveryTime, string tag, Uri image = null)
         {
 #if NETFX_CORE
-            XmlDocument toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
+            XmlDocument toastXml = null;
+
+            if (image != null)
+            {
+                toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastImageAndText02);
+
+                XmlNodeList imageElements = toastXml.GetElementsByTagName("image");
+
+                if (imageElements != null && imageElements.Length >= 1)
+                {
+                    ((XmlElement)imageElements[0]).SetAttribute("src", image.OriginalString);
+                }
+            }
+            else
+            {
+                toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
+            }
 
             XmlNodeList stringElements = toastXml.GetElementsByTagName("text");
 
-            if(stringElements != null && stringElements.Length >= 2)
+            if (stringElements != null && stringElements.Length >= 2)
             {
                 stringElements[0].AppendChild(toastXml.CreateTextNode(title));
                 stringElements[1].AppendChild(toastXml.CreateTextNode(text));
 
                 ScheduledToastNotification toast = new ScheduledToastNotification(toastXml, new DateTimeOffset(deliveryTime));
+
+                if(!string.IsNullOrEmpty(tag))
+                {
+                    toast.Tag = tag;
+                }
+
                 ToastNotificationManager.CreateToastNotifier().AddToSchedule(toast);
             }
+#endif
+        }
+
+        /// <summary>
+        /// Removes a toast notification from the action centre
+        /// </summary>
+        /// <param name="tag">The tag assigned to the toast notification</param>
+        public static void RemoveToastNotification(string tag)
+        {
+#if NETFX_CORE
+            ToastNotificationManager.History.Remove(tag);
 #endif
         }
 

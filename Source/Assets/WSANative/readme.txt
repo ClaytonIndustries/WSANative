@@ -84,6 +84,7 @@ WSANativeNotification.SendPushNotificationUriToServer
 Toast:
 WSANativeNotification.ShowToastNotification
 WSANativeNotification.ShowScheduledToastNotification
+WSANativeNotification.RemoveToastNotification
 
 Picker:
 WSANativeFilePicker.ShowFileOpenPicker
