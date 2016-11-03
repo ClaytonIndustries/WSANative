@@ -166,7 +166,10 @@ public class ExampleSceneManagerController : MonoBehaviour
         WSANativeInterstitialAd.Initialise(WSAInterstitialAdType.Microsoft, "d25517cb-12d4-4699-8bdc-52040c712cab", "11389925");
         WSANativeInterstitialAd.AdReady += (adType) =>
         {
-            WSANativeInterstitialAd.ShowAd(WSAInterstitialAdType.Microsoft);
+            if (adType == WSAInterstitialAdType.Microsoft)
+            {
+                WSANativeInterstitialAd.ShowAd(WSAInterstitialAdType.Microsoft);
+            }
         };
         WSANativeInterstitialAd.RequestAd(WSAInterstitialAdType.Microsoft);
     }
