@@ -253,7 +253,9 @@ public class ExampleSceneManagerController : MonoBehaviour
                 {
                     if (response.Success)
                     {
+#pragma warning disable 0219
                         WSAFacebookUser user = response.Data;
+#pragma warning restore 0219
                     }
                 });
             }

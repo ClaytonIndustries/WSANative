@@ -36,7 +36,7 @@ namespace CI.WSANative.Tile
                     secondaryTile.VisualElements.Square310x310Logo = additionalTilesSizes.Square310x310Logo;
                     secondaryTile.VisualElements.ShowNameOnSquare310x310Logo = additionalTilesSizes.ShowNameOnSquare310x310Logo;
                 }
-
+#if UNITY_WSA_10_0
                 if (additionalTilesSizes.Square44x44Logo != null)
                 {
                     secondaryTile.VisualElements.Square44x44Logo = additionalTilesSizes.Square44x44Logo;
@@ -46,7 +46,7 @@ namespace CI.WSANative.Tile
                 {
                     secondaryTile.VisualElements.Square71x71Logo = additionalTilesSizes.Square71x71Logo;
                 }
-
+#endif
                 if (additionalTilesSizes.Wide310x150Logo != null)
                 {
                     secondaryTile.VisualElements.Wide310x150Logo = additionalTilesSizes.Wide310x150Logo;
@@ -54,7 +54,7 @@ namespace CI.WSANative.Tile
                 }
             }
 
-            UnityPlayer.AppCallbacks.Instance.InvokeOnUIThread(async () =>
+            UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
             {
                 await secondaryTile.RequestCreateAsync();
             }, false);

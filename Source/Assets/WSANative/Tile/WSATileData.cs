@@ -5,11 +5,21 @@ namespace CI.WSANative.Tile
     public class WSATileData
     {
         public Uri Square310x310Logo { get; set; }
+
+        /// <summary>
+        /// Not available on Windows 8.1
+        /// </summary>
         public Uri Square44x44Logo { get; set; }
+
+        /// <summary>
+        /// Not available on Windows 8.1
+        /// </summary>
         public Uri Square71x71Logo { get; set; }
+
         public Uri Wide310x150Logo { get; set; }
 
         public bool ShowNameOnSquare310x310Logo { get; set; }
+
         public bool ShowNameOnWide310x150Logo { get; set; }
     }
 }

@@ -23,8 +23,8 @@ namespace CI.WSANative.Notification
         /// <summary>
         /// Shows a toast notfication with the specified title and text
         /// </summary>
-        /// <param name="title"></param>
-        /// <param name="text"></param>
+        /// <param name="title">Title for the toast notification</param>
+        /// <param name="text">Text to show on the toast notification</param>
         public static void ShowToastNotification(string title, string text)
         {
 #if NETFX_CORE
@@ -39,6 +39,30 @@ namespace CI.WSANative.Notification
 
                 ToastNotification toast = new ToastNotification(toastXml);
                 ToastNotificationManager.CreateToastNotifier().Show(toast);
+            }
+#endif
+        }
+
+        /// <summary>
+        /// Shows a toast notification with the specified title and text at a specific time
+        /// </summary>
+        /// <param name="title">Title for the toast notification</param>
+        /// <param name="text">Text to show on the toast notification</param>
+        /// <param name="deliveryTime">The date and time that the toast notification should be displayed </param>
+        public static void ShowScheduledToastNotification(string title, string text, DateTime deliveryTime)
+        {
+#if NETFX_CORE
+            XmlDocument toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
+
+            XmlNodeList stringElements = toastXml.GetElementsByTagName("text");
+
+            if(stringElements != null && stringElements.Length >= 2)
+            {
+                stringElements[0].AppendChild(toastXml.CreateTextNode(title));
+                stringElements[1].AppendChild(toastXml.CreateTextNode(text));
+
+                ScheduledToastNotification toast = new ScheduledToastNotification(toastXml, new DateTimeOffset(deliveryTime));
+                ToastNotificationManager.CreateToastNotifier().AddToSchedule(toast);
             }
 #endif
         }
