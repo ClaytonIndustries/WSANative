@@ -1,4 +1,4 @@
-﻿Windows Store Native (v1.16)
+﻿Windows Store Native (v1.17)
 ----------------------------
 
 Thank you for downloading Windows Store Native we hope you enjoy using it!
@@ -25,38 +25,6 @@ Then call WSANativeStore.ReloadSimulator when you app starts up to configure the
 
 ------------------------------------------------------------------------------------------------------------------------
 
-Show a dialog:
-WSANativeDialog.ShowDialog
-
-Show a popup menu:
-WSANativePopupMenu.ShowPopupMenu
-
-Serialise to and from xml:
-WSANativeSerialisation.SerialiseToXML
-WSANativeSerialisation.DeserialiseXML
-
-Access storage:
-WSANativeStorage.SaveFile
-WSANativeStorage.LoadFile
-WSANativeStorage.DeleteFile
-WSANativeStorage.DoesFileExist
-WSANativeStorage.GetAllFiles
-
-Interface with the Windows Store:
-WSANativeStore.EnableTestMode
-WSANativeStore.ReloadSimulator
-WSANativeStore.GetProductListings
-WSANativeStore.PurchaseProduct
-WSANativeStore.ReportConsumableProductFulfillment
-WSANativeStore.GetUnfulfilledConsumableProducts
-WSANativeStore.PurchaseApp
-WSANativeStore.GetLicenseForApp
-WSANativeStore.GetLicenseForProduct
-
-File Picker:
-WSANativeFilePicker.ShowFileOpenPicker
-WSANativeFilePicker.ShowFileSavePicker
-
 Advertising:
 Banner:
 WSANativeBannerAd.CreatAd
@@ -72,43 +40,17 @@ WSANativeMediatorAd.CreatAd
 WSANativeMediatorAd.SetVisibility
 WSANativeMediatorAd.DestroyAd
 
-Web:
-WSANativeWeb.GetString
-WSANativeWeb.GetBytes
-WSANativeWeb.PostReturnString
-WSANativeWeb.PostReturnBytes
-
-Notification:
-WSANativeNotification.ShowToastNotification
-WSANativeNotification.CreatePushNotificationChannel
-WSANativeNotification.SendPushNotificationUriToServer
-
-Mapping:
-WSANativeMap.CreateMap
-WSANativeMap.CenterMap
-WSANativeMap.AddMapElement
-WSANativeMap.ClearMap
-WSANativeMap.DestroyMap
-
-Geolocation:
-WSANativeGeolocation.GetUsersLocation
-
-Social:
-WSANativeSocial.ShowAppStoreDescriptionPage
-WSANativeSocial.ShowAppStoreReviewPage
-WSANativeSocial.ComposeEmail
-WSANativeSocial.Share
-
 Device:
 WSANativeDevice.EnableFlashlight
 WSANativeDevice.DisableFlashlight
 WSANativeDevice.CaptureScreenshot
 
-Security:
-WSANativeSecurity.SymmetricEncrypt
-WSANativeSecurity.SymmetricDecrypt
-WSANativeSecurity.EncodeBase64
-WSANativeSecurity.DecodeBase64
+Dialog:
+WSANativeDialog.ShowDialog
+
+Engagement:
+WSANativeEngagement.IsFeedbackHubSupported
+WSANativeEngagement.ShowFeedbackHub
 
 Facebook:
 WSANativeFacebook.Initialise
@@ -121,13 +63,78 @@ WSANativeFacebook.ShowFeedDialog
 WSANativeFacebook.ShowRequestDialog
 WSANativeFacebook.ShowSendDialog
 
-Engagement:
-WSANativeEngagement.IsFeedbackHubSupported
-WSANativeEngagement.ShowFeedbackHub
+Geolocation:
+WSANativeGeolocation.GetUsersLocation
 
 Input:
 WSANativeInput.PointerPressed
 WSANativeInput.PointerReleased
+
+Mapping:
+WSANativeMap.CreateMap
+WSANativeMap.CenterMap
+WSANativeMap.AddMapElement
+WSANativeMap.ClearMap
+WSANativeMap.DestroyMap
+
+Notification:
+Push:
+WSANativeNotification.CreatePushNotificationChannel
+WSANativeNotification.SendPushNotificationUriToServer
+Toast:
+WSANativeNotification.ShowToastNotification
+WSANativeNotification.ShowScheduledToastNotification
+
+Picker:
+WSANativeFilePicker.ShowFileOpenPicker
+WSANativeFilePicker.ShowFileSavePicker
+
+Popup:
+WSANativePopupMenu.ShowPopupMenu
+
+Security:
+WSANativeSecurity.SymmetricEncrypt
+WSANativeSecurity.SymmetricDecrypt
+WSANativeSecurity.EncodeBase64
+WSANativeSecurity.DecodeBase64
+
+Serialisation:
+WSANativeSerialisation.SerialiseToXML
+WSANativeSerialisation.DeserialiseXML
+
+Social:
+WSANativeSocial.ShowAppStoreDescriptionPage
+WSANativeSocial.ShowAppStoreReviewPage
+WSANativeSocial.ComposeEmail
+WSANativeSocial.Share
+
+Storage:
+WSANativeStorage.SaveFile
+WSANativeStorage.LoadFile
+WSANativeStorage.DeleteFile
+WSANativeStorage.DoesFileExist
+WSANativeStorage.GetAllFiles
+
+Store:
+WSANativeStore.EnableTestMode
+WSANativeStore.ReloadSimulator
+WSANativeStore.GetProductListings
+WSANativeStore.PurchaseProduct
+WSANativeStore.ReportConsumableProductFulfillment
+WSANativeStore.GetUnfulfilledConsumableProducts
+WSANativeStore.PurchaseApp
+WSANativeStore.GetLicenseForApp
+WSANativeStore.GetLicenseForProduct
+
+Tile:
+WSANativeTile.CreateSecondaryTile
+WSANativeTile.RemoveSecondaryTile
+
+Web:
+WSANativeWeb.GetString
+WSANativeWeb.GetBytes
+WSANativeWeb.PostReturnString
+WSANativeWeb.PostReturnBytes
 
 ------------------------------------------------------------------------------------------------------------------------
 WSANative makes use of JSON.NET and is used under the following license
