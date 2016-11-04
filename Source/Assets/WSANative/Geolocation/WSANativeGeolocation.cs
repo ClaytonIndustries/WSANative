@@ -40,7 +40,8 @@ namespace CI.WSANative.Geolocation
                             try
                             {
                                 Geoposition position = await geolocator.GetGeopositionAsync();
-                                RaiseCallback(true, WSAGeolocationAccessStatus.Allowed, new WSAGeoPosition() { Latitude = position.Coordinate.Latitude, Longitude = position.Coordinate.Longitude }, response);
+                                RaiseCallback(true, WSAGeolocationAccessStatus.Allowed, 
+                                    new WSAGeoPosition() { Latitude = position.Coordinate.Point.Position.Latitude, Longitude = position.Coordinate.Point.Position.Longitude }, response);
                             }
                             catch
                             {

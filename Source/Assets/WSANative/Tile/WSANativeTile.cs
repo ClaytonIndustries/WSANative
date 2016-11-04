@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 #if NETFX_CORE
+using System.Linq;
 using Windows.UI.StartScreen;
 #endif
 
