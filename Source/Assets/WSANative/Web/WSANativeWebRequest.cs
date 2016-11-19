@@ -15,7 +15,7 @@ using System.Net.Http;
 
 namespace CI.WSANative.Web
 {
-    public static class WSANativeWeb
+    public static class WSANativeWebRequest
     {
         /// <summary>
         /// Sends a GET request to the specified url and returns whether the request succeeded along with the response data as a string
@@ -35,13 +35,13 @@ namespace CI.WSANative.Web
             string result = string.Empty;
             bool isSuccess = false;
 
-            using(HttpClient client = new HttpClient())
+            using (HttpClient client = new HttpClient())
             {
                 try
                 {
                     HttpResponseMessage responseMessage = await client.GetAsync(url);
 
-                    if(responseMessage.IsSuccessStatusCode)
+                    if (responseMessage.IsSuccessStatusCode)
                     {
                         result = await responseMessage.Content.ReadAsStringAsync();
                         isSuccess = true;
@@ -51,7 +51,7 @@ namespace CI.WSANative.Web
                 {
                 }
 
-                if(response != null)
+                if (response != null)
                 {
                     response(isSuccess, result);
                 }
@@ -77,23 +77,23 @@ namespace CI.WSANative.Web
             byte[] result = null;
             bool isSuccess = false;
 
-            using(HttpClient client = new HttpClient())
+            using (HttpClient client = new HttpClient())
             {
                 try
                 {
                     HttpResponseMessage responseMessage = await client.GetAsync(url);
 
-                    if(responseMessage.IsSuccessStatusCode)
+                    if (responseMessage.IsSuccessStatusCode)
                     {
-                        result = await responseMessage.Content.ReadAsByteArrayAsync(); 
+                        result = await responseMessage.Content.ReadAsByteArrayAsync();
                         isSuccess = true;
-                    }     
+                    }
                 }
                 catch
                 {
                 }
 
-                if(response != null)
+                if (response != null)
                 {
                     response(isSuccess, result);
                 }
@@ -119,23 +119,23 @@ namespace CI.WSANative.Web
             string result = string.Empty;
             bool isSuccess = false;
 
-            using(HttpClient client = new HttpClient())
+            using (HttpClient client = new HttpClient())
             {
                 try
                 {
                     HttpResponseMessage responseMessage = await client.PostAsync(url, new FormUrlEncodedContent(content));
-        
-                    if(responseMessage.IsSuccessStatusCode)
+
+                    if (responseMessage.IsSuccessStatusCode)
                     {
                         result = await responseMessage.Content.ReadAsStringAsync();
                         isSuccess = true;
-                    } 
+                    }
                 }
                 catch
                 {
                 }
 
-                if(response != null)
+                if (response != null)
                 {
                     response(isSuccess, result);
                 }
@@ -161,23 +161,23 @@ namespace CI.WSANative.Web
             byte[] result = null;
             bool isSuccess = false;
 
-            using(HttpClient client = new HttpClient())
+            using (HttpClient client = new HttpClient())
             {
                 try
                 {
                     HttpResponseMessage responseMessage = await client.PostAsync(url, new FormUrlEncodedContent(content));
-        
-                    if(responseMessage.IsSuccessStatusCode)
+
+                    if (responseMessage.IsSuccessStatusCode)
                     {
                         result = await responseMessage.Content.ReadAsByteArrayAsync();
                         isSuccess = true;
-                    } 
+                    }
                 }
                 catch
                 {
                 }
 
-                if(response != null)
+                if (response != null)
                 {
                     response(isSuccess, result);
                 }

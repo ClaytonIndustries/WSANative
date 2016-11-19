@@ -156,7 +156,7 @@ public class ExampleSceneManagerController : MonoBehaviour
 
     public void WebGet()
     {
-        WSANativeWeb.GetBytes("http://httpbin.org/encoding/utf8", (success, response) =>
+        WSANativeWebRequest.GetBytes("http://httpbin.org/encoding/utf8", (success, response) =>
         {
         });
     }
