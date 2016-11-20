@@ -1,4 +1,4 @@
-﻿Windows Store Native (v1.17)
+﻿Windows Store Native (v1.18)
 ----------------------------
 
 Thank you for downloading Windows Store Native we hope you enjoy using it!
@@ -133,10 +133,15 @@ WSANativeTile.RemoveSecondaryTile
 WSANativeTile.FindAllSecondaryTiles
 
 Web:
-WSANativeWeb.GetString
-WSANativeWeb.GetBytes
-WSANativeWeb.PostReturnString
-WSANativeWeb.PostReturnBytes
+Request:
+WSANativeWebRequest.GetString
+WSANativeWebRequest.GetBytes
+WSANativeWebRequest.PostReturnString
+WSANativeWebRequest.PostReturnBytes
+Web View:
+WSANativeWebView.Create
+WSANativeWebView.Destroy
+WSANativeWebView.Navigate
 
 ------------------------------------------------------------------------------------------------------------------------
 WSANative makes use of JSON.NET and is used under the following license

@@ -89,9 +89,9 @@ namespace CI.WSANative.Web
         }
 
         /// <summary>
-        /// Close the web view if it is currently open
+        /// Destroy the web view if it is currently open
         /// </summary>
-        public static void Close()
+        public static void Destroy()
         {
 #if NETFX_CORE
             if (_dxSwapChainPanel != null && _webView != null)
