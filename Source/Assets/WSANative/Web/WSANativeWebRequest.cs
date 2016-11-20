@@ -105,7 +105,8 @@ namespace CI.WSANative.Web
         /// Sends a POST request to the specified url and returns whether the request succeeded along with the response data as a string
         /// </summary>
         /// <param name="url">The url</param>
-        /// <param name="keyValuePairs">A callback containing the response</param>
+        /// <param name="content">Data to post</param>
+        /// <param name="response">A callback containing the response</param>
         public static void PostReturnString(string url, Dictionary<string, string> content, Action<bool, string> response)
         {
 #if NETFX_CORE
@@ -147,7 +148,8 @@ namespace CI.WSANative.Web
         /// Sends a POST request to the specified url and returns whether the request succeeded along with the response data as a byte array
         /// </summary>
         /// <param name="url">The url</param>
-        /// <param name="keyValuePairs">A callback containing the response</param>
+        /// <param name="content">Data to post</param>
+        /// <param name="response">A callback containing the response</param>
         public static void PostReturnBytes(string url, Dictionary<string, string> content, Action<bool, byte[]> response)
         {
 #if NETFX_CORE
