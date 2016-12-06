@@ -54,6 +54,9 @@ namespace CI.WSANative.Advertising
         /// </summary>
         public static Action<WSAInterstitialAdType> _Show;
 
+        private static string _adDuplexAppId;
+        private static string _adDuplexAdUnitId;
+
         private static string _msAppId;
         private static string _msAdUnitId;
 
@@ -67,15 +70,20 @@ namespace CI.WSANative.Advertising
         /// <param name="adUnitId">Your apps ad unit id (null or empty for Vungle)</param>
         public static void Initialise(WSAInterstitialAdType adType, string appId, string adUnitId)
         {
-			if(adType == WSAInterstitialAdType.Microsoft)
-			{
-				_msAppId = appId;
-				_msAdUnitId = adUnitId;
-			}
-			else
-			{
-				_vungleAppId = appId;
-			}
+            switch(adType)
+            {
+                case WSAInterstitialAdType.AdDuplex:
+                    _adDuplexAppId = appId;
+                    _adDuplexAdUnitId = adUnitId;
+                    break;
+                case WSAInterstitialAdType.Microsoft:
+                    _msAppId = appId;
+                    _msAdUnitId = adUnitId;
+                    break;
+                case WSAInterstitialAdType.Vungle:
+                    _vungleAppId = appId;
+                    break;
+            }
         }
 
         /// <summary>
@@ -88,13 +96,17 @@ namespace CI.WSANative.Advertising
         {
             if(_Request != null)
             {
-                if (adType == WSAInterstitialAdType.Microsoft)
+                switch (adType)
                 {
-                    _Request(_msAppId, _msAdUnitId, adType);
-                }
-                else
-                {
-                    _Request(_vungleAppId, string.Empty, adType);
+                    case WSAInterstitialAdType.AdDuplex:
+                        _Request(_adDuplexAppId, _adDuplexAdUnitId, adType);
+                        break;
+                    case WSAInterstitialAdType.Microsoft:
+                        _Request(_msAppId, _msAdUnitId, adType);
+                        break;
+                    case WSAInterstitialAdType.Vungle:
+                        _Request(_vungleAppId, string.Empty, adType);
+                        break;
                 }
             }
         }
