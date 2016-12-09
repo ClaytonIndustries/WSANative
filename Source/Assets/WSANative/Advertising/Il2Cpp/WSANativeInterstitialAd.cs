@@ -76,14 +76,15 @@ namespace CI.WSANative.Advertising
         /// <param name="adUnitId">Your apps ad unit id (null or empty for Vungle)</param>
         public static void Initialise(WSAInterstitialAdType adType, string appId, string adUnitId)
         {
-            if (adType == WSAInterstitialAdType.Microsoft)
+            switch(adType)
             {
-                _msAppId = appId;
-                _msAdUnitId = adUnitId;
-            }
-            else
-            {
-                _vungleAppId = appId;
+                case WSAInterstitialAdType.Microsoft:
+                    _msAppId = appId;
+                    _msAdUnitId = adUnitId;
+                    break;
+                case WSAInterstitialAdType.Vungle:
+                    _vungleAppId = appId;
+                    break;
             }
 
             _InterstitialAdInitialise(AdReadyCallback, CancelledCallback, CompletedCallback, ErrorOccurredCallback);
@@ -101,7 +102,7 @@ namespace CI.WSANative.Advertising
             {
                 _InterstitialAdRequest(adType.ToString(), _msAppId, _msAdUnitId);
             }
-            else
+            else if(adType == WSAInterstitialAdType.Vungle)
             {
                 _InterstitialAdRequest(adType.ToString(), _vungleAppId, string.Empty);
             }
@@ -164,12 +165,6 @@ namespace CI.WSANative.Advertising
                 return WSAInterstitialAdType.Vungle;
             }
         }
-    }
-
-    public enum WSAInterstitialAdType
-    {
-        Microsoft,
-        Vungle
     }
 }
 #endif

@@ -1,70 +1,147 @@
 #pragma once
 
+#define AD_DUPLEX_ENABLED 0
+#define MICROSOFT_ENABLED 0
+
+#if AD_DUPLEX_ENABLED
+using namespace AdDuplex::Common::Models;
+using namespace AdDuplex::Banners::Core;
+using namespace AdDuplex::Banners::Models;
+#endif
+#if MICROSOFT_ENABLED
+using namespace Microsoft::Advertising::WinRT::UI;
+#endif
 using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Controls;
-using namespace Microsoft::Advertising::WinRT::UI;
 
 ref class BannerAdManager
 {
 public:
 	static void Initialise(Grid^);
 private:
-	static AdControl^ _adControl;
+#if AD_DUPLEX_ENABLED
+	static AdDuplex::AdControl^ _adDuplexAdControl;
+#endif
+#if MICROSOFT_ENABLED
+	static AdControl^ _microsoftAdControl;
+#endif
+	static const wchar_t* AD_TYPE_AD_DUPLEX;
+	static const wchar_t* AD_TYPE_MICROSOFT;
 	static Grid^ _grid;
+	static AdCallbackWithAdType _Refreshed;
+	static AdCallbackWithAdType _Error;
 	static VerticalAlignment GetVerticalAlignment(wchar_t*);
 	static HorizontalAlignment GetHorizontalAlignment(wchar_t*);
+	static bool IsAdType(const wchar_t*, const wchar_t*);
 };
 
 #include "pch.h"
 #define GENERATED_PROJECT 1
 #include "..\Il2CppOutputProject\il2cppOutput\WSAAdvertisingBridge.h"
 
-AdControl^ BannerAdManager::_adControl;
+const wchar_t* BannerAdManager::AD_TYPE_AD_DUPLEX = L"AdDuplex";
+const wchar_t* BannerAdManager::AD_TYPE_MICROSOFT = L"Microsoft";
+
 Grid^ BannerAdManager::_grid;
+AdCallbackWithAdType BannerAdManager::_Refreshed;
+AdCallbackWithAdType BannerAdManager::_Error;
+
+#if AD_DUPLEX_ENABLED
+AdDuplex::AdControl^ BannerAdManager::_adDuplexAdControl;
+#endif
+#if MICROSOFT_ENABLED
+AdControl^ BannerAdManager::_microsoftAdControl;
+#endif
 
 inline void BannerAdManager::Initialise(Grid^ grid)
 {
 	_grid = grid;
 
-	_BannerAdCreateAction = [](wchar_t* appId, wchar_t* adUnitId, int width, int height, wchar_t* verticalPlacement, wchar_t* horizontalPlacement, AdCallback refreshed, AdCallback error)
+	_BannerAdInitialiseAction = [](AdCallbackWithAdType refreshed, AdCallbackWithAdType error)
 	{
-		if (_adControl == nullptr)
-		{
-			_adControl = ref new AdControl();
-			_adControl->ApplicationId = ref new Platform::String(appId);
-			_adControl->AdUnitId = ref new Platform::String(adUnitId);
-			_adControl->Width = width;
-			_adControl->Height = height;
-			_adControl->IsAutoRefreshEnabled = true;
-			_adControl->VerticalAlignment = GetVerticalAlignment(verticalPlacement);
-			_adControl->HorizontalAlignment = GetHorizontalAlignment(horizontalPlacement);
-
-			_adControl->AdRefreshed += ref new Windows::Foundation::EventHandler<RoutedEventArgs^>([refreshed](Object^ s, RoutedEventArgs^ e) { refreshed(); });
-			_adControl->ErrorOccurred += ref new Windows::Foundation::EventHandler<AdErrorEventArgs^>([error](Object^ s, AdErrorEventArgs^ e) { error(); });
-			_grid->Children->Append(_adControl);
-		}
+		_Refreshed = refreshed;
+		_Error = error;
 	};
-	_BannerAdSetVisibilityAction = [](bool visible)
+	_BannerAdCreateAction = [](wchar_t* adType, wchar_t* appId, wchar_t* adUnitId, int width, int height, wchar_t* verticalPlacement, wchar_t* horizontalPlacement)
 	{
-		if (_adControl != nullptr)
+#if AD_DUPLEX_ENABLED
+		if (IsAdType(adType, AD_TYPE_AD_DUPLEX) && _adDuplexAdControl == nullptr)
 		{
-			_adControl->Visibility = visible ? Visibility::Visible : Visibility::Collapsed;
+			_adDuplexAdControl = ref new AdDuplex::AdControl();
+			_adDuplexAdControl->AppKey = ref new Platform::String(appId);
+			_adDuplexAdControl->AdUnitId = ref new Platform::String(adUnitId);
+			_adDuplexAdControl->Width = width;
+			_adDuplexAdControl->Height = height;
+			_adDuplexAdControl->RefreshInterval = 30;
+			_adDuplexAdControl->AdLoaded += ref new Windows::Foundation::EventHandler<BannerAdLoadedEventArgs^>([](Object^ s, BannerAdLoadedEventArgs^ e) { _Refreshed(AD_TYPE_AD_DUPLEX); });
+			_adDuplexAdControl->AdCovered += ref new Windows::Foundation::EventHandler<AdCoveredEventArgs^>([](Object^ s, AdCoveredEventArgs^ e) { _Error(AD_TYPE_AD_DUPLEX); });
+			_adDuplexAdControl->AdLoadingError += ref new Windows::Foundation::EventHandler<AdLoadingErrorEventArgs^>([](Object^ s, AdLoadingErrorEventArgs^ e) { _Error(AD_TYPE_AD_DUPLEX); });
+			_adDuplexAdControl->NoAd += ref new Windows::Foundation::EventHandler<NoAdEventArgs^>([](Object^ s, NoAdEventArgs^ e) { _Error(AD_TYPE_AD_DUPLEX); });
+			_grid->Children->Append(_adDuplexAdControl);
 		}
+#endif
+#if MICROSOFT_ENABLED
+		if (IsAdType(adType, AD_TYPE_MICROSOFT) && _microsoftAdControl == nullptr)
+		{
+			_microsoftAdControl = ref new AdControl();
+			_microsoftAdControl->ApplicationId = ref new Platform::String(appId);
+			_microsoftAdControl->AdUnitId = ref new Platform::String(adUnitId);
+			_microsoftAdControl->Width = width;
+			_microsoftAdControl->Height = height;
+			_microsoftAdControl->IsAutoRefreshEnabled = true;
+			_microsoftAdControl->VerticalAlignment = GetVerticalAlignment(verticalPlacement);
+			_microsoftAdControl->HorizontalAlignment = GetHorizontalAlignment(horizontalPlacement);
+			_microsoftAdControl->AdRefreshed += ref new Windows::Foundation::EventHandler<RoutedEventArgs^>([](Object^ s, RoutedEventArgs^ e) { _Refreshed(AD_TYPE_MICROSOFT); });
+			_microsoftAdControl->ErrorOccurred += ref new Windows::Foundation::EventHandler<AdErrorEventArgs^>([](Object^ s, AdErrorEventArgs^ e) { _Error(AD_TYPE_MICROSOFT); });
+			_grid->Children->Append(_microsoftAdControl);
+		}
+#endif
 	};
-	_BannerAdDestroyAction = []()
+	_BannerAdSetVisibilityAction = [](wchar_t* adType, bool visible)
 	{
-		if (_adControl != nullptr)
+#if AD_DUPLEX_ENABLED
+		if (IsAdType(adType, AD_TYPE_AD_DUPLEX) && _adDuplexAdControl != nullptr)
+		{
+			_adDuplexAdControl->Visibility = visible ? Visibility::Visible : Visibility::Collapsed;
+		}
+#endif
+#if MICROSOFT_ENABLED
+		if (IsAdType(adType, AD_TYPE_MICROSOFT) && _microsoftAdControl != nullptr)
+		{
+			_microsoftAdControl->Visibility = visible ? Visibility::Visible : Visibility::Collapsed;
+		}
+#endif
+	};
+	_BannerAdDestroyAction = [](wchar_t* adType)
+	{
+#if AD_DUPLEX_ENABLED
+		if (IsAdType(adType, AD_TYPE_AD_DUPLEX) && _adDuplexAdControl != nullptr)
 		{
 			for (unsigned int i = 0; i < _grid->Children->Size; i++)
 			{
-				if (_grid->Children->GetAt(i) == _adControl)
+				if (_grid->Children->GetAt(i) == _adDuplexAdControl)
 				{
 					_grid->Children->RemoveAt(i);
-					_adControl = nullptr;
+					_adDuplexAdControl = nullptr;
 					break;
 				}
 			}
 		}
+#endif
+#if MICROSOFT_ENABLED
+		if (IsAdType(adType, AD_TYPE_MICROSOFT) && _microsoftAdControl != nullptr)
+		{
+			for (unsigned int i = 0; i < _grid->Children->Size; i++)
+			{
+				if (_grid->Children->GetAt(i) == _microsoftAdControl)
+				{
+					_grid->Children->RemoveAt(i);
+					_microsoftAdControl = nullptr;
+					break;
+				}
+			}
+		}
+#endif
 	};
 }
 
@@ -98,4 +175,9 @@ inline HorizontalAlignment BannerAdManager::GetHorizontalAlignment(wchar_t* alig
 	{
 		return HorizontalAlignment::Center;
 	}
+}
+
+inline bool BannerAdManager::IsAdType(const wchar_t* actual, const wchar_t* expected)
+{
+	return wcscmp(actual, expected) == 0;
 }

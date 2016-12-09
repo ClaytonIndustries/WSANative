@@ -38,10 +38,10 @@ private:
 const wchar_t* IntersitialAdManager::AD_TYPE_MICROSOFT = L"Microsoft";
 const wchar_t* IntersitialAdManager::AD_TYPE_VUNGLE = L"Vungle";
 
-AdCallbackWithAdType IntersitialAdManager::_Ready = nullptr;
-AdCallbackWithAdType IntersitialAdManager::_Cancelled = nullptr;
-AdCallbackWithAdType IntersitialAdManager::_Completed = nullptr;
-AdCallbackWithAdType IntersitialAdManager::_Error = nullptr;
+AdCallbackWithAdType IntersitialAdManager::_Ready;
+AdCallbackWithAdType IntersitialAdManager::_Cancelled;
+AdCallbackWithAdType IntersitialAdManager::_Completed;
+AdCallbackWithAdType IntersitialAdManager::_Error;
 
 #if MICROSOFT_ENABLED
 InterstitialAd^ IntersitialAdManager::_microsoftInterstitialAd;
@@ -133,8 +133,8 @@ inline void IntersitialAdManager::Initialise()
 				_vungleInterstitialAd->PlayAdAsync(ref new AdConfig());
 			}), false);
 		}
-	};
 #endif
+	};
 }
 
 inline bool IntersitialAdManager::IsAdType(const wchar_t* actual, const wchar_t* expected)
