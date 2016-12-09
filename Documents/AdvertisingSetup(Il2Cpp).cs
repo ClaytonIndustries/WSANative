@@ -1,14 +1,15 @@
 Configuration Properties -> Linker -> Command Line
 $(OutDir)\GameAssembly.lib
 
-#include "BannerAdManager.h"
+#define GENERATED_PROJECT 1
+#include "..\Il2CppOutputProject\il2cppOutput\WSAAdvertisingBridge.h"
 #include "IntersitialAdManager.h"
+#include "BannerAdManager.h"
 
 BannerAdManager::Initialise(m_DXSwapChainPanel);
 IntersitialAdManager::Initialise();
 
-For interstitial ads enable
-MICROSOFT_ENABLED and/or VUNGLE_ENABLED
+Enable 1 or more #defines to select ad networks
 
 1) Use Unity to build a windows 10 universal visual studio solution
 2) Open the solution and add a reference to the correct ad sdk(s)

@@ -1,12 +1,12 @@
 #pragma once
 
-#define MICROSOFT_ENABLED 0
-#define VUNGLE_ENABLED 0
+#define IAM_MICROSOFT_ENABLED 0
+#define IAM_VUNGLE_ENABLED 0
 
-#if MICROSOFT_ENABLED
+#if IAM_MICROSOFT_ENABLED
 using namespace Microsoft::Advertising::WinRT::UI;
 #endif
-#if VUNGLE_ENABLED
+#if IAM_VUNGLE_ENABLED
 using namespace VungleSDK;
 #endif
 using namespace UnityPlayer;
@@ -16,10 +16,10 @@ ref class IntersitialAdManager
 public:
 	static void Initialise();
 private:
-#if MICROSOFT_ENABLED
+#if IAM_MICROSOFT_ENABLED
 	static InterstitialAd^ _microsoftInterstitialAd;
 #endif
-#if VUNGLE_ENABLED
+#if IAM_VUNGLE_ENABLED
 	static VungleAd^ _vungleInterstitialAd;
 #endif
 	static const wchar_t* AD_TYPE_MICROSOFT;
@@ -32,8 +32,6 @@ private:
 };
 
 #include "pch.h"
-#define GENERATED_PROJECT 1
-#include "..\Il2CppOutputProject\il2cppOutput\WSAAdvertisingBridge.h"
 
 const wchar_t* IntersitialAdManager::AD_TYPE_MICROSOFT = L"Microsoft";
 const wchar_t* IntersitialAdManager::AD_TYPE_VUNGLE = L"Vungle";
@@ -43,10 +41,10 @@ AdCallbackWithAdType IntersitialAdManager::_Cancelled;
 AdCallbackWithAdType IntersitialAdManager::_Completed;
 AdCallbackWithAdType IntersitialAdManager::_Error;
 
-#if MICROSOFT_ENABLED
+#if IAM_MICROSOFT_ENABLED
 InterstitialAd^ IntersitialAdManager::_microsoftInterstitialAd;
 #endif
-#if VUNGLE_ENABLED
+#if IAM_VUNGLE_ENABLED
 VungleAd^ IntersitialAdManager::_vungleInterstitialAd;
 #endif
 
@@ -61,7 +59,7 @@ inline void IntersitialAdManager::Initialise()
 	};
 	_InterstitialAdRequestAction = [](wchar_t* adType, wchar_t* appId, wchar_t* adUnitId)
 	{
-#if MICROSOFT_ENABLED
+#if IAM_MICROSOFT_ENABLED
 		if (IsAdType(adType, AD_TYPE_MICROSOFT))
 		{
 			if (_microsoftInterstitialAd == nullptr)
@@ -79,7 +77,7 @@ inline void IntersitialAdManager::Initialise()
 			}), false);	
 		}
 #endif
-#if VUNGLE_ENABLED
+#if IAM_VUNGLE_ENABLED
 		if (IsAdType(adType, AD_TYPE_VUNGLE))
 		{
 			if (_vungleInterstitialAd == nullptr)
@@ -116,7 +114,7 @@ inline void IntersitialAdManager::Initialise()
 	};
 	_InterstitialAdShowAction = [](wchar_t* adType)
 	{
-#if MICROSOFT_ENABLED
+#if IAM_MICROSOFT_ENABLED
 		if (IsAdType(adType, AD_TYPE_MICROSOFT) && _microsoftInterstitialAd != nullptr)
 		{
 			AppCallbacks::Instance->InvokeOnUIThread(ref new AppCallbackItem([]()
@@ -125,7 +123,7 @@ inline void IntersitialAdManager::Initialise()
 			}), false);
 		}
 #endif
-#if VUNGLE_ENABLED
+#if IAM_VUNGLE_ENABLED
 		if (IsAdType(adType, AD_TYPE_VUNGLE) && _vungleInterstitialAd != nullptr && _vungleInterstitialAd->AdPlayable)
 		{
 			AppCallbacks::Instance->InvokeOnUIThread(ref new AppCallbackItem([]()

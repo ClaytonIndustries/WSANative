@@ -1,14 +1,14 @@
 #pragma once
 
-#define AD_DUPLEX_ENABLED 0
-#define MICROSOFT_ENABLED 0
+#define BAM_AD_DUPLEX_ENABLED 1
+#define BAM_MICROSOFT_ENABLED 0
 
-#if AD_DUPLEX_ENABLED
+#if BAM_AD_DUPLEX_ENABLED
 using namespace AdDuplex::Common::Models;
 using namespace AdDuplex::Banners::Core;
 using namespace AdDuplex::Banners::Models;
 #endif
-#if MICROSOFT_ENABLED
+#if BAM_MICROSOFT_ENABLED
 using namespace Microsoft::Advertising::WinRT::UI;
 #endif
 using namespace Windows::UI::Xaml;
@@ -19,10 +19,10 @@ ref class BannerAdManager
 public:
 	static void Initialise(Grid^);
 private:
-#if AD_DUPLEX_ENABLED
+#if BAM_AD_DUPLEX_ENABLED
 	static AdDuplex::AdControl^ _adDuplexAdControl;
 #endif
-#if MICROSOFT_ENABLED
+#if BAM_MICROSOFT_ENABLED
 	static AdControl^ _microsoftAdControl;
 #endif
 	static const wchar_t* AD_TYPE_AD_DUPLEX;
@@ -36,8 +36,6 @@ private:
 };
 
 #include "pch.h"
-#define GENERATED_PROJECT 1
-#include "..\Il2CppOutputProject\il2cppOutput\WSAAdvertisingBridge.h"
 
 const wchar_t* BannerAdManager::AD_TYPE_AD_DUPLEX = L"AdDuplex";
 const wchar_t* BannerAdManager::AD_TYPE_MICROSOFT = L"Microsoft";
@@ -46,10 +44,10 @@ Grid^ BannerAdManager::_grid;
 AdCallbackWithAdType BannerAdManager::_Refreshed;
 AdCallbackWithAdType BannerAdManager::_Error;
 
-#if AD_DUPLEX_ENABLED
+#if BAM_AD_DUPLEX_ENABLED
 AdDuplex::AdControl^ BannerAdManager::_adDuplexAdControl;
 #endif
-#if MICROSOFT_ENABLED
+#if BAM_MICROSOFT_ENABLED
 AdControl^ BannerAdManager::_microsoftAdControl;
 #endif
 
@@ -64,7 +62,7 @@ inline void BannerAdManager::Initialise(Grid^ grid)
 	};
 	_BannerAdCreateAction = [](wchar_t* adType, wchar_t* appId, wchar_t* adUnitId, int width, int height, wchar_t* verticalPlacement, wchar_t* horizontalPlacement)
 	{
-#if AD_DUPLEX_ENABLED
+#if BAM_AD_DUPLEX_ENABLED
 		if (IsAdType(adType, AD_TYPE_AD_DUPLEX) && _adDuplexAdControl == nullptr)
 		{
 			_adDuplexAdControl = ref new AdDuplex::AdControl();
@@ -73,6 +71,8 @@ inline void BannerAdManager::Initialise(Grid^ grid)
 			_adDuplexAdControl->Width = width;
 			_adDuplexAdControl->Height = height;
 			_adDuplexAdControl->RefreshInterval = 30;
+			_adDuplexAdControl->VerticalAlignment = GetVerticalAlignment(verticalPlacement);
+			_adDuplexAdControl->HorizontalAlignment = GetHorizontalAlignment(horizontalPlacement);
 			_adDuplexAdControl->AdLoaded += ref new Windows::Foundation::EventHandler<BannerAdLoadedEventArgs^>([](Object^ s, BannerAdLoadedEventArgs^ e) { _Refreshed(AD_TYPE_AD_DUPLEX); });
 			_adDuplexAdControl->AdCovered += ref new Windows::Foundation::EventHandler<AdCoveredEventArgs^>([](Object^ s, AdCoveredEventArgs^ e) { _Error(AD_TYPE_AD_DUPLEX); });
 			_adDuplexAdControl->AdLoadingError += ref new Windows::Foundation::EventHandler<AdLoadingErrorEventArgs^>([](Object^ s, AdLoadingErrorEventArgs^ e) { _Error(AD_TYPE_AD_DUPLEX); });
@@ -80,7 +80,7 @@ inline void BannerAdManager::Initialise(Grid^ grid)
 			_grid->Children->Append(_adDuplexAdControl);
 		}
 #endif
-#if MICROSOFT_ENABLED
+#if BAM_MICROSOFT_ENABLED
 		if (IsAdType(adType, AD_TYPE_MICROSOFT) && _microsoftAdControl == nullptr)
 		{
 			_microsoftAdControl = ref new AdControl();
@@ -99,13 +99,13 @@ inline void BannerAdManager::Initialise(Grid^ grid)
 	};
 	_BannerAdSetVisibilityAction = [](wchar_t* adType, bool visible)
 	{
-#if AD_DUPLEX_ENABLED
+#if BAM_AD_DUPLEX_ENABLED
 		if (IsAdType(adType, AD_TYPE_AD_DUPLEX) && _adDuplexAdControl != nullptr)
 		{
 			_adDuplexAdControl->Visibility = visible ? Visibility::Visible : Visibility::Collapsed;
 		}
 #endif
-#if MICROSOFT_ENABLED
+#if BAM_MICROSOFT_ENABLED
 		if (IsAdType(adType, AD_TYPE_MICROSOFT) && _microsoftAdControl != nullptr)
 		{
 			_microsoftAdControl->Visibility = visible ? Visibility::Visible : Visibility::Collapsed;
@@ -114,7 +114,7 @@ inline void BannerAdManager::Initialise(Grid^ grid)
 	};
 	_BannerAdDestroyAction = [](wchar_t* adType)
 	{
-#if AD_DUPLEX_ENABLED
+#if BAM_AD_DUPLEX_ENABLED
 		if (IsAdType(adType, AD_TYPE_AD_DUPLEX) && _adDuplexAdControl != nullptr)
 		{
 			for (unsigned int i = 0; i < _grid->Children->Size; i++)
@@ -128,7 +128,7 @@ inline void BannerAdManager::Initialise(Grid^ grid)
 			}
 		}
 #endif
-#if MICROSOFT_ENABLED
+#if BAM_MICROSOFT_ENABLED
 		if (IsAdType(adType, AD_TYPE_MICROSOFT) && _microsoftAdControl != nullptr)
 		{
 			for (unsigned int i = 0; i < _grid->Children->Size; i++)
