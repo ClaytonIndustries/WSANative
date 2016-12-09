@@ -71,7 +71,7 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// Initialise the interstitial ad for the specified provider
         /// </summary>
-		/// <param name="adType">The type of ad to request</param>
+		/// <param name="adType">The ad network to initialise</param>
         /// <param name="appId">Your apps id</param>
         /// <param name="adUnitId">Your apps ad unit id (null or empty for Vungle)</param>
         public static void Initialise(WSAInterstitialAdType adType, string appId, string adUnitId)

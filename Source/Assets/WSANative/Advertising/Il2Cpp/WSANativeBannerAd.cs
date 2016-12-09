@@ -57,7 +57,7 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// Initialise the banner ad for the specified provider
         /// </summary>
-        /// <param name="adType">The type of ad to request</param>
+        /// <param name="adType">The ad network to initialise</param>
         /// <param name="appId">Your apps id</param>
         /// <param name="adUnitId">Your apps ad unit id</param>
         public static void Initialise(WSABannerAdType adType, string appId, string adUnitId)
@@ -80,8 +80,7 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// Create a banner ad
         /// </summary>
-        /// <param name="appId">Your apps id</param>
-        /// <param name="adUnitId">Your ad unit id</param>
+        /// <param name="adType">The ad type</param>
         /// <param name="width">Width of the ad</param>
         /// <param name="height">Height of the ad</param>
         /// <param name="verticalPlacement">Where should the ad be placed vertically</param>
@@ -104,6 +103,7 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// Show or hide the banner ad
         /// </summary>
+        /// <param name="adType">The ad type</param>
         /// <param name="visible">Should the ad be visible</param>
         public static void SetAdVisibility(WSABannerAdType adType, bool visible)
         {
@@ -116,6 +116,7 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// Destroy the banner ad
         /// </summary>
+        /// <param name="adType">The ad type</param>
         public static void DestroyAd(WSABannerAdType adType)
         {
             UnityEngine.WSA.Application.InvokeOnUIThread(() =>
