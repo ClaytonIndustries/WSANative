@@ -1,6 +1,6 @@
 #pragma once
 
-#define BAM_AD_DUPLEX_ENABLED 1
+#define BAM_AD_DUPLEX_ENABLED 0
 #define BAM_MICROSOFT_ENABLED 0
 
 #if BAM_AD_DUPLEX_ENABLED

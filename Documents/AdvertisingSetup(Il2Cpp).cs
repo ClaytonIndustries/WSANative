@@ -3,11 +3,11 @@ $(OutDir)\GameAssembly.lib
 
 #define GENERATED_PROJECT 1
 #include "..\Il2CppOutputProject\il2cppOutput\WSAAdvertisingBridge.h"
-#include "IntersitialAdManager.h"
+#include "InterstitialAdManager.h"
 #include "BannerAdManager.h"
 
 BannerAdManager::Initialise(m_DXSwapChainPanel);
-IntersitialAdManager::Initialise();
+InterstitialAdManager::Initialise();
 
 Enable 1 or more #defines to select ad networks
 

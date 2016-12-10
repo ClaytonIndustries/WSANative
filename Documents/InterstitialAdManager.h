@@ -11,7 +11,7 @@ using namespace VungleSDK;
 #endif
 using namespace UnityPlayer;
 
-ref class IntersitialAdManager
+ref class InterstitialAdManager
 {
 public:
 	static void Initialise();
@@ -33,22 +33,22 @@ private:
 
 #include "pch.h"
 
-const wchar_t* IntersitialAdManager::AD_TYPE_MICROSOFT = L"Microsoft";
-const wchar_t* IntersitialAdManager::AD_TYPE_VUNGLE = L"Vungle";
+const wchar_t* InterstitialAdManager::AD_TYPE_MICROSOFT = L"Microsoft";
+const wchar_t* InterstitialAdManager::AD_TYPE_VUNGLE = L"Vungle";
 
-AdCallbackWithAdType IntersitialAdManager::_Ready;
-AdCallbackWithAdType IntersitialAdManager::_Cancelled;
-AdCallbackWithAdType IntersitialAdManager::_Completed;
-AdCallbackWithAdType IntersitialAdManager::_Error;
+AdCallbackWithAdType InterstitialAdManager::_Ready;
+AdCallbackWithAdType InterstitialAdManager::_Cancelled;
+AdCallbackWithAdType InterstitialAdManager::_Completed;
+AdCallbackWithAdType InterstitialAdManager::_Error;
 
 #if IAM_MICROSOFT_ENABLED
-InterstitialAd^ IntersitialAdManager::_microsoftInterstitialAd;
+InterstitialAd^ InterstitialAdManager::_microsoftInterstitialAd;
 #endif
 #if IAM_VUNGLE_ENABLED
-VungleAd^ IntersitialAdManager::_vungleInterstitialAd;
+VungleAd^ InterstitialAdManager::_vungleInterstitialAd;
 #endif
 
-inline void IntersitialAdManager::Initialise()
+inline void InterstitialAdManager::Initialise()
 {
 	_InterstitialAdInitialiseAction = [](AdCallbackWithAdType ready, AdCallbackWithAdType cancelled, AdCallbackWithAdType completed, AdCallbackWithAdType error)
 	{
@@ -135,7 +135,7 @@ inline void IntersitialAdManager::Initialise()
 	};
 }
 
-inline bool IntersitialAdManager::IsAdType(const wchar_t* actual, const wchar_t* expected)
+inline bool InterstitialAdManager::IsAdType(const wchar_t* actual, const wchar_t* expected)
 {
 	return wcscmp(actual, expected) == 0;
 }
