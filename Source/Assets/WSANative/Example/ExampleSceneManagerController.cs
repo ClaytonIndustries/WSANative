@@ -163,6 +163,7 @@ public class ExampleSceneManagerController : MonoBehaviour
 
     public void CreateInterstitialAd()
     {
+#if ENABLE_DOTNET || ENABLE_IL2CPP
         WSANativeInterstitialAd.Initialise(WSAInterstitialAdType.Microsoft, "d25517cb-12d4-4699-8bdc-52040c712cab", "11389925");
         WSANativeInterstitialAd.AdReady += (adType) =>
         {
@@ -172,6 +173,7 @@ public class ExampleSceneManagerController : MonoBehaviour
             }
         };
         WSANativeInterstitialAd.RequestAd(WSAInterstitialAdType.Microsoft);
+#endif
     }
 
     public void CreateBannerAd()
