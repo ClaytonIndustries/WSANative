@@ -10,6 +10,11 @@ namespace CI.WSANative.Advertising
 {
     public class WSABannerAdSettings
     {
+        public WSABannerAdType AdType
+        {
+            get; set;
+        }
+
         public string AppId
         {
             get; set;

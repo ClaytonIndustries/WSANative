@@ -8,7 +8,7 @@ private void ConfigureMicrosoftInterstitalAd()
 	interstitialAd.ErrorOccurred += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.ErrorOccurred, WSAInterstitialAdType.Microsoft); };
 	interstitialAd.Completed += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.Completed, WSAInterstitialAdType.Microsoft); };
 	interstitialAd.Cancelled += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.Cancelled, WSAInterstitialAdType.Microsoft); };
-	WSANativeInterstitialAd._Request += (appId, adUnitId, adType) =>
+	WSANativeInterstitialAd._Request += (adType, appId, adUnitId) =>
 	{
 		if (adType == WSAInterstitialAdType.Microsoft)
 		{
@@ -30,7 +30,7 @@ private void ConfigureMicrosoftInterstitalAd()
 private void ConfigureVungleInterstitalAd()
 {
 	VungleAd interstitialAd = null;
-	WSANativeInterstitialAd._Request += (appId, adUnitId, adType) =>
+	WSANativeInterstitialAd._Request += (adType, appId, adUnitId) =>
 	{
 		if(adType == WSAInterstitialAdType.Vungle && interstitialAd == null)
 		{
@@ -69,6 +69,41 @@ private void ConfigureVungleInterstitalAd()
 			AppCallbacks.Instance.InvokeOnUIThread(async () =>
 			{
 				await interstitialAd.PlayAdAsync(new AdConfig());
+			}, false);
+		}
+	};
+}
+
+private void ConfigureAdDuplexInterstitalAd()
+{
+	InterstitialAd interstitialAd = null;
+	WSANativeInterstitialAd._Request += (adType, appId, adUnitId) =>
+	{
+		if (adType == WSAInterstitialAdType.AdDuplex)
+		{
+			AppCallbacks.Instance.InvokeOnUIThread(async () =>
+			{ 
+				if (interstitialAd == null)
+				{
+					AdDuplexClient.Initialize(appId);
+					interstitialAd = new InterstitialAd(adUnitId);
+					interstitialAd.AdLoaded += (s, e) =>  { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.AdReady, WSAInterstitialAdType.AdDuplex); };
+					interstitialAd.AdClosed += (s, e) =>  { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.Completed, WSAInterstitialAdType.AdDuplex); };
+					interstitialAd.AdLoadingError += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.ErrorOccurred, WSAInterstitialAdType.AdDuplex); };
+					interstitialAd.NoAd += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.ErrorOccurred, WSAInterstitialAdType.AdDuplex); };
+				}
+
+				await interstitialAd.LoadAdAsync();
+			}, false);
+		}
+	};
+	WSANativeInterstitialAd._Show += (adType) =>
+	{
+		if (adType == WSAInterstitialAdType.AdDuplex)
+		{
+			AppCallbacks.Instance.InvokeOnUIThread(async () =>
+			{
+				await interstitialAd.ShowAdAsync();
 			}, false);
 		}
 	};

@@ -54,12 +54,15 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// For internal use only
         /// </summary>
-        public static Action<string, string, WSAInterstitialAdType> _Request;
+        public static Action<WSAInterstitialAdType, string, string> _Request;
 
         /// <summary>
         /// For internal use only
         /// </summary>
         public static Action<WSAInterstitialAdType> _Show;
+
+        private static string _adDuplexAppId;
+        private static string _adDuplexAdUnitId;
 
         private static string _msAppId;
         private static string _msAdUnitId;
@@ -74,15 +77,20 @@ namespace CI.WSANative.Advertising
         /// <param name="adUnitId">Your apps ad unit id (null or empty for Vungle)</param>
         public static void Initialise(WSAInterstitialAdType adType, string appId, string adUnitId)
         {
-			if(adType == WSAInterstitialAdType.Microsoft)
-			{
-				_msAppId = appId;
-				_msAdUnitId = adUnitId;
-			}
-			else
-			{
-				_vungleAppId = appId;
-			}
+            switch(adType)
+            {
+                case WSAInterstitialAdType.AdDuplex:
+                    _adDuplexAppId = appId;
+                    _adDuplexAdUnitId = adUnitId;
+                    break;
+                case WSAInterstitialAdType.Microsoft:
+                    _msAppId = appId;
+                    _msAdUnitId = adUnitId;
+                    break;
+                case WSAInterstitialAdType.Vungle:
+                    _vungleAppId = appId;
+                    break;
+            }
         }
 
         /// <summary>
@@ -95,13 +103,17 @@ namespace CI.WSANative.Advertising
         {
             if(_Request != null)
             {
-                if (adType == WSAInterstitialAdType.Microsoft)
+                switch (adType)
                 {
-                    _Request(_msAppId, _msAdUnitId, adType);
-                }
-                else
-                {
-                    _Request(_vungleAppId, string.Empty, adType);
+                    case WSAInterstitialAdType.AdDuplex:
+                        _Request(adType, _adDuplexAppId, _adDuplexAdUnitId);
+                        break;
+                    case WSAInterstitialAdType.Microsoft:
+                        _Request(adType, _msAppId, _msAdUnitId);
+                        break;
+                    case WSAInterstitialAdType.Vungle:
+                        _Request(adType, _vungleAppId, string.Empty);
+                        break;
                 }
             }
         }
@@ -203,6 +215,9 @@ namespace CI.WSANative.Advertising
             get; set;
         }
 
+        private static string _adDuplexAppId;
+        private static string _adDuplexAdUnitId;
+
         private static string _msAppId;
         private static string _msAdUnitId;
 
@@ -218,6 +233,10 @@ namespace CI.WSANative.Advertising
         {
             switch(adType)
             {
+                case WSAInterstitialAdType.AdDuplex:
+                    _adDuplexAppId = appId;
+                    _adDuplexAdUnitId = adUnitId;
+                    break;
                 case WSAInterstitialAdType.Microsoft:
                     _msAppId = appId;
                     _msAdUnitId = adUnitId;
@@ -238,13 +257,17 @@ namespace CI.WSANative.Advertising
         /// <param name="adType">The type of ad to request</param>
         public static void RequestAd(WSAInterstitialAdType adType)
         {
-            if (adType == WSAInterstitialAdType.Microsoft)
+            switch (adType)
             {
-                _InterstitialAdRequest(adType.ToString(), _msAppId, _msAdUnitId);
-            }
-            else if(adType == WSAInterstitialAdType.Vungle)
-            {
-                _InterstitialAdRequest(adType.ToString(), _vungleAppId, string.Empty);
+                case WSAInterstitialAdType.AdDuplex:
+                    _InterstitialAdRequest(adType.ToString(), _adDuplexAppId, _adDuplexAdUnitId);
+                    break;
+                case WSAInterstitialAdType.Microsoft:
+                    _InterstitialAdRequest(adType.ToString(), _msAppId, _msAdUnitId);
+                    break;
+                case WSAInterstitialAdType.Vungle:
+                    _InterstitialAdRequest(adType.ToString(), _vungleAppId, string.Empty);
+                    break;
             }
         }
 
@@ -295,8 +318,12 @@ namespace CI.WSANative.Advertising
         }
 
         private static WSAInterstitialAdType GetAdType(string adType)
-        {
-            if(adType == WSAInterstitialAdType.Microsoft.ToString())
+        {     
+            if(adType == WSAInterstitialAdType.AdDuplex.ToString())
+            {
+                return WSAInterstitialAdType.AdDuplex;
+            }
+            else if(adType == WSAInterstitialAdType.Microsoft.ToString())
             {
                 return WSAInterstitialAdType.Microsoft;
             }
