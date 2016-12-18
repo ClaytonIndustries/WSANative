@@ -10,6 +10,8 @@ using System;
 
 namespace CI.WSANative.Advertising
 {
+    [Obsolete(@"WSANativeMediatorAd is now depeciated and may be removed in a future release. WSANativeBannerAd can now be configured 
+        to use different ad networks and should be used instead. See the online docs for more info")]
     public static class WSANativeMediatorAd
     {
         /// <summary>
