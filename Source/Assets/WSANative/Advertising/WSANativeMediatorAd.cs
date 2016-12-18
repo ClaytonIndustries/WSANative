@@ -10,8 +10,10 @@ using System;
 
 namespace CI.WSANative.Advertising
 {
-    [Obsolete(@"WSANativeMediatorAd is now depeciated and may be removed in a future release. WSANativeBannerAd can now be configured 
+#if UNITY_WSA_10_0
+    [Obsolete(@"WSANativeMediatorAd is now depeciated for Windows 10. WSANativeBannerAd can now be configured 
         to use different ad networks and should be used instead. See the online docs for more info")]
+#endif
     public static class WSANativeMediatorAd
     {
         /// <summary>
