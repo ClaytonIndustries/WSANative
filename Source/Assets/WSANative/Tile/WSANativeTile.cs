@@ -106,7 +106,7 @@ namespace CI.WSANative.Tile
             IEnumerable<string> existingTiles = new List<string>();
 
 #if NETFX_CORE
-            IReadOnlyList<SecondaryTile> tiles = SecondaryTile.FindAllAsync().GetResults();
+            IReadOnlyList<SecondaryTile> tiles = SecondaryTile.FindAllAsync().AsTask().Result;
 
             if (tiles != null)
             {
