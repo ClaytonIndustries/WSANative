@@ -22,15 +22,7 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// Raised when a new ad is received
         /// </summary>
-        public static Action AdRefreshed
-        {
-            get; set;
-        }
-
-        /// <summary>
-        /// Raised when the user interacts with an ad
-        /// </summary>
-        public static Action IsEngagedChanged
+        public static Action<WSABannerAdType> AdRefreshed
         {
             get; set;
         }
@@ -38,7 +30,7 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// Raised when the ad encounters an error in operations
         /// </summary>
-        public static Action ErrorOccurred
+        public static Action<WSABannerAdType> ErrorOccurred
         {
             get; set;
         }
@@ -51,102 +43,129 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// For internal use only
         /// </summary>
-        public static Action<bool> SetVisiblity;
+        public static Action<WSABannerAdType, bool> SetVisiblity;
 
         /// <summary>
         /// For internal use only
         /// </summary>
-        public static Action Destroy;
+        public static Action<WSABannerAdType> Destroy;
+
+        private static string _adDuplexAppId;
+        private static string _adDuplexAdUnitId;
+
+        private static string _msAppId;
+        private static string _msAdUnitId;
 
         /// <summary>
-        /// For internal use only
+        /// Initialise the banner ad for the specified provider
         /// </summary>
-        public static Func<bool> IsShowingAd;
+        /// <param name="adType">The ad network to initialise</param>
+        /// <param name="appId">Your apps id</param>
+        /// <param name="adUnitId">Your apps ad unit id</param>
+        public static void Initialise(WSABannerAdType adType, string appId, string adUnitId)
+        {
+            switch (adType)
+            {
+                case WSABannerAdType.AdDuplex:
+                    _adDuplexAppId = appId;
+                    _adDuplexAdUnitId = adUnitId;
+                    break;
+                case WSABannerAdType.Microsoft:
+                    _msAppId = appId;
+                    _msAdUnitId = adUnitId;
+                    break;
+            }
+        }
 
         /// <summary>
         /// Create a banner ad
         /// </summary>
-        /// <param name="appId">Your apps id</param>
-        /// <param name="adUnitId">Your ad unit id</param>
+        /// <param name="adType">The ad type</param>
         /// <param name="width">Width of the ad</param>
         /// <param name="height">Height of the ad</param>
         /// <param name="verticalPlacement">Where should the ad be placed vertically</param>
         /// <param name="horizontalPlacement">Where should the ad be placed horizontally</param>
-        public static void CreatAd(string appId, string adUnitId, int width, int height, WSAAdVerticalPlacement verticalPlacement, WSAAdHorizontalPlacement horizontalPlacement)
+        public static void CreatAd(WSABannerAdType adType, int width, int height, WSAAdVerticalPlacement verticalPlacement, WSAAdHorizontalPlacement horizontalPlacement)
         {
-#if NETFX_CORE
             if (Create != null)
             {
                 UnityEngine.WSA.Application.InvokeOnUIThread(() =>
                 {
-                    Create(new WSABannerAdSettings() { AppId = appId, AdUnitId = adUnitId, Width = width, Height = height, VerticalPlacement = verticalPlacement, HorizontalPlacement = horizontalPlacement });
+                    if (adType == WSABannerAdType.AdDuplex)
+                    {
+                        Create(new WSABannerAdSettings()
+                        {
+                            AdType = adType,
+                            AppId = _adDuplexAppId,
+                            AdUnitId = _adDuplexAdUnitId,
+                            Width = width,
+                            Height = height,
+                            VerticalPlacement = verticalPlacement,
+                            HorizontalPlacement = horizontalPlacement
+                        });
+                    }
+                    else if (adType == WSABannerAdType.Microsoft)
+                    {
+                        Create(new WSABannerAdSettings()
+                        {
+                            AdType = adType,
+                            AppId = _msAppId,
+                            AdUnitId = _msAdUnitId,
+                            Width = width,
+                            Height = height,
+                            VerticalPlacement = verticalPlacement,
+                            HorizontalPlacement = horizontalPlacement
+                        });
+                    }
                 }, false);
             }
-#endif
         }
 
         /// <summary>
         /// Show or hide the banner ad
         /// </summary>
+        /// <param name="adType">The ad type</param>
         /// <param name="visible">Should the ad be visible</param>
-        public static void SetAdVisibility(bool visible)
+        public static void SetAdVisibility(WSABannerAdType adType, bool visible)
         {
-#if NETFX_CORE
             if (SetVisiblity != null)
             {
                 UnityEngine.WSA.Application.InvokeOnUIThread(() =>
                 {
-                    SetVisiblity(visible);
+                    SetVisiblity(adType, visible);
                 }, false);
             }
-#endif
         }
 
         /// <summary>
         /// Destroy the banner ad
         /// </summary>
-        public static void DestroyAd()
+        /// <param name="adType">The ad type</param>
+        public static void DestroyAd(WSABannerAdType adType)
         {
-#if NETFX_CORE
             if (Destroy != null)
             {
                 UnityEngine.WSA.Application.InvokeOnUIThread(() =>
                 {
-                    Destroy();
+                    Destroy(adType);
                 }, false);
             }
-#endif
-        }
-
-        /// <summary>
-        /// Is an ad currently being displayed
-        /// </summary>
-        /// <returns>Value indicating whether an ad is being shown</returns>
-        public static bool HasAd()
-        {
-            if (IsShowingAd != null)
-            {
-                return IsShowingAd();
-            }
-
-            return false;
         }
 
         /// <summary>
         /// For internal use only
         /// </summary>
         /// <param name="action"></param>
-        public static void RaiseActionOnAppThread(Action action)
+        /// <param name="adType"></param>
+        public static void RaiseActionOnAppThread(Action<WSABannerAdType> action, WSABannerAdType adType)
         {
-#if NETFX_CORE
             if (action != null)
             {
                 UnityEngine.WSA.Application.InvokeOnAppThread(() =>
                 {
-                    action();
+                    action(adType);
                 }, false);
             }
-#endif
         }
     }
 }
@@ -204,7 +223,7 @@ namespace CI.WSANative.Advertising
         private static string _msAdUnitId;
 
         private static string _adDuplexAppId;
-        private static string _adDuplexAppUnitId;
+        private static string _adDuplexAdUnitId;
 
         /// <summary>
         /// Initialise the banner ad for the specified provider
@@ -218,7 +237,7 @@ namespace CI.WSANative.Advertising
             {
                 case WSABannerAdType.AdDuplex:
                     _adDuplexAppId = appId;
-                    _adDuplexAppUnitId = adUnitId;
+                    _adDuplexAdUnitId = adUnitId;
                     break;
                 case WSABannerAdType.Microsoft:
                     _msAppId = appId;
@@ -243,7 +262,7 @@ namespace CI.WSANative.Advertising
             {
                 if (adType == WSABannerAdType.AdDuplex)
                 {
-                    _BannerAdCreate(adType.ToString(), _adDuplexAppId, _adDuplexAppUnitId, width, height, verticalPlacement.ToString(), horizontalPlacement.ToString());
+                    _BannerAdCreate(adType.ToString(), _adDuplexAppId, _adDuplexAdUnitId, width, height, verticalPlacement.ToString(), horizontalPlacement.ToString());
                 }
                 else if(adType == WSABannerAdType.Microsoft)
                 {

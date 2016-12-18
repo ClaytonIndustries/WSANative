@@ -109,55 +109,98 @@ private void ConfigureAdDuplexInterstitalAd()
 	};
 }
 
-private void ConfigureBannerAd()
+private void ConfigureMicrosoftBannerAd()
 {
-    AdControl adControl = null;
-    WSANativeBannerAd.Create += (bannerAdSettings) =>
-    {
-        if (adControl == null)
-        {
-            adControl = new AdControl();
-            adControl.ApplicationId = bannerAdSettings.AppId;
-            adControl.AdUnitId = bannerAdSettings.AdUnitId;
-            adControl.Height = bannerAdSettings.Height;
-            adControl.VerticalAlignment = bannerAdSettings.VerticalPlacement == WSAAdVerticalPlacement.Top ? VerticalAlignment.Top 
+	AdControl adControl = null;
+	WSANativeBannerAd.Create += (bannerAdSettings) =>
+	{
+		if (bannerAdSettings.AdType == WSABannerAdType.Microsoft && adControl == null)
+		{
+			adControl = new AdControl();
+			adControl.ApplicationId = bannerAdSettings.AppId;
+			adControl.AdUnitId = bannerAdSettings.AdUnitId;
+			adControl.Width = bannerAdSettings.Width;
+			adControl.Height = bannerAdSettings.Height;
+			adControl.IsAutoRefreshEnabled = true;
+			adControl.VerticalAlignment = bannerAdSettings.VerticalPlacement == WSAAdVerticalPlacement.Top ? VerticalAlignment.Top
 				: bannerAdSettings.VerticalPlacement == WSAAdVerticalPlacement.Bottom ? VerticalAlignment.Bottom : VerticalAlignment.Center;
-            adControl.HorizontalAlignment = bannerAdSettings.HorizontalPlacement == WSAAdHorizontalPlacement.Left ? HorizontalAlignment.Left
+			adControl.HorizontalAlignment = bannerAdSettings.HorizontalPlacement == WSAAdHorizontalPlacement.Left ? HorizontalAlignment.Left
 				: bannerAdSettings.HorizontalPlacement == WSAAdHorizontalPlacement.Right ? HorizontalAlignment.Right : HorizontalAlignment.Center;
-            adControl.Width = bannerAdSettings.Width;
-            adControl.IsAutoRefreshEnabled = true;
-            adControl.AdRefreshed += (s, e) => { WSANativeBannerAd.RaiseActionOnAppThread(WSANativeBannerAd.AdRefreshed); };
-            adControl.IsEngagedChanged += (s, e) => { WSANativeBannerAd.RaiseActionOnAppThread(WSANativeBannerAd.IsEngagedChanged); };
-            adControl.ErrorOccurred += (s, e) => { WSANativeBannerAd.RaiseActionOnAppThread(WSANativeBannerAd.ErrorOccurred); };
-            GetSwapChainPanel().Children.Add(adControl);
-        }
-    };
-    WSANativeBannerAd.SetVisiblity += (visible) =>
-    {
-        if (adControl != null)
-        {
-            adControl.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
-        }
-    };
-    WSANativeBannerAd.Destroy += () =>
-    {
-        if (adControl != null)
-        {
-            foreach (UIElement child in GetSwapChainPanel().Children)
-            {
-                if (child == adControl)
-                {
-                    GetSwapChainPanel().Children.Remove(child);
-                    adControl = null;
-                    break;
-                }
-            }
-        }
-    };
-    WSANativeBannerAd.IsShowingAd += () =>
-    {
-        return adControl.HasAd;
-    };
+			adControl.AdRefreshed += (s, e) => { WSANativeBannerAd.RaiseActionOnAppThread(WSANativeBannerAd.AdRefreshed, WSABannerAdType.Microsoft); };
+			adControl.ErrorOccurred += (s, e) => { WSANativeBannerAd.RaiseActionOnAppThread(WSANativeBannerAd.ErrorOccurred, WSABannerAdType.Microsoft); };
+			GetSwapChainPanel().Children.Add(adControl);
+		}
+	};
+	WSANativeBannerAd.SetVisiblity += (adType, visible) =>
+	{
+		if (adType == WSABannerAdType.Microsoft && adControl != null)
+		{
+			adControl.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+		}
+	};
+	WSANativeBannerAd.Destroy += (adType) =>
+	{
+		if (adType == WSABannerAdType.Microsoft && adControl != null)
+		{
+			foreach (UIElement child in GetSwapChainPanel().Children)
+			{
+				if (child == adControl)
+				{
+					GetSwapChainPanel().Children.Remove(child);
+					adControl = null;
+					break;
+				}
+			}
+		}
+	};
+}
+
+private void ConfigureAdDuplexBannerAd()
+{
+	AdControl adControl = null;
+	WSANativeBannerAd.Create += (bannerAdSettings) =>
+	{
+		if (bannerAdSettings.AdType == WSABannerAdType.AdDuplex && adControl == null)
+		{
+			adControl = new AdControl();
+			adControl.AppKey = bannerAdSettings.AppId;
+			adControl.AdUnitId = bannerAdSettings.AdUnitId;
+			adControl.Width = bannerAdSettings.Width;
+			adControl.Height = bannerAdSettings.Height;
+			adControl.RefreshInterval = 30;
+			adControl.VerticalAlignment = bannerAdSettings.VerticalPlacement == WSAAdVerticalPlacement.Top ? VerticalAlignment.Top
+				: bannerAdSettings.VerticalPlacement == WSAAdVerticalPlacement.Bottom ? VerticalAlignment.Bottom : VerticalAlignment.Center;
+			adControl.HorizontalAlignment = bannerAdSettings.HorizontalPlacement == WSAAdHorizontalPlacement.Left ? HorizontalAlignment.Left
+				: bannerAdSettings.HorizontalPlacement == WSAAdHorizontalPlacement.Right ? HorizontalAlignment.Right : HorizontalAlignment.Center;
+			adControl.AdLoaded += (s, e) => { WSANativeBannerAd.RaiseActionOnAppThread(WSANativeBannerAd.AdRefreshed, WSABannerAdType.AdDuplex); };
+			adControl.AdCovered += (s, e) => { WSANativeBannerAd.RaiseActionOnAppThread(WSANativeBannerAd.ErrorOccurred, WSABannerAdType.AdDuplex); };
+			adControl.AdLoadingError += (s, e) => { WSANativeBannerAd.RaiseActionOnAppThread(WSANativeBannerAd.ErrorOccurred, WSABannerAdType.AdDuplex); };
+			adControl.NoAd += (s, e) => { WSANativeBannerAd.RaiseActionOnAppThread(WSANativeBannerAd.ErrorOccurred, WSABannerAdType.AdDuplex); };
+			GetSwapChainPanel().Children.Add(adControl);
+		}
+	};
+	WSANativeBannerAd.SetVisiblity += (adType, visible) =>
+	{
+		if (adType == WSABannerAdType.AdDuplex && adControl != null)
+		{
+			adControl.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+		}
+	};
+	WSANativeBannerAd.Destroy += (adType) =>
+	{
+		if (adType == WSABannerAdType.AdDuplex && adControl != null)
+		{
+			foreach (UIElement child in GetSwapChainPanel().Children)
+			{
+				if (child == adControl)
+				{
+					GetSwapChainPanel().Children.Remove(child);
+					adControl = null;
+					break;
+				}
+			}
+		}
+	};
 }
 
 private void ConfigureMediatorAd()
