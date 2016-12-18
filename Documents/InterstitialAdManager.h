@@ -23,10 +23,10 @@ public:
 	static void Initialise();
 private:
 #if IAM_AD_DUPLEX_ENABLED
-	static InterstitialAd^ _adDuplexInterstitialAd;
+	static AdDuplex::InterstitialAd^ _adDuplexInterstitialAd;
 #endif
 #if IAM_MICROSOFT_ENABLED
-	static InterstitialAd^ _microsoftInterstitialAd;
+	static Microsoft::Advertising::WinRT::UI::InterstitialAd^ _microsoftInterstitialAd;
 #endif
 #if IAM_VUNGLE_ENABLED
 	static VungleAd^ _vungleInterstitialAd;
@@ -53,10 +53,10 @@ AdCallbackWithAdType InterstitialAdManager::_Completed;
 AdCallbackWithAdType InterstitialAdManager::_Error;
 
 #if IAM_AD_DUPLEX_ENABLED
-InterstitialAd^ InterstitialAdManager::_adDuplexInterstitialAd;
+AdDuplex::InterstitialAd^ InterstitialAdManager::_adDuplexInterstitialAd;
 #endif
 #if IAM_MICROSOFT_ENABLED
-InterstitialAd^ InterstitialAdManager::_microsoftInterstitialAd;
+Microsoft::Advertising::WinRT::UI::InterstitialAd^ InterstitialAdManager::_microsoftInterstitialAd;
 #endif
 #if IAM_VUNGLE_ENABLED
 VungleAd^ InterstitialAdManager::_vungleInterstitialAd;
@@ -80,8 +80,8 @@ inline void InterstitialAdManager::Initialise()
 			{
 				if(_adDuplexInterstitialAd == nullptr)
 				{
-					AdDuplexClient::Initialize(appId);
-					_adDuplexInterstitialAd = ref new InterstitialAd(adUnitId);
+					AdDuplexClient::Initialize(ref new Platform::String(appId));
+					_adDuplexInterstitialAd = ref new AdDuplex::InterstitialAd(ref new Platform::String(adUnitId));
 					_adDuplexInterstitialAd->AdLoaded += ref new Windows::Foundation::EventHandler<InterstitialAdLoadedEventArgs^>([](Object^ s, InterstitialAdLoadedEventArgs^ e) { _Ready(AD_TYPE_AD_DUPLEX); });
 					_adDuplexInterstitialAd->AdClosed += ref new Windows::Foundation::EventHandler<InterstitialAdLoadedEventArgs^>([](Object^ s, InterstitialAdLoadedEventArgs^ e) { _Completed(AD_TYPE_AD_DUPLEX); });
 					_adDuplexInterstitialAd->AdLoadingError += ref new Windows::Foundation::EventHandler<AdLoadingErrorEventArgs^>([](Object^ s, AdLoadingErrorEventArgs^ e) { _Error(AD_TYPE_AD_DUPLEX); });
@@ -97,7 +97,7 @@ inline void InterstitialAdManager::Initialise()
 		{
 			if (_microsoftInterstitialAd == nullptr)
 			{
-				_microsoftInterstitialAd = ref new InterstitialAd();
+				_microsoftInterstitialAd = ref new Microsoft::Advertising::WinRT::UI::InterstitialAd();
 				_microsoftInterstitialAd->AdReady += ref new Windows::Foundation::EventHandler<Object^>([](Object^ s, Object^ e) { _Ready(AD_TYPE_MICROSOFT); });
 				_microsoftInterstitialAd->Cancelled += ref new Windows::Foundation::EventHandler<Object^>([](Object^ s, Object^ e) { _Cancelled(AD_TYPE_MICROSOFT); });
 				_microsoftInterstitialAd->Completed += ref new Windows::Foundation::EventHandler<Object^>([](Object^ s, Object^ e) { _Completed(AD_TYPE_MICROSOFT); });
@@ -157,21 +157,15 @@ inline void InterstitialAdManager::Initialise()
 		}
 #endif
 #if IAM_MICROSOFT_ENABLED
-		if (IsAdType(adType, AD_TYPE_MICROSOFT) && _microsoftInterstitialAd != nullptr)
+		if (IsAdType(adType, AD_TYPE_MICROSOFT) && _microsoftInterstitialAd != nullptr && _microsoftInterstitialAd->State == InterstitialAdState::Ready)
 		{
-			AppCallbacks::Instance->InvokeOnUIThread(ref new AppCallbackItem([]()
-			{
-				_microsoftInterstitialAd->Show();
-			}), false);
+			_microsoftInterstitialAd->Show();
 		}
 #endif
 #if IAM_VUNGLE_ENABLED
 		if (IsAdType(adType, AD_TYPE_VUNGLE) && _vungleInterstitialAd != nullptr && _vungleInterstitialAd->AdPlayable)
 		{
-			AppCallbacks::Instance->InvokeOnUIThread(ref new AppCallbackItem([]()
-			{
-				_vungleInterstitialAd->PlayAdAsync(ref new AdConfig());
-			}), false);
+			_vungleInterstitialAd->PlayAdAsync(ref new AdConfig());
 		}
 #endif
 	};

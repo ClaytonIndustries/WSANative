@@ -4,9 +4,9 @@
 
 #if BAM_AD_DUPLEX_ENABLED
 //Uncomment the correct using
-//using AdDuplexAd = AdDuplex;                                    (Windows 10)
-//using AdDuplexAd = AdDuplex.Universal.Controls.Win.XAML;        (Windows 8.1 Desktop)
-//using AdDuplexAd = AdDuplex.Universal.Controls.WinPhone.XAML;   (Windows 8.1 Mobile)
+//using AdDuplexAd = AdDuplex;                                    //(Windows 10)
+//using AdDuplexAd = AdDuplex.Universal.Controls.Win.XAML;        //(Windows 8.1 Desktop)
+//using AdDuplexAd = AdDuplex.Universal.Controls.WinPhone.XAML;   //(Windows 8.1 Mobile)
 #endif
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

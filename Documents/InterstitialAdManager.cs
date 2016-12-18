@@ -36,6 +36,7 @@ namespace CI.WSANative.Advertising
                         if (interstitialAd == null)
                         {
                             AdDuplex.AdDuplexClient.Initialize(appId);
+							await Task.Delay(500);
                             interstitialAd = new AdDuplex.InterstitialAd(adUnitId);
                             interstitialAd.AdLoaded += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.AdReady, WSAInterstitialAdType.AdDuplex); };
                             interstitialAd.AdClosed += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.Completed, WSAInterstitialAdType.AdDuplex); };
@@ -49,7 +50,7 @@ namespace CI.WSANative.Advertising
             };
             WSANativeInterstitialAd._Show += (adType) =>
             {
-                if (adType == WSAInterstitialAdType.AdDuplex)
+                if (adType == WSAInterstitialAdType.AdDuplex && interstitialAd != null)
                 {
                     AppCallbacks.Instance.InvokeOnUIThread(async () =>
                     {
@@ -76,7 +77,7 @@ namespace CI.WSANative.Advertising
 	        };
 	        WSANativeInterstitialAd._Show += (adType) =>
 	        {
-		        if (adType == WSAInterstitialAdType.Microsoft && interstitialAd.State == Microsoft.Advertising.WinRT.UI.InterstitialAdState.Ready)
+		        if (adType == WSAInterstitialAdType.Microsoft && interstitialAd != null && interstitialAd.State == Microsoft.Advertising.WinRT.UI.InterstitialAdState.Ready)
 		        {
 			        AppCallbacks.Instance.InvokeOnUIThread(() =>
 			        {
