@@ -1,4 +1,4 @@
-﻿Windows Store Native (v1.19)
+﻿Windows Store Native (v1.20)
 ----------------------------
 
 Thank you for downloading Windows Store Native we hope you enjoy using it!
@@ -21,12 +21,13 @@ Windows Store - Configuring test products
 
 When in test mode products and info about your app are defined in an xml file called WindowsStoreProxy.xml which can be found at C:\Users\<username>\AppData\Local\Packages\<app package folder>\LocalState\Microsoft\Windows Store\ApiData\WindowsStoreProxy.xml. If the file isn't there you can copy one from the website.
 Once you have build your windows store solution you can copy the file to the Assets folder (this is the Assets folder in the solution that is created when you do a build from Unity).
-Then call WSANativeStore.ReloadSimulator when you app starts up to configure the simulated store.
+Then call WSANativeStore.ReloadSimulator when your app starts up to configure the simulated store.
 
 ------------------------------------------------------------------------------------------------------------------------
 
 Advertising:
 Banner:
+WSANativeBannerAd.Initialise
 WSANativeBannerAd.CreatAd
 WSANativeBannerAd.SetVisibility
 WSANativeBannerAd.DestroyAd
