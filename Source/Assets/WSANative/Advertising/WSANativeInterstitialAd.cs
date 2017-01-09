@@ -77,7 +77,7 @@ namespace CI.WSANative.Advertising
         /// <param name="adUnitId">Your apps ad unit id (null or empty for Vungle)</param>
         public static void Initialise(WSAInterstitialAdType adType, string appId, string adUnitId)
         {
-            switch(adType)
+            switch (adType)
             {
                 case WSAInterstitialAdType.AdDuplex:
                     _adDuplexAppId = appId;
@@ -231,7 +231,7 @@ namespace CI.WSANative.Advertising
         /// <param name="adUnitId">Your apps ad unit id (null or empty for Vungle)</param>
         public static void Initialise(WSAInterstitialAdType adType, string appId, string adUnitId)
         {
-            switch(adType)
+            switch (adType)
             {
                 case WSAInterstitialAdType.AdDuplex:
                     _adDuplexAppId = appId;
