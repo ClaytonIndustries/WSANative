@@ -87,6 +87,7 @@ namespace CI.WSANative.Advertising
         /// <param name="horizontalPlacement">Where should the ad be placed horizontally</param>
         public static void CreatAd(WSABannerAdType adType, int width, int height, WSAAdVerticalPlacement verticalPlacement, WSAAdHorizontalPlacement horizontalPlacement)
         {
+#if NETFX_CORE
             if (Create != null)
             {
                 UnityEngine.WSA.Application.InvokeOnUIThread(() =>
@@ -119,6 +120,7 @@ namespace CI.WSANative.Advertising
                     }
                 }, false);
             }
+#endif
         }
 
         /// <summary>
@@ -128,6 +130,7 @@ namespace CI.WSANative.Advertising
         /// <param name="visible">Should the ad be visible</param>
         public static void SetAdVisibility(WSABannerAdType adType, bool visible)
         {
+#if NETFX_CORE
             if (SetVisiblity != null)
             {
                 UnityEngine.WSA.Application.InvokeOnUIThread(() =>
@@ -135,6 +138,7 @@ namespace CI.WSANative.Advertising
                     SetVisiblity(adType, visible);
                 }, false);
             }
+#endif
         }
 
         /// <summary>
@@ -143,6 +147,7 @@ namespace CI.WSANative.Advertising
         /// <param name="adType">The ad type</param>
         public static void DestroyAd(WSABannerAdType adType)
         {
+#if NETFX_CORE
             if (Destroy != null)
             {
                 UnityEngine.WSA.Application.InvokeOnUIThread(() =>
@@ -150,6 +155,7 @@ namespace CI.WSANative.Advertising
                     Destroy(adType);
                 }, false);
             }
+#endif
         }
 
         /// <summary>
@@ -159,6 +165,7 @@ namespace CI.WSANative.Advertising
         /// <param name="adType"></param>
         public static void RaiseActionOnAppThread(Action<WSABannerAdType> action, WSABannerAdType adType)
         {
+#if NETFX_CORE
             if (action != null)
             {
                 UnityEngine.WSA.Application.InvokeOnAppThread(() =>
@@ -166,6 +173,7 @@ namespace CI.WSANative.Advertising
                     action(adType);
                 }, false);
             }
+#endif
         }
     }
 }
@@ -258,6 +266,7 @@ namespace CI.WSANative.Advertising
         /// <param name="horizontalPlacement">Where should the ad be placed horizontally</param>
         public static void CreatAd(WSABannerAdType adType, int width, int height, WSAAdVerticalPlacement verticalPlacement, WSAAdHorizontalPlacement horizontalPlacement)
         {
+#if NETFX_CORE
             UnityEngine.WSA.Application.InvokeOnUIThread(() =>
             {
                 if (adType == WSABannerAdType.AdDuplex)
@@ -269,6 +278,7 @@ namespace CI.WSANative.Advertising
                     _BannerAdCreate(adType.ToString(), _msAppId, _msAdUnitId, width, height, verticalPlacement.ToString(), horizontalPlacement.ToString());
                 }
             }, false);
+#endif
         }
 
         /// <summary>
@@ -278,10 +288,12 @@ namespace CI.WSANative.Advertising
         /// <param name="visible">Should the ad be visible</param>
         public static void SetAdVisibility(WSABannerAdType adType, bool visible)
         {
+#if NETFX_CORE
             UnityEngine.WSA.Application.InvokeOnUIThread(() =>
             {
                 _BannerAdSetVisibility(adType.ToString(), visible);
             }, false);
+#endif
         }
 
         /// <summary>
@@ -290,10 +302,12 @@ namespace CI.WSANative.Advertising
         /// <param name="adType">The ad type</param>
         public static void DestroyAd(WSABannerAdType adType)
         {
+#if NETFX_CORE
             UnityEngine.WSA.Application.InvokeOnUIThread(() =>
             {
                 _BannerAdDestroy(adType.ToString());
             }, false);
+#endif
         }
 
 
