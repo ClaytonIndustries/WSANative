@@ -178,14 +178,8 @@ public class ExampleSceneManagerController : MonoBehaviour
 
     public void CreateBannerAd()
     {
-#if ENABLE_DOTNET
         WSANativeBannerAd.Initialise(WSABannerAdType.Microsoft, "3f83fe91-d6be-434d-a0ae-7351c5a997f1", "10865270");
         WSANativeBannerAd.CreatAd(WSABannerAdType.Microsoft, 728, 90, WSAAdVerticalPlacement.Top, WSAAdHorizontalPlacement.Centre);
-#endif
-#if ENABLE_IL2CPP
-        WSANativeBannerAd.Initialise(WSABannerAdType.Microsoft, "3f83fe91-d6be-434d-a0ae-7351c5a997f1", "10865270");
-        WSANativeBannerAd.CreatAd(WSABannerAdType.Microsoft, 728, 90, WSAAdVerticalPlacement.Top, WSAAdHorizontalPlacement.Centre);
-#endif
     }
 
     public void CreateMediatedAd()
