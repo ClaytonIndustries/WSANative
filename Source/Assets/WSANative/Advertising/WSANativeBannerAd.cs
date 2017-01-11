@@ -12,7 +12,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#if ENABLE_IL2CPP
+#if ENABLE_IL2CPP && NETFX_CORE
 using System;
 using System.Runtime.InteropServices;
 using AOT;
