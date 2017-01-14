@@ -1,8 +1,8 @@
 ﻿using System;
-using CI.WSANative.Dispatcher.Core;
+using CI.WSANative.Dispatchers.Core;
 using UnityEngine;
 
-namespace CI.WSANative.Dispatcher
+namespace CI.WSANative.Dispatchers
 {
     public static class WSANativeDispatcher
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CI.WSANative.Dispatcher.Core
+namespace CI.WSANative.Dispatchers.Core
 {
     public class WSADispatcher : MonoBehaviour
     {
