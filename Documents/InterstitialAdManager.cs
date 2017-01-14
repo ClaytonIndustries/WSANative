@@ -4,6 +4,7 @@
 //#define IAM_VUNGLE_ENABLED
 
 using System;
+using System.Threading.Tasks;
 using UnityPlayer;
 
 namespace CI.WSANative.Advertising
@@ -38,10 +39,10 @@ namespace CI.WSANative.Advertising
                             AdDuplex.AdDuplexClient.Initialize(appId);
 							await Task.Delay(500);
                             interstitialAd = new AdDuplex.InterstitialAd(adUnitId);
-                            interstitialAd.AdLoaded += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.AdReady, WSAInterstitialAdType.AdDuplex); };
-                            interstitialAd.AdClosed += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.Completed, WSAInterstitialAdType.AdDuplex); };
-                            interstitialAd.AdLoadingError += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.ErrorOccurred, WSAInterstitialAdType.AdDuplex); };
-                            interstitialAd.NoAd += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.ErrorOccurred, WSAInterstitialAdType.AdDuplex); };
+                            interstitialAd.AdLoaded += (s, e) => { RaiseActionOnAppThread(WSANativeInterstitialAd.AdReady, WSAInterstitialAdType.AdDuplex); };
+                            interstitialAd.AdClosed += (s, e) => { RaiseActionOnAppThread(WSANativeInterstitialAd.Completed, WSAInterstitialAdType.AdDuplex); };
+                            interstitialAd.AdLoadingError += (s, e) => { RaiseActionOnAppThread(WSANativeInterstitialAd.ErrorOccurred, WSAInterstitialAdType.AdDuplex, e.Error.Message); };
+                            interstitialAd.NoAd += (s, e) => { RaiseActionOnAppThread(WSANativeInterstitialAd.ErrorOccurred, WSAInterstitialAdType.AdDuplex, e.Message); };
                         }
 
                         await interstitialAd.LoadAdAsync();
@@ -64,10 +65,10 @@ namespace CI.WSANative.Advertising
         private static void ConfigureMicrosoftInterstitalAd()
         {
             Microsoft.Advertising.WinRT.UI.InterstitialAd interstitialAd = new Microsoft.Advertising.WinRT.UI.InterstitialAd();
-	        interstitialAd.AdReady += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.AdReady, WSAInterstitialAdType.Microsoft); };
-	        interstitialAd.ErrorOccurred += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.ErrorOccurred, WSAInterstitialAdType.Microsoft); };
-	        interstitialAd.Completed += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.Completed, WSAInterstitialAdType.Microsoft); };
-	        interstitialAd.Cancelled += (s, e) => { WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.Cancelled, WSAInterstitialAdType.Microsoft); };
+	        interstitialAd.AdReady += (s, e) => { RaiseActionOnAppThread(WSANativeInterstitialAd.AdReady, WSAInterstitialAdType.Microsoft); };
+	        interstitialAd.ErrorOccurred += (s, e) => { RaiseActionOnAppThread(WSANativeInterstitialAd.ErrorOccurred, WSAInterstitialAdType.Microsoft, e.ErrorMessage); };
+	        interstitialAd.Completed += (s, e) => { RaiseActionOnAppThread(WSANativeInterstitialAd.Completed, WSAInterstitialAdType.Microsoft); };
+	        interstitialAd.Cancelled += (s, e) => { RaiseActionOnAppThread(WSANativeInterstitialAd.Cancelled, WSAInterstitialAdType.Microsoft); };
 	        WSANativeInterstitialAd._Request += (adType, appId, adUnitId) =>
 	        {
 		        if (adType == WSAInterstitialAdType.Microsoft)
@@ -100,25 +101,25 @@ namespace CI.WSANative.Advertising
 			        {
 				        if (e.AdPlayable)
 				        {
-					        WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.AdReady, WSAInterstitialAdType.Vungle);
+					        RaiseActionOnAppThread(WSANativeInterstitialAd.AdReady, WSAInterstitialAdType.Vungle);
 				        }
 			        };
 			        interstitialAd.OnVideoView += (s, e) =>
 			        {
 				        if (e.IsCompletedView)
 				        {
-					        WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.Completed, WSAInterstitialAdType.Vungle);
+					        RaiseActionOnAppThread(WSANativeInterstitialAd.Completed, WSAInterstitialAdType.Vungle);
 				        }
 				        else
 				        {
-					        WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.Cancelled, WSAInterstitialAdType.Vungle);
+					        RaiseActionOnAppThread(WSANativeInterstitialAd.Cancelled, WSAInterstitialAdType.Vungle);
 				        }
 			        };
 			        interstitialAd.Diagnostic += (s, e) =>
 			        {
 				        if(e.Level == VungleSDK.DiagnosticLogLevel.Error || e.Level == VungleSDK.DiagnosticLogLevel.Fatal)
 				        {
-					        WSANativeInterstitialAd.RaiseActionOnAppThread(WSANativeInterstitialAd.ErrorOccurred, WSAInterstitialAdType.Vungle);
+					        RaiseActionOnAppThread(WSANativeInterstitialAd.ErrorOccurred, WSAInterstitialAdType.Vungle, e.Message);
 				        }
 			        };
 		        }
@@ -135,5 +136,27 @@ namespace CI.WSANative.Advertising
 	        };
         }
 #endif
+
+        private static void RaiseActionOnAppThread(Action<WSAInterstitialAdType> action, WSAInterstitialAdType adType)
+        {
+            if (action != null)
+            {
+                AppCallbacks.Instance.InvokeOnAppThread(() =>
+                {
+                    action(adType);
+                }, false);
+            }
+        }
+
+        private static void RaiseActionOnAppThread(Action<WSAInterstitialAdType, string> action, WSAInterstitialAdType adType, string errorMessage)
+        {
+            if (action != null)
+            {
+                AppCallbacks.Instance.InvokeOnAppThread(() =>
+                {
+                    action(adType, errorMessage);
+                }, false);
+            }
+        }
     }
 }

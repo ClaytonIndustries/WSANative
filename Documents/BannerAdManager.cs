@@ -8,8 +8,10 @@
 //using AdDuplexAd = AdDuplex.Universal.Controls.Win.XAML;        //(Windows 8.1 Desktop)
 //using AdDuplexAd = AdDuplex.Universal.Controls.WinPhone.XAML;   //(Windows 8.1 Mobile)
 #endif
+using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using UnityPlayer;
 
 namespace CI.WSANative.Advertising
 {
@@ -43,10 +45,10 @@ namespace CI.WSANative.Advertising
                         : bannerAdSettings.VerticalPlacement == WSAAdVerticalPlacement.Bottom ? VerticalAlignment.Bottom : VerticalAlignment.Center;
                     adControl.HorizontalAlignment = bannerAdSettings.HorizontalPlacement == WSAAdHorizontalPlacement.Left ? HorizontalAlignment.Left
                         : bannerAdSettings.HorizontalPlacement == WSAAdHorizontalPlacement.Right ? HorizontalAlignment.Right : HorizontalAlignment.Center;
-                    adControl.AdLoaded += (s, e) => { WSANativeBannerAd.RaiseActionOnAppThread(WSANativeBannerAd.AdRefreshed, WSABannerAdType.AdDuplex); };
-                    adControl.AdCovered += (s, e) => { WSANativeBannerAd.RaiseActionOnAppThread(WSANativeBannerAd.ErrorOccurred, WSABannerAdType.AdDuplex); };
-                    adControl.AdLoadingError += (s, e) => { WSANativeBannerAd.RaiseActionOnAppThread(WSANativeBannerAd.ErrorOccurred, WSABannerAdType.AdDuplex); };
-                    adControl.NoAd += (s, e) => { WSANativeBannerAd.RaiseActionOnAppThread(WSANativeBannerAd.ErrorOccurred, WSABannerAdType.AdDuplex); };
+                    adControl.AdLoaded += (s, e) => { RaiseActionOnAppThread(WSANativeBannerAd.AdRefreshed, WSABannerAdType.AdDuplex); };
+                    adControl.AdCovered += (s, e) => { RaiseActionOnAppThread(WSANativeBannerAd.ErrorOccurred, WSABannerAdType.AdDuplex, "Ad Covered"); };
+                    adControl.AdLoadingError += (s, e) => { RaiseActionOnAppThread(WSANativeBannerAd.ErrorOccurred, WSABannerAdType.AdDuplex, e.Error.Message); };
+                    adControl.NoAd += (s, e) => { RaiseActionOnAppThread(WSANativeBannerAd.ErrorOccurred, WSABannerAdType.AdDuplex, e.Message); };
                     grid.Children.Add(adControl);
                 }
             };
@@ -92,8 +94,8 @@ namespace CI.WSANative.Advertising
                         : bannerAdSettings.VerticalPlacement == WSAAdVerticalPlacement.Bottom ? VerticalAlignment.Bottom : VerticalAlignment.Center;
                     adControl.HorizontalAlignment = bannerAdSettings.HorizontalPlacement == WSAAdHorizontalPlacement.Left ? HorizontalAlignment.Left
                         : bannerAdSettings.HorizontalPlacement == WSAAdHorizontalPlacement.Right ? HorizontalAlignment.Right : HorizontalAlignment.Center;
-                    adControl.AdRefreshed += (s, e) => { WSANativeBannerAd.RaiseActionOnAppThread(WSANativeBannerAd.AdRefreshed, WSABannerAdType.Microsoft); };
-                    adControl.ErrorOccurred += (s, e) => { WSANativeBannerAd.RaiseActionOnAppThread(WSANativeBannerAd.ErrorOccurred, WSABannerAdType.Microsoft); };
+                    adControl.AdRefreshed += (s, e) => { RaiseActionOnAppThread(WSANativeBannerAd.AdRefreshed, WSABannerAdType.Microsoft); };
+                    adControl.ErrorOccurred += (s, e) => { RaiseActionOnAppThread(WSANativeBannerAd.ErrorOccurred, WSABannerAdType.Microsoft, e.ErrorMessage); };
                     grid.Children.Add(adControl);
                 }
             };
@@ -121,5 +123,27 @@ namespace CI.WSANative.Advertising
             };
         }
 #endif
+
+        private static void RaiseActionOnAppThread(Action<WSABannerAdType> action, WSABannerAdType adType)
+        {
+            if(action != null)
+            {
+                AppCallbacks.Instance.InvokeOnAppThread(() =>
+                {
+                    action(adType);
+                }, false);
+            }
+        }
+
+        private static void RaiseActionOnAppThread(Action<WSABannerAdType, string> action, WSABannerAdType adType, string errorMessage)
+        {
+            if (action != null)
+            {
+                AppCallbacks.Instance.InvokeOnAppThread(() =>
+                {
+                    action(adType, errorMessage);
+                }, false);
+            }
+        }
     }
 }
