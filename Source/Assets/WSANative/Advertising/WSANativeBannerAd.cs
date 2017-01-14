@@ -22,7 +22,7 @@ namespace CI.WSANative.Advertising
     public static class WSANativeBannerAd
     {
         private delegate void AdRefreshedCallbackDelegate([MarshalAs(UnmanagedType.LPWStr)]string adType);
-        private delegate void ErrorOccurredCallbackDelegate([MarshalAs(UnmanagedType.LPWStr)]string adType);
+        private delegate void ErrorOccurredCallbackDelegate([MarshalAs(UnmanagedType.LPWStr)]string adType, [MarshalAs(UnmanagedType.LPWStr)]string errorMessage);
 
         [DllImport("__Internal")]
         private static extern void _BannerAdInitialise(AdRefreshedCallbackDelegate adRefreshedCallback, ErrorOccurredCallbackDelegate errorOccurredCallback);
@@ -49,7 +49,7 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// Raised when the ad encounters an error in operations
         /// </summary>
-        public static Action<WSABannerAdType> ErrorOccurred
+        public static Action<WSABannerAdType, string> ErrorOccurred
         {
             get; set;
         }
@@ -150,11 +150,11 @@ namespace CI.WSANative.Advertising
         }
 
         [MonoPInvokeCallback(typeof(ErrorOccurredCallbackDelegate))]
-        private static void ErrorOccurredCallback(string adType)
+        private static void ErrorOccurredCallback(string adType, string errorMessage)
         {
             if(ErrorOccurred != null)
             {
-                ErrorOccurred(GetAdType(adType));
+                ErrorOccurred(GetAdType(adType), errorMessage);
             }
         }
 
@@ -197,7 +197,7 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// Raised when the ad encounters an error in operations
         /// </summary>
-        public static Action<WSABannerAdType> ErrorOccurred
+        public static Action<WSABannerAdType, string> ErrorOccurred
         {
             get; set;
         }
@@ -322,24 +322,6 @@ namespace CI.WSANative.Advertising
                 UnityEngine.WSA.Application.InvokeOnUIThread(() =>
                 {
                     Destroy(adType);
-                }, false);
-            }
-#endif
-        }
-
-        /// <summary>
-        /// For internal use only
-        /// </summary>
-        /// <param name="action"></param>
-        /// <param name="adType"></param>
-        public static void RaiseActionOnAppThread(Action<WSABannerAdType> action, WSABannerAdType adType)
-        {
-#if NETFX_CORE
-            if (action != null)
-            {
-                UnityEngine.WSA.Application.InvokeOnAppThread(() =>
-                {
-                    action(adType);
                 }, false);
             }
 #endif

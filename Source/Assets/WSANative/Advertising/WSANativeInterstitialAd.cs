@@ -24,7 +24,7 @@ namespace CI.WSANative.Advertising
         private delegate void AdReadyCallbackDelegate([MarshalAs(UnmanagedType.LPWStr)]string adType);
         private delegate void CancelledCallbackDelegate([MarshalAs(UnmanagedType.LPWStr)]string adType);
         private delegate void CompletedCallbackDelegate([MarshalAs(UnmanagedType.LPWStr)]string adType);
-        private delegate void ErrorOccurredCallbackDelegate([MarshalAs(UnmanagedType.LPWStr)]string adType);
+        private delegate void ErrorOccurredCallbackDelegate([MarshalAs(UnmanagedType.LPWStr)]string adType, [MarshalAs(UnmanagedType.LPWStr)]string errorMessage);
 
         [DllImport("__Internal")]
         private static extern void _InterstitialAdInitialise(AdReadyCallbackDelegate adReadyCallbackDelegate, CancelledCallbackDelegate cancelledCallbackDelegate, 
@@ -64,7 +64,7 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// Raised when the interstitial ad encounters an operational error
         /// </summary>
-        public static Action<WSAInterstitialAdType> ErrorOccurred
+        public static Action<WSAInterstitialAdType, string> ErrorOccurred
         {
             get; set;
         }
@@ -163,11 +163,11 @@ namespace CI.WSANative.Advertising
         }
 
         [MonoPInvokeCallback(typeof(ErrorOccurredCallbackDelegate))]
-        private static void ErrorOccurredCallback(string adType)
+        private static void ErrorOccurredCallback(string adType, string errorMessage)
         {
             if (ErrorOccurred != null)
             {
-                ErrorOccurred(GetAdType(adType));
+                ErrorOccurred(GetAdType(adType), errorMessage);
             }
         }
 
@@ -230,7 +230,7 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// Raised when the interstitial ad encounters an operational error
         /// </summary>
-        public static Action<WSAInterstitialAdType> ErrorOccurred
+        public static Action<WSAInterstitialAdType, string> ErrorOccurred
         {
             get; set;
         }
@@ -313,24 +313,6 @@ namespace CI.WSANative.Advertising
             {
                 _Show(adType);
             }
-        }
-
-        /// <summary>
-        /// For internal use only
-        /// </summary>
-        /// <param name="action"></param>
-        /// <param name="adType"></param>
-        public static void RaiseActionOnAppThread(Action<WSAInterstitialAdType> action, WSAInterstitialAdType adType)
-        {
-#if NETFX_CORE
-            if (action != null)
-            {
-                UnityEngine.WSA.Application.InvokeOnAppThread(() =>
-                {
-                    action(adType);
-                }, false);
-            }
-#endif
         }
     }
 }

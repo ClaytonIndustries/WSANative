@@ -27,7 +27,7 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// Raised when the ad encounters an error in operations
         /// </summary>
-        public static Action ErrorOccurred
+        public static Action<string> ErrorOccurred
         {
             get; set;
         }
@@ -102,23 +102,6 @@ namespace CI.WSANative.Advertising
                 UnityEngine.WSA.Application.InvokeOnUIThread(() =>
                 {
                     Destroy();
-                }, false);
-            }
-#endif
-        }
-
-        /// <summary>
-        /// For internal use only
-        /// </summary>
-        /// <param name="action"></param>
-        public static void RaiseActionOnAppThread(Action action)
-        {
-#if NETFX_CORE
-            if (action != null)
-            {
-                UnityEngine.WSA.Application.InvokeOnAppThread(() =>
-                {
-                    action();
                 }, false);
             }
 #endif
