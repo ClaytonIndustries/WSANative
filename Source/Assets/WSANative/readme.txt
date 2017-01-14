@@ -1,4 +1,4 @@
-﻿Windows Store Native (v1.20)
+﻿Windows Store Native (v1.21)
 ----------------------------
 
 Thank you for downloading Windows Store Native we hope you enjoy using it!
@@ -48,6 +48,9 @@ WSANativeDevice.CaptureScreenshot
 
 Dialog:
 WSANativeDialog.ShowDialog
+
+Dispatcher:
+WSANativeDispatcher.Invoke
 
 Engagement:
 WSANativeEngagement.IsFeedbackHubSupported
