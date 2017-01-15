@@ -3,7 +3,9 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 #if UNITY_WSA_8_1
-using Microsoft.AdMediator.Windows81;
+//Uncomment the correct using
+//using Microsoft.AdMediator.Windows81;			//(Windows 8.1 Desktop)
+//using Microsoft.AdMediator.WindowsPhone81;	//(Windows 8.1 Mobile)
 #elif UNITY_WSA_10_0
 using Microsoft.Advertising.WinRT.UI;
 #endif
