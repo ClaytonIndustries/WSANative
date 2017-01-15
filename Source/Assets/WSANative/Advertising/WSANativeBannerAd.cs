@@ -60,13 +60,11 @@ namespace CI.WSANative.Advertising
             get; set;
         }
 
-#pragma warning disable 0414
         private static string _msAppId;
         private static string _msAdUnitId;
 
         private static string _adDuplexAppId;
         private static string _adDuplexAdUnitId;
-#pragma warning restore 0414
 
         /// <summary>
         /// Initialise the banner ad for the specified provider
