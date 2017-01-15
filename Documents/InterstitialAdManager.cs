@@ -73,7 +73,10 @@ namespace CI.WSANative.Advertising
 	        {
 		        if (adType == WSAInterstitialAdType.Microsoft)
 		        {
-			        interstitialAd.RequestAd(Microsoft.Advertising.WinRT.UI.AdType.Video, appId, adUnitId);
+                    AppCallbacks.Instance.InvokeOnUIThread(() =>
+                    {
+                        interstitialAd.RequestAd(Microsoft.Advertising.WinRT.UI.AdType.Video, appId, adUnitId);
+                    }, false);
 		        }
 	        };
 	        WSANativeInterstitialAd._Show += (adType) =>
