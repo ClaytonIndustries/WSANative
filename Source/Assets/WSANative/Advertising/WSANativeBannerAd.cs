@@ -12,7 +12,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#if ENABLE_IL2CPP && NETFX_CORE
+#if ENABLE_IL2CPP && UNITY_WSA_10_0
 using System;
 using System.Runtime.InteropServices;
 using AOT;
@@ -21,6 +21,12 @@ namespace CI.WSANative.Advertising
 {
     public static class WSANativeBannerAd
     {
+#if UNITY_EDITOR
+        private static bool _unityEditor = true;
+#else
+        private static bool _unityEditor = false;
+#endif
+
         private delegate void AdRefreshedCallbackDelegate([MarshalAs(UnmanagedType.LPWStr)]string adType);
         private delegate void ErrorOccurredCallbackDelegate([MarshalAs(UnmanagedType.LPWStr)]string adType, [MarshalAs(UnmanagedType.LPWStr)]string errorMessage);
 
@@ -70,19 +76,22 @@ namespace CI.WSANative.Advertising
         /// <param name="adUnitId">Your apps ad unit id</param>
         public static void Initialise(WSABannerAdType adType, string appId, string adUnitId)
         {
-            switch (adType)
+            if (!_unityEditor)
             {
-                case WSABannerAdType.AdDuplex:
-                    _adDuplexAppId = appId;
-                    _adDuplexAdUnitId = adUnitId;
-                    break;
-                case WSABannerAdType.Microsoft:
-                    _msAppId = appId;
-                    _msAdUnitId = adUnitId;
-                    break;
-            }
+                switch (adType)
+                {
+                    case WSABannerAdType.AdDuplex:
+                        _adDuplexAppId = appId;
+                        _adDuplexAdUnitId = adUnitId;
+                        break;
+                    case WSABannerAdType.Microsoft:
+                        _msAppId = appId;
+                        _msAdUnitId = adUnitId;
+                        break;
+                }
 
-            _BannerAdInitialise(AdRefreshedCallback, ErrorOccurredCallback);
+                _BannerAdInitialise(AdRefreshedCallback, ErrorOccurredCallback);
+            }
         }
 
         /// <summary>
@@ -95,19 +104,20 @@ namespace CI.WSANative.Advertising
         /// <param name="horizontalPlacement">Where should the ad be placed horizontally</param>
         public static void CreatAd(WSABannerAdType adType, int width, int height, WSAAdVerticalPlacement verticalPlacement, WSAAdHorizontalPlacement horizontalPlacement)
         {
-#if NETFX_CORE
-            UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+            if (!_unityEditor)
             {
-                if (adType == WSABannerAdType.AdDuplex)
+                UnityEngine.WSA.Application.InvokeOnUIThread(() =>
                 {
-                    _BannerAdCreate(adType.ToString(), _adDuplexAppId, _adDuplexAdUnitId, width, height, verticalPlacement.ToString(), horizontalPlacement.ToString());
-                }
-                else if(adType == WSABannerAdType.Microsoft)
-                {
-                    _BannerAdCreate(adType.ToString(), _msAppId, _msAdUnitId, width, height, verticalPlacement.ToString(), horizontalPlacement.ToString());
-                }
-            }, false);
-#endif
+                    if (adType == WSABannerAdType.AdDuplex)
+                    {
+                        _BannerAdCreate(adType.ToString(), _adDuplexAppId, _adDuplexAdUnitId, width, height, verticalPlacement.ToString(), horizontalPlacement.ToString());
+                    }
+                    else if (adType == WSABannerAdType.Microsoft)
+                    {
+                        _BannerAdCreate(adType.ToString(), _msAppId, _msAdUnitId, width, height, verticalPlacement.ToString(), horizontalPlacement.ToString());
+                    }
+                }, false);
+            }
         }
 
         /// <summary>
@@ -117,12 +127,13 @@ namespace CI.WSANative.Advertising
         /// <param name="visible">Should the ad be visible</param>
         public static void SetAdVisibility(WSABannerAdType adType, bool visible)
         {
-#if NETFX_CORE
-            UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+            if (!_unityEditor)
             {
-                _BannerAdSetVisibility(adType.ToString(), visible);
-            }, false);
-#endif
+                UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+                {
+                    _BannerAdSetVisibility(adType.ToString(), visible);
+                }, false);
+            }
         }
 
         /// <summary>
@@ -131,12 +142,13 @@ namespace CI.WSANative.Advertising
         /// <param name="adType">The ad type</param>
         public static void DestroyAd(WSABannerAdType adType)
         {
-#if NETFX_CORE
-            UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+            if (!_unityEditor)
             {
-                _BannerAdDestroy(adType.ToString());
-            }, false);
-#endif
+                UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+                {
+                    _BannerAdDestroy(adType.ToString());
+                }, false);
+            }
         }
 
 

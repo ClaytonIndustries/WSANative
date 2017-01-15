@@ -12,7 +12,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#if ENABLE_IL2CPP && NETFX_CORE
+#if ENABLE_IL2CPP && UNITY_WSA_10_0
 using System;
 using System.Runtime.InteropServices;
 using AOT;
@@ -21,6 +21,12 @@ namespace CI.WSANative.Advertising
 {
     public static class WSANativeInterstitialAd
     {
+#if UNITY_EDITOR
+        private static bool _unityEditor = true;
+#else
+        private static bool _unityEditor = false;
+#endif
+
         private delegate void AdReadyCallbackDelegate([MarshalAs(UnmanagedType.LPWStr)]string adType);
         private delegate void CancelledCallbackDelegate([MarshalAs(UnmanagedType.LPWStr)]string adType);
         private delegate void CompletedCallbackDelegate([MarshalAs(UnmanagedType.LPWStr)]string adType);
@@ -85,22 +91,25 @@ namespace CI.WSANative.Advertising
         /// <param name="adUnitId">Your apps ad unit id (null or empty for Vungle)</param>
         public static void Initialise(WSAInterstitialAdType adType, string appId, string adUnitId)
         {
-            switch (adType)
+            if (!_unityEditor)
             {
-                case WSAInterstitialAdType.AdDuplex:
-                    _adDuplexAppId = appId;
-                    _adDuplexAdUnitId = adUnitId;
-                    break;
-                case WSAInterstitialAdType.Microsoft:
-                    _msAppId = appId;
-                    _msAdUnitId = adUnitId;
-                    break;
-                case WSAInterstitialAdType.Vungle:
-                    _vungleAppId = appId;
-                    break;
-            }
+                switch (adType)
+                {
+                    case WSAInterstitialAdType.AdDuplex:
+                        _adDuplexAppId = appId;
+                        _adDuplexAdUnitId = adUnitId;
+                        break;
+                    case WSAInterstitialAdType.Microsoft:
+                        _msAppId = appId;
+                        _msAdUnitId = adUnitId;
+                        break;
+                    case WSAInterstitialAdType.Vungle:
+                        _vungleAppId = appId;
+                        break;
+                }
 
-            _InterstitialAdInitialise(AdReadyCallback, CancelledCallback, CompletedCallback, ErrorOccurredCallback);
+                _InterstitialAdInitialise(AdReadyCallback, CancelledCallback, CompletedCallback, ErrorOccurredCallback);
+            }
         }
 
         /// <summary>
@@ -111,17 +120,20 @@ namespace CI.WSANative.Advertising
         /// <param name="adType">The type of ad to request</param>
         public static void RequestAd(WSAInterstitialAdType adType)
         {
-            switch (adType)
+            if (!_unityEditor)
             {
-                case WSAInterstitialAdType.AdDuplex:
-                    _InterstitialAdRequest(adType.ToString(), _adDuplexAppId, _adDuplexAdUnitId);
-                    break;
-                case WSAInterstitialAdType.Microsoft:
-                    _InterstitialAdRequest(adType.ToString(), _msAppId, _msAdUnitId);
-                    break;
-                case WSAInterstitialAdType.Vungle:
-                    _InterstitialAdRequest(adType.ToString(), _vungleAppId, string.Empty);
-                    break;
+                switch (adType)
+                {
+                    case WSAInterstitialAdType.AdDuplex:
+                        _InterstitialAdRequest(adType.ToString(), _adDuplexAppId, _adDuplexAdUnitId);
+                        break;
+                    case WSAInterstitialAdType.Microsoft:
+                        _InterstitialAdRequest(adType.ToString(), _msAppId, _msAdUnitId);
+                        break;
+                    case WSAInterstitialAdType.Vungle:
+                        _InterstitialAdRequest(adType.ToString(), _vungleAppId, string.Empty);
+                        break;
+                }
             }
         }
 
@@ -132,7 +144,10 @@ namespace CI.WSANative.Advertising
         /// <param name="adType">The type of ad to show</param>
         public static void ShowAd(WSAInterstitialAdType adType)
         {
-            _InterstitialAdShow(adType.ToString());
+            if (!_unityEditor)
+            {
+                _InterstitialAdShow(adType.ToString());
+            }
         }
 
         [MonoPInvokeCallback(typeof(AdReadyCallbackDelegate))]
