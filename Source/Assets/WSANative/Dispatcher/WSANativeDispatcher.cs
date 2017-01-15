@@ -16,9 +16,9 @@ namespace CI.WSANative.Dispatchers
     {
         private static WSADispatcher _dispatcher;
 
-        static WSANativeDispatcher()
+        public static void Initialise()
         {
-            if(_dispatcher == null)
+            if (_dispatcher == null)
             {
                 _dispatcher = new GameObject("WSANativeDispatcher").AddComponent<WSADispatcher>();
             }
@@ -26,7 +26,10 @@ namespace CI.WSANative.Dispatchers
 
         public static void Invoke(Action action)
         {
-            _dispatcher.Enqueue(action);
+            if (_dispatcher != null)
+            {
+                _dispatcher.Enqueue(action);
+            }
         }
     }
 }

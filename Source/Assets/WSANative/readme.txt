@@ -50,6 +50,7 @@ Dialog:
 WSANativeDialog.ShowDialog
 
 Dispatcher:
+WSANativeDispatcher.Initialise
 WSANativeDispatcher.Invoke
 
 Engagement:
