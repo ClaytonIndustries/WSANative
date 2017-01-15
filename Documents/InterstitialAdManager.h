@@ -37,7 +37,7 @@ private:
 	static AdCallbackWithAdType _Ready;
 	static AdCallbackWithAdType _Cancelled;
 	static AdCallbackWithAdType _Completed;
-	static AdCallbackWithAdType _Error;
+	static AdCallbackWithAdTypeAndErrorMessage _Error;
 	static bool IsAdType(const wchar_t*, const wchar_t*);
 };
 
@@ -50,7 +50,7 @@ const wchar_t* InterstitialAdManager::AD_TYPE_VUNGLE = L"Vungle";
 AdCallbackWithAdType InterstitialAdManager::_Ready;
 AdCallbackWithAdType InterstitialAdManager::_Cancelled;
 AdCallbackWithAdType InterstitialAdManager::_Completed;
-AdCallbackWithAdType InterstitialAdManager::_Error;
+AdCallbackWithAdTypeAndErrorMessage InterstitialAdManager::_Error;
 
 #if IAM_AD_DUPLEX_ENABLED
 AdDuplex::InterstitialAd^ InterstitialAdManager::_adDuplexInterstitialAd;
@@ -64,7 +64,7 @@ VungleAd^ InterstitialAdManager::_vungleInterstitialAd;
 
 inline void InterstitialAdManager::Initialise()
 {
-	_InterstitialAdInitialiseAction = [](AdCallbackWithAdType ready, AdCallbackWithAdType cancelled, AdCallbackWithAdType completed, AdCallbackWithAdType error)
+	_InterstitialAdInitialiseAction = [](AdCallbackWithAdType ready, AdCallbackWithAdType cancelled, AdCallbackWithAdType completed, AdCallbackWithAdTypeAndErrorMessage error)
 	{
 		_Ready = ready;
 		_Cancelled = cancelled;
@@ -84,8 +84,8 @@ inline void InterstitialAdManager::Initialise()
 					_adDuplexInterstitialAd = ref new AdDuplex::InterstitialAd(ref new Platform::String(adUnitId));
 					_adDuplexInterstitialAd->AdLoaded += ref new Windows::Foundation::EventHandler<InterstitialAdLoadedEventArgs^>([](Object^ s, InterstitialAdLoadedEventArgs^ e) { _Ready(AD_TYPE_AD_DUPLEX); });
 					_adDuplexInterstitialAd->AdClosed += ref new Windows::Foundation::EventHandler<InterstitialAdLoadedEventArgs^>([](Object^ s, InterstitialAdLoadedEventArgs^ e) { _Completed(AD_TYPE_AD_DUPLEX); });
-					_adDuplexInterstitialAd->AdLoadingError += ref new Windows::Foundation::EventHandler<AdLoadingErrorEventArgs^>([](Object^ s, AdLoadingErrorEventArgs^ e) { _Error(AD_TYPE_AD_DUPLEX); });
-					_adDuplexInterstitialAd->NoAd += ref new Windows::Foundation::EventHandler<NoAdEventArgs^>([](Object^ s, NoAdEventArgs^ e) { _Error(AD_TYPE_AD_DUPLEX); });
+					_adDuplexInterstitialAd->AdLoadingError += ref new Windows::Foundation::EventHandler<AdLoadingErrorEventArgs^>([](Object^ s, AdLoadingErrorEventArgs^ e) { _Error(AD_TYPE_AD_DUPLEX, L"Ad Loading Error"); });
+					_adDuplexInterstitialAd->NoAd += ref new Windows::Foundation::EventHandler<NoAdEventArgs^>([](Object^ s, NoAdEventArgs^ e) { _Error(AD_TYPE_AD_DUPLEX, e->Message->Data); });
 				}
 			
 				_adDuplexInterstitialAd->LoadAdAsync();
@@ -101,7 +101,7 @@ inline void InterstitialAdManager::Initialise()
 				_microsoftInterstitialAd->AdReady += ref new Windows::Foundation::EventHandler<Object^>([](Object^ s, Object^ e) { _Ready(AD_TYPE_MICROSOFT); });
 				_microsoftInterstitialAd->Cancelled += ref new Windows::Foundation::EventHandler<Object^>([](Object^ s, Object^ e) { _Cancelled(AD_TYPE_MICROSOFT); });
 				_microsoftInterstitialAd->Completed += ref new Windows::Foundation::EventHandler<Object^>([](Object^ s, Object^ e) { _Completed(AD_TYPE_MICROSOFT); });
-				_microsoftInterstitialAd->ErrorOccurred += ref new Windows::Foundation::EventHandler<AdErrorEventArgs^>([](Object^ s, AdErrorEventArgs^ e) { _Error(AD_TYPE_MICROSOFT); });
+				_microsoftInterstitialAd->ErrorOccurred += ref new Windows::Foundation::EventHandler<AdErrorEventArgs^>([](Object^ s, AdErrorEventArgs^ e) { _Error(AD_TYPE_MICROSOFT, e->ErrorMessage->Data); });
 			}
 
 			AppCallbacks::Instance->InvokeOnUIThread(ref new AppCallbackItem([appId, adUnitId]()
@@ -138,7 +138,7 @@ inline void InterstitialAdManager::Initialise()
 				{
 					if (e->Level == DiagnosticLogLevel::Error || e->Level == DiagnosticLogLevel::Fatal)
 					{
-						_Error(AD_TYPE_VUNGLE);
+						_Error(AD_TYPE_VUNGLE, e->Message->Data);
 					}
 				});
 			}

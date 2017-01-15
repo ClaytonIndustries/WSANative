@@ -2,9 +2,9 @@
 
 // Banner Ad Start
 
-void (*_BannerAdInitialiseAction)(AdCallbackWithAdType,AdCallbackWithAdType);
+void (*_BannerAdInitialiseAction)(AdCallbackWithAdType,AdCallbackWithAdTypeAndErrorMessage);
 
-extern "C" void __stdcall _BannerAdInitialise(AdCallbackWithAdType refreshed, AdCallbackWithAdType error)
+extern "C" void __stdcall _BannerAdInitialise(AdCallbackWithAdType refreshed, AdCallbackWithAdTypeAndErrorMessage error)
 {
 	_BannerAdInitialiseAction(refreshed, error);
 }
@@ -35,9 +35,9 @@ extern "C" void __stdcall _BannerAdDestroy(wchar_t* adType)
 
 // Interstitial Ad Start
 
-void (*_InterstitialAdInitialiseAction)(AdCallbackWithAdType,AdCallbackWithAdType,AdCallbackWithAdType,AdCallbackWithAdType);
+void (*_InterstitialAdInitialiseAction)(AdCallbackWithAdType,AdCallbackWithAdType,AdCallbackWithAdType,AdCallbackWithAdTypeAndErrorMessage);
 
-extern "C" void __stdcall _InterstitialAdInitialise(AdCallbackWithAdType ready, AdCallbackWithAdType cancelled, AdCallbackWithAdType completed, AdCallbackWithAdType error)
+extern "C" void __stdcall _InterstitialAdInitialise(AdCallbackWithAdType ready, AdCallbackWithAdType cancelled, AdCallbackWithAdType completed, AdCallbackWithAdTypeAndErrorMessage error)
 {
 	_InterstitialAdInitialiseAction(ready, cancelled, completed, error);
 }
