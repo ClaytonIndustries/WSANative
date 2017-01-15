@@ -23,7 +23,7 @@ private:
 	static AdDuplex::AdControl^ _adDuplexAdControl;
 #endif
 #if BAM_MICROSOFT_ENABLED
-	static AdControl^ _microsoftAdControl;
+	static Microsoft::Advertising::WinRT::UI::AdControl^ _microsoftAdControl;
 #endif
 	static const wchar_t* AD_TYPE_AD_DUPLEX;
 	static const wchar_t* AD_TYPE_MICROSOFT;
@@ -48,7 +48,7 @@ AdCallbackWithAdTypeAndErrorMessage BannerAdManager::_Error;
 AdDuplex::AdControl^ BannerAdManager::_adDuplexAdControl;
 #endif
 #if BAM_MICROSOFT_ENABLED
-AdControl^ BannerAdManager::_microsoftAdControl;
+Microsoft::Advertising::WinRT::UI::AdControl^ BannerAdManager::_microsoftAdControl;
 #endif
 
 inline void BannerAdManager::Initialise(Grid^ grid)
@@ -76,14 +76,14 @@ inline void BannerAdManager::Initialise(Grid^ grid)
 			_adDuplexAdControl->AdLoaded += ref new Windows::Foundation::EventHandler<BannerAdLoadedEventArgs^>([](Object^ s, BannerAdLoadedEventArgs^ e) { _Refreshed(AD_TYPE_AD_DUPLEX); });
 			_adDuplexAdControl->AdCovered += ref new Windows::Foundation::EventHandler<AdCoveredEventArgs^>([](Object^ s, AdCoveredEventArgs^ e) { _Error(AD_TYPE_AD_DUPLEX, L"Ad Covered"); });
 			_adDuplexAdControl->AdLoadingError += ref new Windows::Foundation::EventHandler<AdLoadingErrorEventArgs^>([](Object^ s, AdLoadingErrorEventArgs^ e) { _Error(AD_TYPE_AD_DUPLEX, L"Ad Loading Error"); });
-			_adDuplexAdControl->NoAd += ref new Windows::Foundation::EventHandler<NoAdEventArgs^>([](Object^ s, NoAdEventArgs^ e) { _Error(AD_TYPE_AD_DUPLEX, e->Message->Data); });
+			_adDuplexAdControl->NoAd += ref new Windows::Foundation::EventHandler<NoAdEventArgs^>([](Object^ s, NoAdEventArgs^ e) { _Error(AD_TYPE_AD_DUPLEX, e->Message->Data()); });
 			_grid->Children->Append(_adDuplexAdControl);
 		}
 #endif
 #if BAM_MICROSOFT_ENABLED
 		if (IsAdType(adType, AD_TYPE_MICROSOFT) && _microsoftAdControl == nullptr)
 		{
-			_microsoftAdControl = ref new AdControl();
+			_microsoftAdControl = ref new Microsoft::Advertising::WinRT::UI::AdControl();
 			_microsoftAdControl->ApplicationId = ref new Platform::String(appId);
 			_microsoftAdControl->AdUnitId = ref new Platform::String(adUnitId);
 			_microsoftAdControl->Width = width;
@@ -92,7 +92,7 @@ inline void BannerAdManager::Initialise(Grid^ grid)
 			_microsoftAdControl->VerticalAlignment = GetVerticalAlignment(verticalPlacement);
 			_microsoftAdControl->HorizontalAlignment = GetHorizontalAlignment(horizontalPlacement);
 			_microsoftAdControl->AdRefreshed += ref new Windows::Foundation::EventHandler<RoutedEventArgs^>([](Object^ s, RoutedEventArgs^ e) { _Refreshed(AD_TYPE_MICROSOFT); });
-			_microsoftAdControl->ErrorOccurred += ref new Windows::Foundation::EventHandler<AdErrorEventArgs^>([](Object^ s, AdErrorEventArgs^ e) { _Error(AD_TYPE_MICROSOFT, e->ErrorMessage->Data); });
+			_microsoftAdControl->ErrorOccurred += ref new Windows::Foundation::EventHandler<AdErrorEventArgs^>([](Object^ s, AdErrorEventArgs^ e) { _Error(AD_TYPE_MICROSOFT, e->ErrorMessage->Data()); });
 			_grid->Children->Append(_microsoftAdControl);
 		}
 #endif
