@@ -249,9 +249,9 @@ public class ExampleSceneManagerController : MonoBehaviour
     public void FacebookLogin()
     {
         WSANativeFacebook.Initialise("facebookId", "packageSID");
-        WSANativeFacebook.Login(new List<string>() { "public_profile", "email", "user_birthday" }, (success) =>
+        WSANativeFacebook.Login(new List<string>() { "public_profile", "email", "user_birthday" }, (result) =>
         {
-            if (success)
+            if (result.Success)
             {
                 WSANativeFacebook.GetUserDetails((response) =>
                 {

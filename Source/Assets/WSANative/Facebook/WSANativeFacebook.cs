@@ -68,12 +68,12 @@ namespace CI.WSANative.Facebook
         /// </summary>
         /// <param name="permissions">Any combination of permissions eg "public_profile, email, user_birthday, user_likes" etc - only request what you need</param>
         /// <param name="response">Did the login request succeed</param>
-        public static void Login(List<string> permissions, Action<bool> response)
+        public static void Login(List<string> permissions, Action<WSAFacebookLoginResult> response)
         {
 #if NETFX_CORE
             UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
             {
-                bool result = await _facebookApi.Login(permissions);
+                WSAFacebookLoginResult result = await _facebookApi.Login(permissions);
 
                 UnityEngine.WSA.Application.InvokeOnAppThread(() =>
                 {

@@ -69,8 +69,10 @@ namespace CI.WSANative.Facebook
             _dxSwapChainPanel = dxSwapChainPanel;
         }
 
-        public async Task<bool> Login(List<string> permissions)
+        public async Task<WSAFacebookLoginResult> Login(List<string> permissions)
         {
+            WSAFacebookLoginResult loginResult = new WSAFacebookLoginResult();
+
             try
             {
                 Logout(false);
@@ -127,12 +129,16 @@ namespace CI.WSANative.Facebook
                     }
                 }
             }
-            catch
+            catch (Exception e)
             {
                 IsLoggedIn = false;
+                loginResult.ErrorMessage = e.Message;
             }
 
-            return IsLoggedIn;
+            loginResult.Success = IsLoggedIn;
+            loginResult.AccessToken = !string.IsNullOrWhiteSpace(_accessToken) ? _accessToken : null;
+
+            return loginResult;
         }
 
         public async void Logout(bool uninstall)
