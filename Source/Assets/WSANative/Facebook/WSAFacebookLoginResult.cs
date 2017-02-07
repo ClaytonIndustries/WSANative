@@ -1,4 +1,11 @@
-﻿
+﻿////////////////////////////////////////////////////////////////////////////////
+//  
+// @module WSA Native for Unity3D 
+// @author Michael Clayton
+// @support clayton.inds+support@gmail.com 
+//
+////////////////////////////////////////////////////////////////////////////////
+
 namespace CI.WSANative.Facebook
 {
     public class WSAFacebookLoginResult
@@ -14,7 +21,7 @@ namespace CI.WSANative.Facebook
         public string AccessToken { get; set; }
 
         /// <summary>
-        /// Error message if the login is not successful
+        /// Error message if the login was not successful
         /// </summary>
         public string ErrorMessage { get; set; }
     }
