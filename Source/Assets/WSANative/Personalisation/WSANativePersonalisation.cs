@@ -24,7 +24,7 @@ namespace CI.WSANative.Personalisation
         /// <returns>The accent colour or white if it fails</returns>
         public static Color GetAccentColour()
         {
-#if UNITY_WSA_10_0
+#if NETFX_CORE
             if (_GetAccentColour != null)
             {
                 return _GetAccentColour();
