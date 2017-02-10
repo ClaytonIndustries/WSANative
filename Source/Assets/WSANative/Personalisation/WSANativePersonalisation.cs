@@ -22,7 +22,7 @@ namespace CI.WSANative.Personalisation
         /// Attempts to return the system accent colour
         /// </summary>
         /// <returns>The accent colour or white if it fails</returns>
-        public static Color GetAccentColour()
+        public static Color GetSystemAccentColour()
         {
 #if NETFX_CORE
             if (_GetAccentColour != null)

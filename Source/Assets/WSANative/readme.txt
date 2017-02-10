@@ -1,4 +1,4 @@
-﻿Windows Store Native (v1.21)
+﻿Windows Store Native (v1.22)
 ----------------------------
 
 Thank you for downloading Windows Store Native we hope you enjoy using it!
@@ -90,6 +90,9 @@ Toast:
 WSANativeNotification.ShowToastNotification
 WSANativeNotification.ShowScheduledToastNotification
 WSANativeNotification.RemoveToastNotification
+
+Personalisation:
+WSANativePersonalisation.GetSystemAccentColour
 
 Picker:
 WSANativeFilePicker.ShowFileOpenPicker
