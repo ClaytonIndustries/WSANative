@@ -14,7 +14,7 @@ using System.Linq;
 using Windows.Storage;
 #endif
 
-namespace CI.WSANative.Storage
+namespace CI.WSANative.FileStorage
 {
     public class WSANativeStorageLibrary
     {

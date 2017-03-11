@@ -1,5 +1,5 @@
 ﻿
-namespace CI.WSANative.Storage
+namespace CI.WSANative.FileStorage
 {
     public enum WSAStorageLibrary
     {
