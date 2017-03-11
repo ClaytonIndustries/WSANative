@@ -48,30 +48,6 @@ namespace CI.WSANative.FileStorage
 #endif
 
         /// <summary>
-        /// Determines whether a file exists
-        /// </summary>
-        /// <param name="library">The library to start in - you must request permissions for it in the app manifest</param>
-        /// <param name="relativePath">Path to the file</param>
-        /// <returns>True if the file exists, otherwise false</returns>
-        public static bool DoesFileExist(WSAStorageLibrary library, string relativePath)
-        {
-#if NETFX_CORE
-            StorageFolder folder = GetStorageFolderForWSAKnownLibrary(library);
-
-            try
-            {
-                folder.GetFileAsync(relativePath).AsTask().Wait();
-
-                return true;
-            }
-            catch
-            {
-            }
-#endif
-            return false;
-        }
-
-        /// <summary>
         /// Gets a handle to each file at the specified path
         /// </summary>
         /// <param name="library">The library to start in - you must request permissions for it in the app manifest</param>
@@ -130,6 +106,30 @@ namespace CI.WSANative.FileStorage
             result(directories);
         }
 #endif
+
+        /// <summary>
+        /// Determines whether a file exists
+        /// </summary>
+        /// <param name="library">The library to start in - you must request permissions for it in the app manifest</param>
+        /// <param name="relativePath">Path to the file</param>
+        /// <returns>True if the file exists, otherwise false</returns>
+        public static bool DoesFileExist(WSAStorageLibrary library, string relativePath)
+        {
+#if NETFX_CORE
+            StorageFolder folder = GetStorageFolderForWSAKnownLibrary(library);
+
+            try
+            {
+                folder.GetFileAsync(relativePath).AsTask().Wait();
+
+                return true;
+            }
+            catch
+            {
+            }
+#endif
+            return false;
+        }
 
         /// <summary>
         /// Determines whether a directory exists

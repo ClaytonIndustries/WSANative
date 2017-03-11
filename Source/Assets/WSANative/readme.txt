@@ -1,4 +1,4 @@
-﻿Windows Store Native (v1.22)
+﻿Windows Store Native (v1.23)
 ----------------------------
 
 Thank you for downloading Windows Store Native we hope you enjoy using it!
@@ -123,6 +123,17 @@ WSANativeStorage.LoadFile
 WSANativeStorage.DeleteFile
 WSANativeStorage.DoesFileExist
 WSANativeStorage.GetAllFiles
+
+StorageLibrary:
+WSANativeStorageLibrary.GetFile
+WSANativeStorageLibrary.GetFiles
+WSANativeStorageLibrary.GetDirectories
+WSANativeStorageLibrary.DoesFileExist
+WSANativeStorageLibrary.DoesDirectoryExist
+WSANativeStorageLibrary.CreateFile
+WSANativeStorageLibrary.CreateDirectory
+WSANativeStorageLibrary.DeleteFile
+WSANativeStorageLibrary.DeleteDirectory
 
 Store:
 WSANativeStore.EnableTestMode
