@@ -85,5 +85,19 @@ namespace CI.WSANative.Device
             texture.Apply();
             return texture.EncodeToPNG();
         }
+
+        /// <summary>
+        /// Vibrates the device (if supported) for the specified number of seconds. Seconds can be in the range 0 to 5, any other value will throw an exception
+        /// </summary>
+        /// <param name="seconds">The number of seconds to vibrate for</param>
+        public static void Vibrate(int seconds)
+        {
+#if NETFX_CORE && UNITY_WSA_10_0
+            if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.Devices.Notification.VibrationDevice"))
+            {
+                Windows.Phone.Devices.Notification.VibrationDevice.GetDefault().Vibrate(TimeSpan.FromSeconds(seconds));
+            }
+#endif
+        }
     }
 }
