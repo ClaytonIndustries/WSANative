@@ -51,7 +51,7 @@ namespace CI.WSANative.FileStorage
         /// Gets a handle to each file at the specified path
         /// </summary>
         /// <param name="library">The library to start in - you must request permissions for it in the app manifest</param>
-        /// <param name="relativePath">Path to the directory to look in - empty string for the root</param>
+        /// <param name="relativePath">Path to the folder to look in - empty string for the root</param>
         /// <param name="result">Collection of files at the specified path</param>
         public static void GetFiles(WSAStorageLibrary library, string relativePath, Action<IEnumerable<WSAStorageFile>> result)
         {
@@ -78,32 +78,32 @@ namespace CI.WSANative.FileStorage
 #endif
 
         /// <summary>
-        /// Gets the names of all the directories at the specified path
+        /// Gets the names of all the folders at the specified path
         /// </summary>
         /// <param name="library">The library to start in - you must request permissions for it in the app manifest</param>
-        /// <param name="relativePath">Path to the directory to look in - empty string for the root</param>
-        /// <param name="result">Collection of files at the specified path</param>
-        public static void GetDirectories(WSAStorageLibrary library, string relativePath, Action<IEnumerable<string>> result)
+        /// <param name="relativePath">Path to the folder to look in - empty string for the root</param>
+        /// <param name="result">Collection of folders at the specified path</param>
+        public static void GetFolders(WSAStorageLibrary library, string relativePath, Action<IEnumerable<string>> result)
         {
 #if NETFX_CORE
             if (result != null)
             {
                 StorageFolder folder = GetStorageFolderForWSAKnownLibrary(library);
 
-                GetDirectoriesAsync(folder, relativePath, result);
+                GetFoldersAsync(folder, relativePath, result);
             }
 #endif
         }
 
 #if NETFX_CORE
-        private static async void GetDirectoriesAsync(StorageFolder knownFolder, string path, Action<IEnumerable<string>> result)
+        private static async void GetFoldersAsync(StorageFolder knownFolder, string path, Action<IEnumerable<string>> result)
         {
             StorageFolder folder = string.IsNullOrWhiteSpace(path) ? knownFolder : await knownFolder.GetFolderAsync(path);
 
-            IEnumerable<string> directories = (await folder.GetFoldersAsync())
+            IEnumerable<string> folders = (await folder.GetFoldersAsync())
                                                              .Select(x => x.Name).ToList();
 
-            result(directories);
+            result(folders);
         }
 #endif
 
@@ -132,12 +132,12 @@ namespace CI.WSANative.FileStorage
         }
 
         /// <summary>
-        /// Determines whether a directory exists
+        /// Determines whether a folder exists
         /// </summary>
         /// <param name="library">The library to start in - you must request permissions for it in the app manifest</param>
-        /// <param name="relativePath">Path to the directory</param>
-        /// <returns>True if the directory exists, otherwise false</returns>
-        public static bool DoesDirectoryExist(WSAStorageLibrary library, string relativePath)
+        /// <param name="relativePath">Path to the folder</param>
+        /// <returns>True if the folder exists, otherwise false</returns>
+        public static bool DoesFolderExist(WSAStorageLibrary library, string relativePath)
         {
 #if NETFX_CORE
             StorageFolder folder = GetStorageFolderForWSAKnownLibrary(library);
@@ -156,10 +156,11 @@ namespace CI.WSANative.FileStorage
         }
 
         /// <summary>
-        /// Creates a file at the specified path and returns a handle to it. If the file already exists it will be overwritten
+        /// Creates a file at the specified path and returns a handle to it, parent folders will be created automatically if necessary. 
+        /// If the file already exists it will be overwritten
         /// </summary>
         /// <param name="library">The library to start in - you must request permissions for it in the app manifest</param>
-        /// <param name="relativePath">Path to the directory in which to create the file</param>
+        /// <param name="relativePath">Path to the folder in which to create the file</param>
         /// <returns>A handle to the created file</returns>
         public static WSAStorageFile CreateFile(WSAStorageLibrary library, string relativePath)
         {
@@ -177,11 +178,11 @@ namespace CI.WSANative.FileStorage
         }
 
         /// <summary>
-        /// Creates a directory at the specified path, if the directory already exsists it will be overwitten
+        /// Creates a folder at the specified path, parent folders will be created automatically if necessary. If the folder already exists it will be overwitten
         /// </summary>
         /// <param name="library">The library to start in - you must request permissions for it in the app manifest</param>
-        /// <param name="relativePath">Path to the directory in which to create the new directory</param>
-        public static void CreateDirectory(WSAStorageLibrary library, string relativePath)
+        /// <param name="relativePath">Path to the folder in which to create the new folder</param>
+        public static void CreateFolder(WSAStorageLibrary library, string relativePath)
         {
 #if NETFX_CORE
             StorageFolder folder = GetStorageFolderForWSAKnownLibrary(library);
@@ -194,7 +195,7 @@ namespace CI.WSANative.FileStorage
         /// Attempts to delete the file at the specified path
         /// </summary>
         /// <param name="library">The library to start in - you must request permissions for it in the app manifest</param>
-        /// <param name="relativePath">Path to the directory in which the file exists</param>
+        /// <param name="relativePath">Path to the folder in which the file exists</param>
         public static void DeleteFile(WSAStorageLibrary library, string relativePath)
         {
 #if NETFX_CORE
@@ -207,11 +208,11 @@ namespace CI.WSANative.FileStorage
         }
 
         /// <summary>
-        /// Attempts to delete the directory at the specified path
+        /// Attempts to delete the folder at the specified path
         /// </summary>
         /// <param name="library">The library to start in - you must request permissions for it in the app manifest</param>
-        /// <param name="relativePath">Path to the directory which should be deleted</param>
-        public static void DeleteDirectory(WSAStorageLibrary library, string relativePath)
+        /// <param name="relativePath">Path to the folder which should be deleted</param>
+        public static void DeleteFolder(WSAStorageLibrary library, string relativePath)
         {
 #if NETFX_CORE
             StorageFolder folder = GetStorageFolderForWSAKnownLibrary(library);
