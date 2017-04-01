@@ -1,4 +1,4 @@
-﻿Windows Store Native (v1.23)
+﻿Windows Store Native (v1.24)
 ----------------------------
 
 Thank you for downloading Windows Store Native we hope you enjoy using it!
@@ -45,6 +45,7 @@ Device:
 WSANativeDevice.EnableFlashlight
 WSANativeDevice.DisableFlashlight
 WSANativeDevice.CaptureScreenshot
+WSANativeDevice.Vibrate
 
 Dialog:
 WSANativeDialog.ShowDialog
@@ -127,13 +128,13 @@ WSANativeStorage.GetAllFiles
 StorageLibrary:
 WSANativeStorageLibrary.GetFile
 WSANativeStorageLibrary.GetFiles
-WSANativeStorageLibrary.GetDirectories
+WSANativeStorageLibrary.GetFolders
 WSANativeStorageLibrary.DoesFileExist
-WSANativeStorageLibrary.DoesDirectoryExist
+WSANativeStorageLibrary.DoesFolderExist
 WSANativeStorageLibrary.CreateFile
-WSANativeStorageLibrary.CreateDirectory
+WSANativeStorageLibrary.CreateFolder
 WSANativeStorageLibrary.DeleteFile
-WSANativeStorageLibrary.DeleteDirectory
+WSANativeStorageLibrary.DeleteFolder
 
 Store:
 WSANativeStore.EnableTestMode
