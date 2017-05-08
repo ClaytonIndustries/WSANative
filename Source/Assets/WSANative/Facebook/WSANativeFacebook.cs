@@ -33,15 +33,6 @@ namespace CI.WSANative.Facebook
 #endif
         }
 
-        public static bool IsDialogOpen
-        {
-#if NETFX_CORE
-            get { return _facebookApi.IsDialogOpen; }
-#else
-            get { return false; }
-#endif
-        }
-
         /// <summary>
         /// Initialise the facebook api - this must be called first - see the website for additional information
         /// </summary>
@@ -196,8 +187,8 @@ namespace CI.WSANative.Facebook
         /// </summary>
         /// <param name="title">The title for the Dialog. Maximum length is 50 characters.</param>
         /// <param name="message">A plain-text message to be sent as part of the request. This text will surface in the App Center view of the request, but not on the notification jewel</param>
-        /// <param name="closed">A callback indicating that the dialog has closed</param>
-        public static void ShowRequestDialog(string title, string message, Action closed)
+        /// <param name="closed">A callback indicating that the dialog has closed. Containing a list of user ids that were invited</param>
+        public static void ShowRequestDialog(string title, string message, Action<IEnumerable<string>> closed)
         {
 #if NETFX_CORE
             UnityEngine.WSA.Application.InvokeOnUIThread(() =>
