@@ -46,6 +46,10 @@ WSANativeDevice.EnableFlashlight
 WSANativeDevice.DisableFlashlight
 WSANativeDevice.CaptureScreenshot
 WSANativeDevice.Vibrate
+WSANativeProgressControl.CreateProgressBar
+WSANativeProgressControl.DestroyProgressBar
+WSANativeProgressControl.CreateProgressRing
+WSANativeProgressControl.DestroyProgressRing
 
 Dialog:
 WSANativeDialog.ShowDialog

@@ -26,6 +26,10 @@ namespace CI.WSANative.Device
         }
 #endif
 
+        /// <summary>
+        /// Create an indeterminate progress bar
+        /// </summary>
+        /// <param name="width">The width of the progress bar</param>
         public static void CreateProgressBar(int width)
         {
 #if NETFX_CORE
@@ -47,6 +51,9 @@ namespace CI.WSANative.Device
 #endif
         }
 
+        /// <summary>
+        /// Destroy the progress bar if is it currently active
+        /// </summary>
         public static void DestroyProgressBar()
         {
 #if NETFX_CORE
@@ -61,6 +68,11 @@ namespace CI.WSANative.Device
 #endif
         }
 
+        /// <summary>
+        /// Create an indeterminate progress ring
+        /// </summary>
+        /// <param name="width">The width of the progress ring</param>
+        /// <param name="height">The height of the progress ring</param>
         public static void CreateProgressRing(int width, int height)
         {
 #if NETFX_CORE
@@ -83,6 +95,9 @@ namespace CI.WSANative.Device
 #endif
         }
 
+        /// <summary>
+        /// Destroy the progress ring if is it currently active
+        /// </summary>
         public static void DestroyProgressRing()
         {
 #if NETFX_CORE
