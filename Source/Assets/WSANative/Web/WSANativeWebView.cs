@@ -99,6 +99,7 @@ namespace CI.WSANative.Web
                 UnityEngine.WSA.Application.InvokeOnUIThread(() =>
                 {
                     _dxSwapChainPanel.Children.Remove(_webView);
+                    _webView = null;
                 }, true);
             }
 #endif
