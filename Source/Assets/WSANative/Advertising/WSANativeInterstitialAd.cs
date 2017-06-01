@@ -37,8 +37,8 @@ namespace CI.WSANative.Advertising
             CompletedCallbackDelegate completedCallbackDelegate, ErrorOccurredCallbackDelegate errorOccurredCallbackDelegate);
 
         [DllImport("__Internal")]
-        private static extern void _InterstitialAdRequest([MarshalAs(UnmanagedType.LPWStr)]string adType, [MarshalAs(UnmanagedType.LPWStr)]string appId,
-            [MarshalAs(UnmanagedType.LPWStr)]string adUnitId);
+        private static extern void _InterstitialAdRequest([MarshalAs(UnmanagedType.LPWStr)]string adType, [MarshalAs(UnmanagedType.LPWStr)]string adVariant, 
+            [MarshalAs(UnmanagedType.LPWStr)]string appId, [MarshalAs(UnmanagedType.LPWStr)]string adUnitId);
 
         [DllImport("__Internal")]
         private static extern void _InterstitialAdShow([MarshalAs(UnmanagedType.LPWStr)]string adType);
@@ -89,7 +89,7 @@ namespace CI.WSANative.Advertising
 		/// <param name="adType">The ad network to initialise</param>
         /// <param name="appId">Your apps id</param>
         /// <param name="adUnitId">Your apps ad unit id (null or empty for Vungle)</param>
-        public static void Initialise(WSAInterstitialAdType adType, string appId, string adUnitId)
+        public static void Initialise(WSAInterstitialAdType adType,  string appId, string adUnitId)
         {
             if (!_unityEditor)
             {
@@ -118,20 +118,21 @@ namespace CI.WSANative.Advertising
         /// Only needs to be called once for Vungle ads (ads will be automatically fetched from then on)
         /// </summary>
         /// <param name="adType">The type of ad to request</param>
-        public static void RequestAd(WSAInterstitialAdType adType)
+        /// <param name="adType">The variant to request - "Display" for banner interstitial, "Video" for video interstitial. ONLY relevant to Microsoft ads, otherwise specify "Video"</param>
+        public static void RequestAd(WSAInterstitialAdType adType, WSAInterstitialAdVariant adVariant)
         {
             if (!_unityEditor)
             {
                 switch (adType)
                 {
                     case WSAInterstitialAdType.AdDuplex:
-                        _InterstitialAdRequest(adType.ToString(), _adDuplexAppId, _adDuplexAdUnitId);
+                        _InterstitialAdRequest(adType.ToString(), adVariant.ToString(), _adDuplexAppId, _adDuplexAdUnitId);
                         break;
                     case WSAInterstitialAdType.Microsoft:
-                        _InterstitialAdRequest(adType.ToString(), _msAppId, _msAdUnitId);
+                        _InterstitialAdRequest(adType.ToString(), adVariant.ToString(), _msAppId, _msAdUnitId);
                         break;
                     case WSAInterstitialAdType.Vungle:
-                        _InterstitialAdRequest(adType.ToString(), _vungleAppId, string.Empty);
+                        _InterstitialAdRequest(adType.ToString(), adVariant.ToString(), _vungleAppId, string.Empty);
                         break;
                 }
             }

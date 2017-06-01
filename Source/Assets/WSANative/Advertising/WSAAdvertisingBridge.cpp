@@ -42,11 +42,11 @@ extern "C" void __stdcall _InterstitialAdInitialise(AdCallbackWithAdType ready, 
 	_InterstitialAdInitialiseAction(ready, cancelled, completed, error);
 }
 
-void (*_InterstitialAdRequestAction)(wchar_t*,wchar_t*,wchar_t*);
+void (*_InterstitialAdRequestAction)(wchar_t*,wchar_t*,wchar_t*,wchar_t*);
 
-extern "C" void __stdcall _InterstitialAdRequest(wchar_t* adType, wchar_t* appId, wchar_t* adUnitId)
+extern "C" void __stdcall _InterstitialAdRequest(wchar_t* adType, wchar_t* adVariant, wchar_t* appId, wchar_t* adUnitId)
 {
-	_InterstitialAdRequestAction(adType, appId, adUnitId);
+	_InterstitialAdRequestAction(adType, adVariant, appId, adUnitId);
 }
 
 void (*_InterstitialAdShowAction)(wchar_t*);

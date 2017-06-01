@@ -71,7 +71,7 @@ inline void InterstitialAdManager::Initialise()
 		_Completed = completed;
 		_Error = error;
 	};
-	_InterstitialAdRequestAction = [](wchar_t* adType, wchar_t* appId, wchar_t* adUnitId)
+	_InterstitialAdRequestAction = [](wchar_t* adType, wchar_t* adVariant, wchar_t* appId, wchar_t* adUnitId)
 	{
 #if IAM_AD_DUPLEX_ENABLED
 		if (IsAdType(adType, AD_TYPE_AD_DUPLEX))
@@ -106,7 +106,7 @@ inline void InterstitialAdManager::Initialise()
 
 			AppCallbacks::Instance->InvokeOnUIThread(ref new AppCallbackItem([appId, adUnitId]()
 			{
-				_microsoftInterstitialAd->RequestAd(AdType::Video, ref new Platform::String(appId), ref new Platform::String(adUnitId));
+				_microsoftInterstitialAd->RequestAd(IsAdVariantDisplay(adVariant) ? AdType::Display : AdType::Video, ref new Platform::String(appId), ref new Platform::String(adUnitId));
 			}), false);	
 		}
 #endif
@@ -177,4 +177,9 @@ inline void InterstitialAdManager::Initialise()
 inline bool InterstitialAdManager::IsAdType(const wchar_t* actual, const wchar_t* expected)
 {
 	return wcscmp(actual, expected) == 0;
+}
+
+inline bool InterstitialAdManager::IsAdVariantDisplay(const wchar_t* actual)
+{
+	return wcscmp(actual, L"Display") == 0;
 }

@@ -13,5 +13,5 @@ extern PLUGIN_API void (*_BannerAdSetVisibilityAction)(wchar_t*,bool);
 extern PLUGIN_API void (*_BannerAdDestroyAction)(wchar_t*);
 
 extern PLUGIN_API void (*_InterstitialAdInitialiseAction)(AdCallbackWithAdType,AdCallbackWithAdType,AdCallbackWithAdType,AdCallbackWithAdTypeAndErrorMessage);
-extern PLUGIN_API void (*_InterstitialAdRequestAction)(wchar_t*,wchar_t*,wchar_t*);
+extern PLUGIN_API void (*_InterstitialAdRequestAction)(wchar_t*,wchar_t*,wchar_t*,wchar_t*);
 extern PLUGIN_API void (*_InterstitialAdShowAction)(wchar_t*);
