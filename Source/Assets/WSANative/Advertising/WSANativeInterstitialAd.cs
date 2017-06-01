@@ -253,7 +253,7 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// For internal use only
         /// </summary>
-        public static Action<WSAInterstitialAdType, string, string> _Request;
+        public static Action<WSAInterstitialAdType, WSAInterstitialAdVariant, string, string> _Request;
 
         /// <summary>
         /// For internal use only
@@ -298,20 +298,21 @@ namespace CI.WSANative.Advertising
         /// Only needs to be called once for Vungle ads (ads will be automatically fetched from then on)
         /// </summary>
         /// <param name="adType">The type of ad to request</param>
-        public static void RequestAd(WSAInterstitialAdType adType)
+        /// <param name="adType">The variant to request - "Display" for banner interstitial, "Video" for video interstitial. ONLY relevant to Microsoft ads, otherwise specify "Video"</param>
+        public static void RequestAd(WSAInterstitialAdType adType, WSAInterstitialAdVariant adVariant)
         {
             if (_Request != null)
             {
                 switch (adType)
                 {
                     case WSAInterstitialAdType.AdDuplex:
-                        _Request(adType, _adDuplexAppId, _adDuplexAdUnitId);
+                        _Request(adType, adVariant, _adDuplexAppId, _adDuplexAdUnitId);
                         break;
                     case WSAInterstitialAdType.Microsoft:
-                        _Request(adType, _msAppId, _msAdUnitId);
+                        _Request(adType, adVariant, _msAppId, _msAdUnitId);
                         break;
                     case WSAInterstitialAdType.Vungle:
-                        _Request(adType, _vungleAppId, string.Empty);
+                        _Request(adType, adVariant, _vungleAppId, string.Empty);
                         break;
                 }
             }
