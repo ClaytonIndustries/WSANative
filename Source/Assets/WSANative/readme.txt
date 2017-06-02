@@ -1,4 +1,4 @@
-﻿Windows Store Native (v1.24)
+﻿Windows Store Native (v1.25)
 ----------------------------
 
 Thank you for downloading Windows Store Native we hope you enjoy using it!
@@ -30,6 +30,7 @@ Banner:
 WSANativeBannerAd.Initialise
 WSANativeBannerAd.CreatAd
 WSANativeBannerAd.SetVisibility
+WSANativeBannerAd.ReconfigureAd
 WSANativeBannerAd.DestroyAd
 WSANativeBannerAd.HasAd
 Interstitial:
