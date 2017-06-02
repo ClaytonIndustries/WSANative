@@ -180,12 +180,6 @@ public class ExampleSceneManagerController : MonoBehaviour
         WSANativeBannerAd.CreatAd(WSABannerAdType.Microsoft, 728, 90, WSAAdVerticalPlacement.Top, WSAAdHorizontalPlacement.Centre);
     }
 
-    public void CreateMediatedAd()
-    {
-        WSANativeMediatorAd.CreatAd("3f83fe91-d6be-434d-a0ae-7351c5a997f1", "10865270", "AdDuplexAppKey", "AdDuplexAdUnitId", 50,
-            728, 90, WSAAdVerticalPlacement.Top, WSAAdHorizontalPlacement.Centre);
-    }
-
     public void CreateMap()
     {
         int xPos = (Screen.width / 2) - 350;
