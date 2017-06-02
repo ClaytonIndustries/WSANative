@@ -225,6 +225,11 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// For internal use only
         /// </summary>
+        public static Action<WSABannerAdSettings> Reconfigure;
+
+        /// <summary>
+        /// For internal use only
+        /// </summary>
         public static Action<WSABannerAdType> Destroy;
 
 #pragma warning disable 0414
@@ -315,6 +320,34 @@ namespace CI.WSANative.Advertising
                 UnityEngine.WSA.Application.InvokeOnUIThread(() =>
                 {
                     SetVisiblity(adType, visible);
+                }, false);
+            }
+#endif
+        }
+
+        /// <summary>
+        /// Reconfigure an existing ad
+        /// </summary>
+        /// <param name="adType">The ad type</param>
+        /// <param name="width">Width of the ad</param>
+        /// <param name="height">Height of the ad</param>
+        /// <param name="verticalPlacement">Where should the ad be placed vertically</param>
+        /// <param name="horizontalPlacement">Where should the ad be placed horizontally</param>
+        public static void ReconfigureAd(WSABannerAdType adType, int width, int height, WSAAdVerticalPlacement verticalPlacement, WSAAdHorizontalPlacement horizontalPlacement)
+        {
+#if NETFX_CORE
+            if (Reconfigure != null)
+            {
+                UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+                {
+                    Reconfigure(new WSABannerAdSettings()
+                    {
+                        AdType = adType,
+                        Width = width,
+                        Height = height,
+                        VerticalPlacement = verticalPlacement,
+                        HorizontalPlacement = horizontalPlacement
+                    });
                 }, false);
             }
 #endif

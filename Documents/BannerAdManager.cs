@@ -59,6 +59,18 @@ namespace CI.WSANative.Advertising
                     adControl.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
                 }
             };
+			WSANativeBannerAd.ReconfigureAd += (bannerAdSettings) =>
+			{
+				if(bannerAdSettings.AdType == WSABannerAdType.AdDuplex && adControl != null)
+				{
+					adControl.Width = bannerAdSettings.Width;
+                    adControl.Height = bannerAdSettings.Height;
+					adControl.VerticalAlignment = bannerAdSettings.VerticalPlacement == WSAAdVerticalPlacement.Top ? VerticalAlignment.Top
+                        : bannerAdSettings.VerticalPlacement == WSAAdVerticalPlacement.Bottom ? VerticalAlignment.Bottom : VerticalAlignment.Center;
+                    adControl.HorizontalAlignment = bannerAdSettings.HorizontalPlacement == WSAAdHorizontalPlacement.Left ? HorizontalAlignment.Left
+                        : bannerAdSettings.HorizontalPlacement == WSAAdHorizontalPlacement.Right ? HorizontalAlignment.Right : HorizontalAlignment.Center;
+				}
+			};
             WSANativeBannerAd.Destroy += (adType) =>
             {
                 if (adType == WSABannerAdType.AdDuplex && adControl != null)
@@ -106,6 +118,18 @@ namespace CI.WSANative.Advertising
                     adControl.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
                 }
             };
+			WSANativeBannerAd.ReconfigureAd += (bannerAdSettings) =>
+			{
+				if(bannerAdSettings.AdType == WSABannerAdType.Microsoft && adControl != null)
+				{
+					adControl.Width = bannerAdSettings.Width;
+                    adControl.Height = bannerAdSettings.Height;
+					adControl.VerticalAlignment = bannerAdSettings.VerticalPlacement == WSAAdVerticalPlacement.Top ? VerticalAlignment.Top
+                        : bannerAdSettings.VerticalPlacement == WSAAdVerticalPlacement.Bottom ? VerticalAlignment.Bottom : VerticalAlignment.Center;
+                    adControl.HorizontalAlignment = bannerAdSettings.HorizontalPlacement == WSAAdHorizontalPlacement.Left ? HorizontalAlignment.Left
+                        : bannerAdSettings.HorizontalPlacement == WSAAdHorizontalPlacement.Right ? HorizontalAlignment.Right : HorizontalAlignment.Center;
+				}
+			};
             WSANativeBannerAd.Destroy += (adType) =>
             {
                 if (adType == WSABannerAdType.Microsoft && adControl != null)
