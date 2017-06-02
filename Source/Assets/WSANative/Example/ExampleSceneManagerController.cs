@@ -171,7 +171,7 @@ public class ExampleSceneManagerController : MonoBehaviour
                 WSANativeInterstitialAd.ShowAd(WSAInterstitialAdType.Microsoft);
             }
         };
-        WSANativeInterstitialAd.RequestAd(WSAInterstitialAdType.Microsoft);
+        WSANativeInterstitialAd.RequestAd(WSAInterstitialAdType.Microsoft, WSAInterstitialAdVariant.Video);
     }
 
     public void CreateBannerAd()
