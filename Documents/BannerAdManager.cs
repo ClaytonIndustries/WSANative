@@ -59,7 +59,7 @@ namespace CI.WSANative.Advertising
                     adControl.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
                 }
             };
-			WSANativeBannerAd.ReconfigureAd += (bannerAdSettings) =>
+			WSANativeBannerAd.Reconfigure += (bannerAdSettings) =>
 			{
 				if(bannerAdSettings.AdType == WSABannerAdType.AdDuplex && adControl != null)
 				{
@@ -118,7 +118,7 @@ namespace CI.WSANative.Advertising
                     adControl.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
                 }
             };
-			WSANativeBannerAd.ReconfigureAd += (bannerAdSettings) =>
+			WSANativeBannerAd.Reconfigure += (bannerAdSettings) =>
 			{
 				if(bannerAdSettings.AdType == WSABannerAdType.Microsoft && adControl != null)
 				{

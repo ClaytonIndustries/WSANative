@@ -24,6 +24,13 @@ extern "C" void __stdcall _BannerAdSetVisibility(wchar_t* adType, bool visible)
 	_BannerAdSetVisibilityAction(adType, visible);
 }
 
+void (*_BannerAdReconfigureAction)(wchar_t*,int,int,wchar_t*,wchar_t*);
+
+extern "C" void __stdcall _BannerAdReconfigure(wchar_t* adType, int width, int height, wchar_t* verticalPlacement, wchar_t* horizontalPlacement)
+{
+	_BannerAdReconfigureAction(adType, width, height, verticalPlacement, horizontalPlacement);
+}
+
 void (*_BannerAdDestroyAction)(wchar_t*);
 
 extern "C" void __stdcall _BannerAdDestroy(wchar_t* adType)

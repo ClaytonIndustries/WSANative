@@ -34,12 +34,16 @@ namespace CI.WSANative.Advertising
         private static extern void _BannerAdInitialise(AdRefreshedCallbackDelegate adRefreshedCallback, ErrorOccurredCallbackDelegate errorOccurredCallback);
 
         [DllImport("__Internal")]
-        private static extern void _BannerAdCreate([MarshalAs(UnmanagedType.LPWStr)]string adType, [MarshalAs(UnmanagedType.LPWStr)]string appId, 
-            [MarshalAs(UnmanagedType.LPWStr)]string adUnitId, int width, int height, 
+        private static extern void _BannerAdCreate([MarshalAs(UnmanagedType.LPWStr)]string adType, int width, int height, 
             [MarshalAs(UnmanagedType.LPWStr)]string verticalPlacement, [MarshalAs(UnmanagedType.LPWStr)]string horizontalPlacement);
 
         [DllImport("__Internal")]
         private static extern void _BannerAdSetVisibility([MarshalAs(UnmanagedType.LPWStr)]string adType, bool visible);
+
+        [DllImport("__Internal")]
+        private static extern void _BannerAdReconfigure([MarshalAs(UnmanagedType.LPWStr)]string adType, [MarshalAs(UnmanagedType.LPWStr)]string appId, 
+            [MarshalAs(UnmanagedType.LPWStr)]string adUnitId, int width, int height, 
+            [MarshalAs(UnmanagedType.LPWStr)]string verticalPlacement, [MarshalAs(UnmanagedType.LPWStr)]string horizontalPlacement);
 
         [DllImport("__Internal")]
         private static extern void _BannerAdDestroy([MarshalAs(UnmanagedType.LPWStr)]string adType);
@@ -130,6 +134,25 @@ namespace CI.WSANative.Advertising
                 UnityEngine.WSA.Application.InvokeOnUIThread(() =>
                 {
                     _BannerAdSetVisibility(adType.ToString(), visible);
+                }, false);
+            }
+        }
+
+        /// <summary>
+        /// Reconfigure an existing ad
+        /// </summary>
+        /// <param name="adType">The ad type</param>
+        /// <param name="width">Width of the ad</param>
+        /// <param name="height">Height of the ad</param>
+        /// <param name="verticalPlacement">Where should the ad be placed vertically</param>
+        /// <param name="horizontalPlacement">Where should the ad be placed horizontally</param>
+        public static void ReconfigureAd(WSABannerAdType adType, int width, int height, WSAAdVerticalPlacement verticalPlacement, WSAAdHorizontalPlacement horizontalPlacement)
+        {
+            if (!_unityEditor)
+            {
+                UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+                {
+                    _BannerAdCreate(adType.ToString(), width, height, verticalPlacement.ToString(), horizontalPlacement.ToString());
                 }, false);
             }
         }

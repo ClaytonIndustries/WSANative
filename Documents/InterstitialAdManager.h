@@ -39,6 +39,7 @@ private:
 	static AdCallbackWithAdType _Completed;
 	static AdCallbackWithAdTypeAndErrorMessage _Error;
 	static bool IsAdType(const wchar_t*, const wchar_t*);
+	static bool IsAdVariantDisplay(const wchar_t*);
 };
 
 #include "pch.h"

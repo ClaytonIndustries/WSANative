@@ -112,6 +112,27 @@ inline void BannerAdManager::Initialise(Grid^ grid)
 		}
 #endif
 	};
+	_BannerAdReconfigureAction = [](wchar_t* adType, int width, int height, wchar_t* verticalPlacement, wchar_t* horizontalPlacement)
+	{
+#if BAM_AD_DUPLEX_ENABLED
+		if (IsAdType(adType, AD_TYPE_AD_DUPLEX) && _adDuplexAdControl != nullptr)
+		{
+			_adDuplexAdControl->Width = width;
+			_adDuplexAdControl->Height = height;
+			_adDuplexAdControl->VerticalAlignment = GetVerticalAlignment(verticalPlacement);
+			_adDuplexAdControl->HorizontalAlignment = GetHorizontalAlignment(horizontalPlacement);		
+		}
+#endif
+#if BAM_MICROSOFT_ENABLED
+		if (IsAdType(adType, AD_TYPE_MICROSOFT) && _microsoftAdControl != nullptr)
+		{
+			_microsoftAdControl->Width = width;
+			_microsoftAdControl->Height = height;
+			_microsoftAdControl->VerticalAlignment = GetVerticalAlignment(verticalPlacement);
+			_microsoftAdControl->HorizontalAlignment = GetHorizontalAlignment(horizontalPlacement);
+		}
+#endif
+	};
 	_BannerAdDestroyAction = [](wchar_t* adType)
 	{
 #if BAM_AD_DUPLEX_ENABLED
