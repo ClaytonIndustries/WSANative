@@ -37,10 +37,6 @@ Interstitial:
 WSANativeInterstitialAd.Initialise
 WSANativeInterstitialAd.RequestAd
 WSANativeInterstitialAd.ShowAd
-Mediator:
-WSANativeMediatorAd.CreatAd
-WSANativeMediatorAd.SetVisibility
-WSANativeMediatorAd.DestroyAd
 
 Device:
 WSANativeDevice.EnableFlashlight
@@ -158,11 +154,6 @@ WSANativeTile.RemoveSecondaryTile
 WSANativeTile.FindAllSecondaryTiles
 
 Web:
-Request:
-WSANativeWebRequest.GetString
-WSANativeWebRequest.GetBytes
-WSANativeWebRequest.PostReturnString
-WSANativeWebRequest.PostReturnBytes
 Web View:
 WSANativeWebView.Create
 WSANativeWebView.Destroy
