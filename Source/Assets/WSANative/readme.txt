@@ -14,7 +14,7 @@ Support Email: clayton.inds+support@gmail.com
 Basics - all functions listed below have detailed comments in the code
 
 ***All the functions below except the serialisation functions will only work once you build a Windows Store Solution - however they are safe to use in the editor***
-***Banner, interstitial and mediator ads as well as maps, Facebook, Feedback Hub and input require additional setup - please see the website for details***
+***Banner and interstitial ads as well as maps, Facebook, Feedback Hub and input require additional setup - please see the website for details***
 
 ------------------------------------------------------------------------------------------------------------------------
 Windows Store - Configuring test products
