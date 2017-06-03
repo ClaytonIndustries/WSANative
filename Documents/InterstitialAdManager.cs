@@ -28,7 +28,7 @@ namespace CI.WSANative.Advertising
         private static void ConfigureAdDuplexInterstitalAd()
         {
             AdDuplex.InterstitialAd interstitialAd = null;
-            WSANativeInterstitialAd._Request += (adType, appId, adUnitId) =>
+            WSANativeInterstitialAd._Request += (adType, adVariant, appId, adUnitId) =>
             {
                 if (adType == WSAInterstitialAdType.AdDuplex)
                 {
@@ -69,13 +69,18 @@ namespace CI.WSANative.Advertising
 	        interstitialAd.ErrorOccurred += (s, e) => { RaiseActionOnAppThread(WSANativeInterstitialAd.ErrorOccurred, WSAInterstitialAdType.Microsoft, e.ErrorMessage); };
 	        interstitialAd.Completed += (s, e) => { RaiseActionOnAppThread(WSANativeInterstitialAd.Completed, WSAInterstitialAdType.Microsoft); };
 	        interstitialAd.Cancelled += (s, e) => { RaiseActionOnAppThread(WSANativeInterstitialAd.Cancelled, WSAInterstitialAdType.Microsoft); };
-	        WSANativeInterstitialAd._Request += (adType, appId, adUnitId) =>
+	        WSANativeInterstitialAd._Request += (adType, adVariant, appId, adUnitId) =>
 	        {
 		        if (adType == WSAInterstitialAdType.Microsoft)
 		        {
                     AppCallbacks.Instance.InvokeOnUIThread(() =>
                     {
+#if UNITY_WSA_10_0
+                        interstitialAd.RequestAd(adVariant == WSAInterstitialAdVariant.Display ? Microsoft.Advertising.WinRT.UI.AdType.Display : Microsoft.Advertising.WinRT.UI.AdType.Video,
+                            appId, adUnitId);
+#else
                         interstitialAd.RequestAd(Microsoft.Advertising.WinRT.UI.AdType.Video, appId, adUnitId);
+#endif
                     }, false);
 		        }
 	        };
@@ -95,7 +100,7 @@ namespace CI.WSANative.Advertising
         private static void ConfigureVungleInterstitalAd()
         {
             VungleSDK.VungleAd interstitialAd = null;
-	        WSANativeInterstitialAd._Request += (adType, appId, adUnitId) =>
+	        WSANativeInterstitialAd._Request += (adType, adVariant, appId, adUnitId) =>
 	        {
 		        if(adType == WSAInterstitialAdType.Vungle && interstitialAd == null)
 		        {
