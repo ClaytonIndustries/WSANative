@@ -154,13 +154,6 @@ public class ExampleSceneManagerController : MonoBehaviour
         });
     }
 
-    public void WebGet()
-    {
-        WSANativeWebRequest.GetBytes("http://httpbin.org/encoding/utf8", (success, response) =>
-        {
-        });
-    }
-
     public void CreateInterstitialAd()
     {
         WSANativeInterstitialAd.Initialise(WSAInterstitialAdType.Microsoft, "d25517cb-12d4-4699-8bdc-52040c712cab", "11389925");
