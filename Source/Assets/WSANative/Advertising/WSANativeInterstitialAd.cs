@@ -118,7 +118,7 @@ namespace CI.WSANative.Advertising
         /// Only needs to be called once for Vungle ads (ads will be automatically fetched from then on)
         /// </summary>
         /// <param name="adType">The type of ad to request</param>
-        /// <param name="adType">The variant to request - "Display" for banner interstitial, "Video" for video interstitial. ONLY relevant to Microsoft ads, otherwise specify "Video"</param>
+        /// <param name="adVariant">The variant to request - "Display" for banner interstitial, "Video" for video interstitial. ONLY relevant to Microsoft ads, otherwise specify "Video"</param>
         public static void RequestAd(WSAInterstitialAdType adType, WSAInterstitialAdVariant adVariant)
         {
             if (!_unityEditor)
@@ -299,7 +299,7 @@ namespace CI.WSANative.Advertising
         /// Only needs to be called once for Vungle ads (ads will be automatically fetched from then on)
         /// </summary>
         /// <param name="adType">The type of ad to request</param>
-        /// <param name="adType">The variant to request - "Display" for banner interstitial, "Video" for video interstitial. ONLY relevant to Microsoft ads, otherwise specify "Video"</param>
+        /// <param name="adVariant">The variant to request - "Display" for banner interstitial, "Video" for video interstitial. ONLY relevant to Microsoft ads, otherwise specify "Video"</param>
         public static void RequestAd(WSAInterstitialAdType adType, WSAInterstitialAdVariant adVariant)
         {
             if (_Request != null)
