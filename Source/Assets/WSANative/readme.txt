@@ -73,6 +73,10 @@ WSANativeFacebook.ShowSendDialog
 Geolocation:
 WSANativeGeolocation.GetUsersLocation
 
+Image:
+WSANativeImage.LoadImage
+WSANativeImage.Crop
+
 Input:
 WSANativeInput.PointerPressed
 WSANativeInput.PointerReleased
