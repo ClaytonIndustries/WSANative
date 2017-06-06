@@ -34,15 +34,14 @@ namespace CI.WSANative.Advertising
         private static extern void _BannerAdInitialise(AdRefreshedCallbackDelegate adRefreshedCallback, ErrorOccurredCallbackDelegate errorOccurredCallback);
 
         [DllImport("__Internal")]
-        private static extern void _BannerAdCreate([MarshalAs(UnmanagedType.LPWStr)]string adType, int width, int height, 
-            [MarshalAs(UnmanagedType.LPWStr)]string verticalPlacement, [MarshalAs(UnmanagedType.LPWStr)]string horizontalPlacement);
+        private static extern void _BannerAdCreate([MarshalAs(UnmanagedType.LPWStr)]string adType, [MarshalAs(UnmanagedType.LPWStr)]string appId, [MarshalAs(UnmanagedType.LPWStr)]string adUnitId, 
+            int width, int height, [MarshalAs(UnmanagedType.LPWStr)]string verticalPlacement, [MarshalAs(UnmanagedType.LPWStr)]string horizontalPlacement);
 
         [DllImport("__Internal")]
         private static extern void _BannerAdSetVisibility([MarshalAs(UnmanagedType.LPWStr)]string adType, bool visible);
 
         [DllImport("__Internal")]
-        private static extern void _BannerAdReconfigure([MarshalAs(UnmanagedType.LPWStr)]string adType, [MarshalAs(UnmanagedType.LPWStr)]string appId, 
-            [MarshalAs(UnmanagedType.LPWStr)]string adUnitId, int width, int height, 
+        private static extern void _BannerAdReconfigure([MarshalAs(UnmanagedType.LPWStr)]string adType, int width, int height, 
             [MarshalAs(UnmanagedType.LPWStr)]string verticalPlacement, [MarshalAs(UnmanagedType.LPWStr)]string horizontalPlacement);
 
         [DllImport("__Internal")]
@@ -152,7 +151,7 @@ namespace CI.WSANative.Advertising
             {
                 UnityEngine.WSA.Application.InvokeOnUIThread(() =>
                 {
-                    _BannerAdCreate(adType.ToString(), width, height, verticalPlacement.ToString(), horizontalPlacement.ToString());
+                    _BannerAdReconfigure(adType.ToString(), width, height, verticalPlacement.ToString(), horizontalPlacement.ToString());
                 }, false);
             }
         }
