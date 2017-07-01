@@ -105,7 +105,7 @@ inline void InterstitialAdManager::Initialise()
 				_microsoftInterstitialAd->ErrorOccurred += ref new Windows::Foundation::EventHandler<AdErrorEventArgs^>([](Object^ s, AdErrorEventArgs^ e) { _Error(AD_TYPE_MICROSOFT, e->ErrorMessage->Data()); });
 			}
 
-			AppCallbacks::Instance->InvokeOnUIThread(ref new AppCallbackItem([appId, adUnitId]()
+			AppCallbacks::Instance->InvokeOnUIThread(ref new AppCallbackItem([appId, adUnitId, adVariant]()
 			{
 				_microsoftInterstitialAd->RequestAd(IsAdVariantDisplay(adVariant) ? AdType::Display : AdType::Video, ref new Platform::String(appId), ref new Platform::String(adUnitId));
 			}), false);	
