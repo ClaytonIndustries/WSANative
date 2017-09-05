@@ -10,6 +10,7 @@
 using System;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.ApplicationModel.Email;
 using Windows.Storage.Streams;
 #endif
 
@@ -50,14 +51,51 @@ namespace CI.WSANative.Social
         /// <summary>
         /// Allows the user to send an email to the specified address - will launch the default email client
         /// </summary>
-        /// <param name="emailAddress">Prepopulate the to field with this address</param>
-        public static void ComposeEmail(string emailAddress)
+        /// <param name="emailAddress">Prepopulate the to field</param>
+        public static void ComposeEmail(string to)
         {
 #if NETFX_CORE
             UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
             {
-                var uri = new Uri("mailto:" + emailAddress);
+                var uri = new Uri("mailto:" + to);
                 await Windows.System.Launcher.LaunchUriAsync(uri);
+            }, false);
+#endif
+        }
+
+        /// <summary>
+        /// Allows the user to send an email with the specified address, body and attachment - will launch the default email client
+        /// </summary>
+        /// <param name="to">Prepopulate the to field</param>
+        /// <param name="messageBody">Prepopulate the email body</param>
+        /// <param name="attachmentFilename">Filename of the attachment - optional</param>
+        /// <param name="attachmentData">Data for the attachment - optional</param>
+        public static void ComposeEmail(string to, string messageBody, string attachmentFilename = null, byte[] attachmentData = null)
+        {
+#if NETFX_CORE
+            UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
+            {
+                EmailMessage emailMessage = new EmailMessage()
+                {
+                    Body = messageBody
+                };
+
+                if (!string.IsNullOrWhiteSpace(attachmentFilename) && attachmentData != null)
+                {
+                    InMemoryRandomAccessStream memoryStream = new InMemoryRandomAccessStream();
+
+                    await memoryStream.WriteAsync(attachmentData.AsBuffer());
+
+                    IRandomAccessStreamReference stream = RandomAccessStreamReference.CreateFromStream(memoryStream);
+
+                    EmailAttachment emailAttachment = new EmailAttachment(attachmentFilename, stream);
+
+                    emailMessage.Attachments.Add(emailAttachment);
+                }
+
+                emailMessage.To.Add(new EmailRecipient(to));
+
+                await EmailManager.ShowComposeNewEmailAsync(emailMessage);
             }, false);
 #endif
         }
