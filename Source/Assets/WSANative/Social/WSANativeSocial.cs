@@ -67,16 +67,18 @@ namespace CI.WSANative.Social
         /// Allows the user to send an email with the specified address, body and attachment - will launch the default email client
         /// </summary>
         /// <param name="to">Prepopulate the to field</param>
+        /// <param name="subject">Prepopulate the subject field</param>
         /// <param name="messageBody">Prepopulate the email body</param>
         /// <param name="attachmentFilename">Filename of the attachment - optional</param>
         /// <param name="attachmentData">Data for the attachment - optional</param>
-        public static void ComposeEmail(string to, string messageBody, string attachmentFilename = null, byte[] attachmentData = null)
+        public static void ComposeEmail(string to, string subject, string messageBody, string attachmentFilename = null, byte[] attachmentData = null)
         {
 #if NETFX_CORE
             UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
             {
                 EmailMessage emailMessage = new EmailMessage()
                 {
+                    Subject = subject,
                     Body = messageBody
                 };
 
