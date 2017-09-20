@@ -350,7 +350,7 @@ namespace CI.WSANative.Facebook
             return graphApiReadResponse;
         }
 
-        public void ShowFeedDialog(string link, string picture, string source, string name, string caption, string description, Action closed)
+        public void ShowFeedDialog(string link, string source, Action closed)
         {
             if (_dxSwapChainPanel == null)
             {
@@ -360,11 +360,7 @@ namespace CI.WSANative.Facebook
             Dictionary<string, string> parameters = new Dictionary<string, string>()
             {
                 { "link", link },
-                { "picture", picture },
-                { "source", source },
-                { "name", name },
-                { "caption", caption },
-                { "description", description }
+                { "source", source }
             };
 
             string feedBaseUri = string.Format("{0}?app_id={1}&display=popup&redirect_url={2}", WSAFacebookConstants.FeedDialogUri, _facebookAppId, WSAFacebookConstants.WebRedirectUri);

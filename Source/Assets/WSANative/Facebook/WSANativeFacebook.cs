@@ -166,18 +166,14 @@ namespace CI.WSANative.Facebook
         /// You don't need to specify all of the following parameters, null the ones you don't want
         /// </summary>
         /// <param name="link">The link attached to this post</param>
-        /// <param name="picture">The URL of a picture attached to this post. The picture must be at least 200px by 200px</param>
         /// <param name="source">The URL of a media file (either SWF or MP3) attached to this post. If SWF, you must also specify a picture to provide a thumbnail for the video</param>
-        /// <param name="name">The name of the link attachment</param>
-        /// <param name="caption">The caption of the link (appears beneath the link name). If not specified, this field is automatically populated with the URL of the link</param>
-        /// <param name="description">The description of the link (appears beneath the link caption). If not specified, this field is automatically populated by information scraped from the link, typically the title of the page</param>
         /// <param name="closed">A callback indicating that the dialog has closed</param>
-        public static void ShowFeedDialog(string link, string picture, string source, string name, string caption, string description, Action closed)
+        public static void ShowFeedDialog(string link, string source, Action closed)
         {
 #if NETFX_CORE
             UnityEngine.WSA.Application.InvokeOnUIThread(() =>
             {
-                _facebookApi.ShowFeedDialog(link, picture, source, name, caption, description, closed);
+                _facebookApi.ShowFeedDialog(link, source, closed);
             }, false);
 #endif
         }
