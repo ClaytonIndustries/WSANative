@@ -1,4 +1,4 @@
-﻿Windows Store Native (v1.25)
+﻿Windows Store Native (v1.26)
 ----------------------------
 
 Thank you for downloading Windows Store Native we hope you enjoy using it!
