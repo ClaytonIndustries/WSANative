@@ -13,7 +13,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Windows.Storage;
-using Windows.UI.Xaml.Controls;
 using CI.WSANative.Facebook.Core;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -32,7 +31,7 @@ namespace CI.WSANative.Facebook
         private string _facebookAppId;
         private string _packageSID;
         private string _accessToken;
-        private Grid _dxSwapChainPanel;
+        private Windows.UI.Xaml.Controls.Grid _dxSwapChainPanel;
 
         private const string _savedDataFilename = "FacebookData.sav";
         private const string _authenticationErrorCode = "190";
@@ -63,7 +62,7 @@ namespace CI.WSANative.Facebook
             _packageSID = packageSID;
         }
 
-        public void ConfigureDialogs(Grid dxSwapChainPanel)
+        public void ConfigureDialogs(Windows.UI.Xaml.Controls.Grid dxSwapChainPanel)
         {
             _dxSwapChainPanel = dxSwapChainPanel;
         }
