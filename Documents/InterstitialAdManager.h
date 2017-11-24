@@ -43,6 +43,7 @@ private:
 };
 
 #include "pch.h"
+#include "WSAAdvertisingBridge.h"
 
 const wchar_t* InterstitialAdManager::AD_TYPE_AD_DUPLEX = L"AdDuplex";
 const wchar_t* InterstitialAdManager::AD_TYPE_MICROSOFT = L"Microsoft";
