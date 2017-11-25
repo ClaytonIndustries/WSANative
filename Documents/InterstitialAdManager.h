@@ -117,7 +117,10 @@ inline void InterstitialAdManager::Initialise()
 		{
 			if (_vungleInterstitialAd == nullptr)
 			{
-				_vungleInterstitialAd = AdFactory::GetInstance(ref new Platform::String(appId));
+				Platform::Array<Platform::String^>^ placementIds = ref new Platform::Array<Platform::String^>(1);
+				placementIds[0] = ref new Platform::String(adUnitId);
+
+				_vungleInterstitialAd = AdFactory::GetInstance(ref new Platform::String(appId), placementIds);
 				_vungleInterstitialAd->OnAdPlayableChanged += ref new Windows::Foundation::EventHandler<AdPlayableEventArgs^>([](Object^ s, AdPlayableEventArgs^ e)
 				{
 					if (e->AdPlayable)
@@ -125,9 +128,9 @@ inline void InterstitialAdManager::Initialise()
 						_Ready(AD_TYPE_VUNGLE);
 					}
 				});
-				_vungleInterstitialAd->OnVideoView += ref new Windows::Foundation::EventHandler<AdViewEventArgs^>([](Object^ s, AdViewEventArgs^ e)
+				_vungleInterstitialAd->OnAdEnd += ref new Windows::Foundation::EventHandler<AdEndEventArgs^>([](Object^ s, AdEndEventArgs^ e)
 				{
-					if (e->IsCompletedView)
+					if (e->IsCompletedView || e->CallToActionClicked)
 					{
 						_Completed(AD_TYPE_VUNGLE);
 					}
@@ -143,6 +146,7 @@ inline void InterstitialAdManager::Initialise()
 						_Error(AD_TYPE_VUNGLE, e->Message->Data());
 					}
 				});
+				_vungleInterstitialAd->LoadAd(ref new Platform::String(adUnitId));
 			}
 		}
 #endif
@@ -168,7 +172,7 @@ inline void InterstitialAdManager::Initialise()
 		}
 #endif
 #if IAM_VUNGLE_ENABLED
-		if (IsAdType(adType, AD_TYPE_VUNGLE) && _vungleInterstitialAd != nullptr && _vungleInterstitialAd->AdPlayable)
+		if (IsAdType(adType, AD_TYPE_VUNGLE) && _vungleInterstitialAd != nullptr)
 		{
 			_vungleInterstitialAd->PlayAdAsync(ref new AdConfig());
 		}

@@ -104,17 +104,17 @@ namespace CI.WSANative.Advertising
 	        {
 		        if(adType == WSAInterstitialAdType.Vungle && interstitialAd == null)
 		        {
-			        interstitialAd = VungleSDK.AdFactory.GetInstance(appId);
-			        interstitialAd.OnAdPlayableChanged += (s, e) =>
+                    interstitialAd = VungleSDK.AdFactory.GetInstance(appId, adUnitId);
+                    interstitialAd.OnAdPlayableChanged += (s, e) =>
 			        {
 				        if (e.AdPlayable)
 				        {
 					        RaiseActionOnAppThread(WSANativeInterstitialAd.AdReady, WSAInterstitialAdType.Vungle);
 				        }
 			        };
-			        interstitialAd.OnVideoView += (s, e) =>
+			        interstitialAd.OnAdEnd += (s, e) =>
 			        {
-				        if (e.IsCompletedView)
+				        if (e.IsCompletedView || e.CallToActionClicked)
 				        {
 					        RaiseActionOnAppThread(WSANativeInterstitialAd.Completed, WSAInterstitialAdType.Vungle);
 				        }
@@ -130,11 +130,12 @@ namespace CI.WSANative.Advertising
 					        RaiseActionOnAppThread(WSANativeInterstitialAd.ErrorOccurred, WSAInterstitialAdType.Vungle, e.Message);
 				        }
 			        };
-		        }
+                    interstitialAd.LoadAd(adUnitId);
+                }
 	        };
 	        WSANativeInterstitialAd._Show += (adType) =>
 	        {
-		        if (adType == WSAInterstitialAdType.Vungle && interstitialAd != null && interstitialAd.AdPlayable)
+		        if (adType == WSAInterstitialAdType.Vungle && interstitialAd != null)
 		        {
 			        AppCallbacks.Instance.InvokeOnUIThread(async () =>
 			        {

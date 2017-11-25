@@ -82,13 +82,14 @@ namespace CI.WSANative.Advertising
         private static string _msAdUnitId;
 
         private static string _vungleAppId;
+        private static string _vunglePlacementId;
 
         /// <summary>
         /// Initialise the interstitial ad for the specified provider
         /// </summary>
 		/// <param name="adType">The ad network to initialise</param>
         /// <param name="appId">Your apps id</param>
-        /// <param name="adUnitId">Your apps ad unit id (null or empty for Vungle)</param>
+        /// <param name="adUnitId">Your apps ad unit id (plcaement id for Vungle)</param>
         public static void Initialise(WSAInterstitialAdType adType,  string appId, string adUnitId)
         {
             if (!_unityEditor)
@@ -105,6 +106,7 @@ namespace CI.WSANative.Advertising
                         break;
                     case WSAInterstitialAdType.Vungle:
                         _vungleAppId = appId;
+                        _vunglePlacementId = adUnitId;
                         break;
                 }
 
@@ -132,7 +134,7 @@ namespace CI.WSANative.Advertising
                         _InterstitialAdRequest(adType.ToString(), adVariant.ToString(), _msAppId, _msAdUnitId);
                         break;
                     case WSAInterstitialAdType.Vungle:
-                        _InterstitialAdRequest(adType.ToString(), adVariant.ToString(), _vungleAppId, string.Empty);
+                        _InterstitialAdRequest(adType.ToString(), adVariant.ToString(), _vungleAppId, _vunglePlacementId);
                         break;
                 }
             }
@@ -268,13 +270,14 @@ namespace CI.WSANative.Advertising
         private static string _msAdUnitId;
 
         private static string _vungleAppId;
+        private static string _vunglePlacementId;
 
         /// <summary>
         /// Initialise the interstitial ad for the specified provider
         /// </summary>
 		/// <param name="adType">The type of ad to request</param>
         /// <param name="appId">Your apps id</param>
-        /// <param name="adUnitId">Your apps ad unit id (null or empty for Vungle)</param>
+        /// <param name="adUnitId">Your apps ad unit id (plcaement id for Vungle)</param>
         public static void Initialise(WSAInterstitialAdType adType, string appId, string adUnitId)
         {
             switch (adType)
@@ -289,6 +292,7 @@ namespace CI.WSANative.Advertising
                     break;
                 case WSAInterstitialAdType.Vungle:
                     _vungleAppId = appId;
+                    _vunglePlacementId = adUnitId;
                     break;
             }
         }
@@ -313,7 +317,7 @@ namespace CI.WSANative.Advertising
                         _Request(adType, adVariant, _msAppId, _msAdUnitId);
                         break;
                     case WSAInterstitialAdType.Vungle:
-                        _Request(adType, adVariant, _vungleAppId, string.Empty);
+                        _Request(adType, adVariant, _vungleAppId, _vunglePlacementId);
                         break;
                 }
             }
