@@ -18,7 +18,7 @@ namespace CI.WSANative.Facebook
     public static class WSANativeFacebook
     {
 #if NETFX_CORE
-        private static WSAFacebookApi _facebookApi = new WSAFacebookApi();
+        private static readonly WSAFacebookApi _facebookApi = new WSAFacebookApi();
 #endif
 
         /// <summary>
