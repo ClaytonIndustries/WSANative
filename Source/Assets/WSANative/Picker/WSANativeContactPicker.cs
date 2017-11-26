@@ -10,6 +10,10 @@ namespace CI.WSANative.Pickers
 {
     public class WSANativeContactPicker
     {
+        /// <summary>
+        /// Launches a picker which allows the user to choose a contact
+        /// </summary>
+        /// <param name="response">Contains the chosen contact or null if nothing was selected</param>
         public static void PickContact(Action<WSAContact> response)
         {
 #if NETFX_CORE
@@ -34,6 +38,10 @@ namespace CI.WSANative.Pickers
 #endif
         }
 
+        /// <summary>
+        /// Launches a picker which allows the user to choose multiple contacts
+        /// </summary>
+        /// <param name="response">Contains the chosen contacts or null if nothing was selected</param>
         public static void PickContacts(Action<IEnumerable<WSAContact>> response)
         {
 #if NETFX_CORE

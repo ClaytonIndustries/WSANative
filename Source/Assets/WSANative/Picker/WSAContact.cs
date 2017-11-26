@@ -18,6 +18,9 @@ namespace CI.WSANative.Pickers
         public IEnumerable<string> Phones { get; set; }
 
 #if NETFX_CORE
+        /// <summary>
+        /// The original contact selected by the user - any calls to this must be wrapped in a NETFX_CORE block
+        /// </summary>
         public Contact OriginalContact { get; set; }
 #endif
     }
