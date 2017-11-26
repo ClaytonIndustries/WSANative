@@ -17,23 +17,23 @@ namespace CI.WSANative.FileStorage
 {
     public class WSAStorageFile
     {
-        public DateTimeOffset DateCreated;
-        public string DisplayName;
-        public string FileType;
-        public string Name;
-        public string Path;
-        public string DisplayType;
+        public DateTimeOffset DateCreated { get; set; }
+        public string DisplayName { get; set; }
+        public string FileType { get; set; }
+        public string Name { get; set; }
+        public string Path { get; set; }
+        public string DisplayType { get; set; }
 
         /// <summary>
         /// Only available in universal 10 or desktop 8.1
         /// </summary>
-        public bool IsAvailable;
+        public bool IsAvailable { get; set; }
 
 #if NETFX_CORE
         /// <summary>
         /// The original file selected by the user - any calls to this must be wrapped in a NETFX_CORE block
         /// </summary>
-        public StorageFile OriginalFile;
+        public StorageFile OriginalFile { get; set; }
 #endif
 
         /// <summary>

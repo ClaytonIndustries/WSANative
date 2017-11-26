@@ -49,21 +49,6 @@ namespace CI.WSANative.Social
         }
 
         /// <summary>
-        /// Allows the user to send an email to the specified address - will launch the default email client
-        /// </summary>
-        /// <param name="emailAddress">Prepopulate the to field</param>
-        public static void ComposeEmail(string to)
-        {
-#if NETFX_CORE
-            UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
-            {
-                var uri = new Uri("mailto:" + to);
-                await Windows.System.Launcher.LaunchUriAsync(uri);
-            }, false);
-#endif
-        }
-
-        /// <summary>
         /// Allows the user to send an email with the specified address, body and attachment - will launch the default email client
         /// </summary>
         /// <param name="to">Prepopulate the to field</param>

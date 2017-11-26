@@ -6,7 +6,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace CI.WSANative.FilePickers
+namespace CI.WSANative.Pickers
 {
     public enum WSAPickerViewMode
     {

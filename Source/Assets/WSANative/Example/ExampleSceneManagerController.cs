@@ -3,15 +3,14 @@ using CI.WSANative.Advertising;
 using CI.WSANative.Device;
 using CI.WSANative.Dialogs;
 using CI.WSANative.Facebook;
-using CI.WSANative.FilePickers;
 using CI.WSANative.FileStorage;
 using CI.WSANative.Geolocation;
 using CI.WSANative.IAPStore;
 using CI.WSANative.Mapping;
 using CI.WSANative.Notification;
+using CI.WSANative.Pickers;
 using CI.WSANative.Security;
 using CI.WSANative.Serialisers;
-using CI.WSANative.Web;
 using UnityEngine;
 
 public class ExampleSceneManagerController : MonoBehaviour
