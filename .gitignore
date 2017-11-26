@@ -13,3 +13,4 @@ Temp
 /Source/bin/*
 /Source/obj/*
 /Source/UWP/*
+/Source/.vs/*
