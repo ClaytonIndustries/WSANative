@@ -8,10 +8,9 @@
 
 namespace CI.WSANative.Twitter
 {
-    public class WSATwitterResponse
+    public class WSATwitterError
     {
-        public bool Success { get; set; }
-        public string Data { get; set; }
-        public WSATwitterError Error { get; set; }
+        public string Message { get; set; }
+        public bool Unauthorised { get; set; }
     }
 }

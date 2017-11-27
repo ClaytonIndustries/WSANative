@@ -14,45 +14,116 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Windows.Security.Authentication.Web;
+using Windows.Storage;
 
 namespace CI.WSANative.Twitter.Core
 {
     public class WSATwitterApi
     {
-        private string _oauthToken = "";
-        private string _oauthTokenSecret = "";
-        private string _oauthVerifier = "";
+        public bool IsLoggedIn { get; private set; }
 
-        private string _userId = "";
-        private string _screenName = "";
+        private string _oauthToken;
+        private string _oauthTokenSecret;
+        private string _oauthCallback;
 
         private WSATwitterHeaderGenerator _headerGenerator;
 
-        public void Initialise(string consumerKey, string consumerSecret)
+        private const string _savedDataFilename = "TwitterData.sav";
+
+        public WSATwitterApi()
         {
+            Startup();
+        }
+
+        private async void Startup()
+        {
+            try
+            {
+                StorageFile file = await ApplicationData.Current.LocalFolder.GetFileAsync(_savedDataFilename);
+
+                string content = await FileIO.ReadTextAsync(file);
+
+                string[] items = content.Split('&');
+
+                if(items.Length == 2)
+                {
+                    _oauthToken = items[0];
+                    _oauthTokenSecret = items[1];
+                }
+
+                IsLoggedIn = true;
+            }
+            catch
+            {
+            }
+        }
+
+        public void Initialise(string consumerKey, string consumerSecret, string oauthCallback)
+        {
+            _oauthCallback = oauthCallback;
+
             _headerGenerator = new WSATwitterHeaderGenerator(consumerKey, consumerSecret);
         }
 
         public async Task<WSATwitterLoginResult> Login()
         {
-            string callback = "https://www.twitter.co.uk";
+            Logout();
 
-            if (!await GetRequestToken(callback) || !await UserLogin(callback) || !await GetAccessToken())
+            WSATwitterLoginResult result = new WSATwitterLoginResult()
             {
-                return new WSATwitterLoginResult()
-                {
-                    Success = false,
-                };
+                Success = true
+            };
+
+            result = await GetRequestToken(result);
+            if (!result.Success)
+            {
+                return result;
             }
-            else
+
+            var userLoginResult = await UserLogin(result);
+            if (!userLoginResult.Item1.Success)
             {
-                return new WSATwitterLoginResult()
+                return userLoginResult.Item1;
+            }
+
+            result = await GetAccessToken(userLoginResult.Item1, userLoginResult.Item2);
+            if (!result.Success)
+            {
+                return result;
+            }
+
+            IsLoggedIn = true;
+
+            try
+            {
+                StorageFile file = await ApplicationData.Current.LocalFolder.CreateFileAsync(_savedDataFilename, CreationCollisionOption.ReplaceExisting);
+
+                await FileIO.WriteTextAsync(file, string.Format("{0}&{1}", _oauthToken, _oauthTokenSecret));
+            }
+            catch
+            {
+            }
+
+            return result;
+        }
+
+        public async void Logout()
+        {
+            if (IsLoggedIn)
+            {
+                _oauthToken = null;
+                _oauthTokenSecret = null;
+                IsLoggedIn = false;
+
+                try
                 {
-                    Success = true,
-                    AccessToken = _oauthToken,
-                    UserId = _userId,
-                    ScreenName = _screenName
-                };
+                    StorageFile file = await ApplicationData.Current.LocalFolder.GetFileAsync(_savedDataFilename);
+
+                    await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                }
+                catch
+                {
+                }
             }
         }
 
@@ -62,6 +133,17 @@ namespace CI.WSANative.Twitter.Core
             {
                 Success = false
             };
+
+            if(!IsLoggedIn)
+            {
+                wsaTwitterResponse.Error = new WSATwitterError()
+                {
+                    Message = "User is not logged in",
+                    Unauthorised = true
+                };
+
+                return wsaTwitterResponse;
+            }
 
             try
             {
@@ -86,21 +168,38 @@ namespace CI.WSANative.Twitter.Core
                     wsaTwitterResponse.Success = true;
                     wsaTwitterResponse.Data = content;
                 }
+                else
+                {
+                    wsaTwitterResponse.Error = new WSATwitterError()
+                    {
+                        Message = await response.Content.ReadAsStringAsync()
+                    };
+
+                    if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        wsaTwitterResponse.Error.Unauthorised = true;
+                    }
+                }
             }
-            catch
+            catch(Exception e)
             {
+                wsaTwitterResponse.Error = new WSATwitterError()
+                {
+                    Message = e.Message,
+                    Unauthorised = true
+                };
             }
 
             return wsaTwitterResponse;
         }
 
-        private async Task<bool> GetRequestToken(string callback)
+        private async Task<WSATwitterLoginResult> GetRequestToken(WSATwitterLoginResult result)
         {
             try
             {
                 Dictionary<string, string> additionalParts = new Dictionary<string, string>()
                 {
-                    { "oauth_callback", callback }
+                    { "oauth_callback", _oauthCallback }
                 };
 
                 string authHeader = _headerGenerator.Generate("POST", "https://api.twitter.com/oauth/request_token", additionalParts, null, null);
@@ -109,7 +208,9 @@ namespace CI.WSANative.Twitter.Core
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    return false;
+                    result.Success = false;
+                    result.ErrorMessage = await response.Content.ReadAsStringAsync();
+                    return result;
                 }
 
                 string content = await response.Content.ReadAsStringAsync();
@@ -118,55 +219,63 @@ namespace CI.WSANative.Twitter.Core
 
                 if (!parsed.ContainsKey("oauth_callback_confirmed") || parsed["oauth_callback_confirmed"] == "false" || !parsed.ContainsKey("oauth_token") || !parsed.ContainsKey("oauth_token_secret"))
                 {
-                    return false;
+                    result.Success = false;
+                    result.ErrorMessage = "GetRequestToken response does not contain the expected properties";
+                    return result;
                 }
 
                 _oauthToken = parsed["oauth_token"];
                 _oauthTokenSecret = parsed["oauth_token_secret"];
 
-                return true;
+                return result;
             }
-            catch
+            catch(Exception e)
             {
+                result.Success = false;
+                result.ErrorMessage = e.Message;
+                return result;
             }
-
-            return false;
         }
 
-        private async Task<bool> UserLogin(string callback)
+        private async Task<Tuple<WSATwitterLoginResult, string>> UserLogin(WSATwitterLoginResult result)
         {
             try
             {
                 Uri requestUri = new Uri(string.Format("https://api.twitter.com/oauth/authenticate?oauth_token={0}", _oauthToken));
 
-                Uri callbackUri = new Uri(callback);
+                Uri callbackUri = new Uri(_oauthCallback);
 
-                WebAuthenticationResult auth = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, requestUri, callbackUri);
+                WebAuthenticationResult authentication = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, requestUri, callbackUri);
 
-                if (auth.ResponseStatus != WebAuthenticationStatus.Success)
+                if (authentication.ResponseStatus != WebAuthenticationStatus.Success)
                 {
-                    return false;
+                    result.Success = false;
+                    result.ErrorMessage = authentication.ResponseStatus.ToString();
+                    return new Tuple<WSATwitterLoginResult, string>(result, null);
                 }
 
-                Dictionary<string, string> parsed = ParseResponse(auth.ResponseData);
+                Dictionary<string, string> parsed = ParseResponse(authentication.ResponseData);
 
                 if ((parsed.ContainsKey("oauth_token") && parsed["oauth_token"] != _oauthToken) || !parsed.ContainsKey("oauth_verifier"))
                 {
-                    return false;
+                    result.Success = false;
+                    result.ErrorMessage = "UserLogin response does not contain the expected properties";
+                    return new Tuple<WSATwitterLoginResult, string>(result, null);
                 }
 
-                _oauthVerifier = parsed["oauth_verifier"];
+                string oauthVerifier = parsed["oauth_verifier"];
 
-                return true;
+                return new Tuple<WSATwitterLoginResult, string>(result, oauthVerifier);
             }
-            catch
+            catch(Exception e)
             {
+                result.Success = false;
+                result.ErrorMessage = e.Message;
+                return new Tuple<WSATwitterLoginResult, string>(result, null);
             }
-
-            return false;
         }
 
-        private async Task<bool> GetAccessToken()
+        private async Task<WSATwitterLoginResult> GetAccessToken(WSATwitterLoginResult result, string oauthVerifier)
         {
             try
             {
@@ -179,14 +288,16 @@ namespace CI.WSANative.Twitter.Core
 
                 Dictionary<string, string> body = new Dictionary<string, string>()
                 {
-                    { "oauth_verifier", _oauthVerifier }
+                    { "oauth_verifier", oauthVerifier }
                 };
 
                 HttpResponseMessage response = await MakeRequest("https://api.twitter.com//oauth/access_token", authHeader, new FormUrlEncodedContent(body), HttpMethod.Post);
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    return false;
+                    result.Success = false;
+                    result.ErrorMessage = await response.Content.ReadAsStringAsync();
+                    return result;
                 }
 
                 string content = await response.Content.ReadAsStringAsync();
@@ -195,29 +306,32 @@ namespace CI.WSANative.Twitter.Core
 
                 if (!parsed.ContainsKey("oauth_token") || !parsed.ContainsKey("oauth_token_secret"))
                 {
-                    return false;
+                    result.Success = false;
+                    result.ErrorMessage = "GetAccessToken response does not contain the expected properties";
+                    return result;
                 }
 
                 if (parsed.ContainsKey("user_id"))
                 {
-                    _userId = parsed["user_id"];
+                    result.UserId = parsed["user_id"];
                 }
 
                 if (parsed.ContainsKey("screen_name"))
                 {
-                    _screenName = parsed["screen_name"];
+                    result.ScreenName = parsed["screen_name"];
                 }
 
                 _oauthToken = parsed["oauth_token"];
                 _oauthTokenSecret = parsed["oauth_token_secret"];
 
-                return true;
+                return result;
             }
-            catch
+            catch(Exception e)
             {
+                result.Success = false;
+                result.ErrorMessage = e.Message;
+                return result;
             }
-
-            return false;
         }
 
         private async Task<HttpResponseMessage> MakeRequest(string url, string authHeader, HttpContent content, HttpMethod method)

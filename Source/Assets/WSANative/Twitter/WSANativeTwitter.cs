@@ -7,7 +7,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System;
+
+#if NETFX_CORE
 using CI.WSANative.Twitter.Core;
+#endif
 
 namespace CI.WSANative.Twitter
 {
@@ -17,10 +20,19 @@ namespace CI.WSANative.Twitter
         private static readonly WSATwitterApi _twitterApi = new WSATwitterApi();
 #endif
 
-        public static void Initialise(string consumerKey, string consumerSecret)
+        public static bool IsLoggedIn
         {
 #if NETFX_CORE
-            _twitterApi.Initialise(consumerKey, consumerSecret);
+            get { return _twitterApi.IsLoggedIn; }
+#else
+            get { return false; }
+#endif
+        }
+
+        public static void Initialise(string consumerKey, string consumerSecret, string oauthCallback)
+        {
+#if NETFX_CORE
+            _twitterApi.Initialise(consumerKey, consumerSecret, oauthCallback);
 #endif
         }
 
@@ -39,6 +51,13 @@ namespace CI.WSANative.Twitter
                     }
                 }, true);
             }, false);
+#endif
+        }
+
+        public static void Logout()
+        {
+#if NETFX_CORE
+            _twitterApi.Logout();
 #endif
         }
 
