@@ -263,7 +263,7 @@ namespace CI.WSANative.Twitter.Core
 
         private string CombineUrlAndQuery(string url, Dictionary<string, string> items)
         {
-            return url + string.Join("&", items.Select(x => string.Format("{0}={1}", x.Key, x.Value)));
+            return url + "?" + string.Join("&", items.Select(x => string.Format("{0}={1}", x.Key, x.Value)));
         }
     }
 }
