@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System;
+using System.Collections.Generic;
 
 #if NETFX_CORE && UNITY_WSA_10_0
 using CI.WSANative.Twitter.Core;
@@ -93,7 +94,37 @@ namespace CI.WSANative.Twitter
 #if NETFX_CORE && UNITY_WSA_10_0
         private static async void GetUserDetailsAsync(bool includeEmail, Action<WSATwitterResponse> response)
         {
-            WSATwitterResponse result = await _twitterApi.GetUserDetails(includeEmail);
+            IDictionary<string, string> parameters = new Dictionary<string, string>()
+            {
+                { "include_email", includeEmail ? "true" : "false" }
+            };
+
+            WSATwitterResponse result = await _twitterApi.ApiRead("https://api.twitter.com/1.1/account/verify_credentials.json", parameters);
+
+            if (response != null)
+            {
+                response(result);
+            }
+        }
+#endif
+
+        /// <summary>
+        /// Call any GET method on the twitter api
+        /// </summary>
+        /// <param name="url">The base url (e.g https://api.twitter.com/1.1/statuses/user_timeline.json) - any query string arguments should be added to the parameters dictionary</param>
+        /// <param name="parameters">Any parameters to be appended to the url - can be a null or empty dictionary if there are none</param>
+        /// <param name="response">Response containing the requested data if successful</param>
+        public static void ApiRead(string url, IDictionary<string, string> parameters, Action<WSATwitterResponse> response)
+        {
+#if NETFX_CORE && UNITY_WSA_10_0
+            ApiReadAsync(url, parameters, response);
+#endif
+        }
+
+#if NETFX_CORE && UNITY_WSA_10_0
+        private static async void ApiReadAsync(string url, IDictionary<string, string> parameters, Action<WSATwitterResponse> response)
+        {
+            WSATwitterResponse result = await _twitterApi.ApiRead(url, parameters);
 
             if (response != null)
             {

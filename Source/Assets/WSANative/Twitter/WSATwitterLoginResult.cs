@@ -10,9 +10,24 @@ namespace CI.WSANative.Twitter
 {
     public class WSATwitterLoginResult
     {
+        /// <summary>
+        /// Was the login successful
+        /// </summary>
         public bool Success { get; set; }
+
+        /// <summary>
+        /// The users twitter User Id
+        /// </summary>
         public string UserId { get; set; }
+
+        /// <summary>
+        /// The users twitter Screen Name
+        /// </summary>
         public string ScreenName { get; set; }
+
+        /// <summary>
+        /// Error message if the login was not successful
+        /// </summary>
         public string ErrorMessage { get; set; }
     }
 }

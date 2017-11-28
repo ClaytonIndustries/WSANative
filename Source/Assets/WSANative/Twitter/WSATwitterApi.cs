@@ -127,14 +127,14 @@ namespace CI.WSANative.Twitter.Core
             }
         }
 
-        public async Task<WSATwitterResponse> GetUserDetails(bool includeEmail)
+        public async Task<WSATwitterResponse> ApiRead(string url, IDictionary<string, string> parameters)
         {
             WSATwitterResponse wsaTwitterResponse = new WSATwitterResponse()
             {
                 Success = false
             };
 
-            if(!IsLoggedIn)
+            if (!IsLoggedIn)
             {
                 wsaTwitterResponse.Error = new WSATwitterError()
                 {
@@ -147,19 +147,14 @@ namespace CI.WSANative.Twitter.Core
 
             try
             {
-                Dictionary<string, string> additionalParts = new Dictionary<string, string>()
+                IDictionary<string, string> additionalParts = new Dictionary<string, string>()
                 {
                     { "oauth_token", _oauthToken }
                 };
 
-                Dictionary<string, string> signatureOnlyParts = new Dictionary<string, string>()
-                {
-                    { "include_email", includeEmail ? "true" : "false" }
-                };
+                string authHeader = _headerGenerator.Generate("GET", url, additionalParts, parameters, _oauthTokenSecret);
 
-                string authHeader = _headerGenerator.Generate("GET", "https://api.twitter.com/1.1/account/verify_credentials.json", additionalParts, signatureOnlyParts, _oauthTokenSecret);
-
-                HttpResponseMessage response = await MakeRequest(CombineUrlAndQuery("https://api.twitter.com/1.1/account/verify_credentials.json", signatureOnlyParts), authHeader, null, HttpMethod.Get);
+                HttpResponseMessage response = await MakeRequest(CombineUrlAndQuery(url, parameters), authHeader, null, HttpMethod.Get);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -177,11 +172,13 @@ namespace CI.WSANative.Twitter.Core
 
                     if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
+                        Logout();
+
                         wsaTwitterResponse.Error.Unauthorised = true;
                     }
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 wsaTwitterResponse.Error = new WSATwitterError()
                 {
@@ -197,7 +194,7 @@ namespace CI.WSANative.Twitter.Core
         {
             try
             {
-                Dictionary<string, string> additionalParts = new Dictionary<string, string>()
+                IDictionary<string, string> additionalParts = new Dictionary<string, string>()
                 {
                     { "oauth_callback", _oauthCallback }
                 };
@@ -215,7 +212,7 @@ namespace CI.WSANative.Twitter.Core
 
                 string content = await response.Content.ReadAsStringAsync();
 
-                Dictionary<string, string> parsed = ParseResponse(content);
+                IDictionary<string, string> parsed = ParseResponse(content);
 
                 if (!parsed.ContainsKey("oauth_callback_confirmed") || parsed["oauth_callback_confirmed"] == "false" || !parsed.ContainsKey("oauth_token") || !parsed.ContainsKey("oauth_token_secret"))
                 {
@@ -254,7 +251,7 @@ namespace CI.WSANative.Twitter.Core
                     return new Tuple<WSATwitterLoginResult, string>(result, null);
                 }
 
-                Dictionary<string, string> parsed = ParseResponse(authentication.ResponseData);
+                IDictionary<string, string> parsed = ParseResponse(authentication.ResponseData);
 
                 if ((parsed.ContainsKey("oauth_token") && parsed["oauth_token"] != _oauthToken) || !parsed.ContainsKey("oauth_verifier"))
                 {
@@ -279,14 +276,14 @@ namespace CI.WSANative.Twitter.Core
         {
             try
             {
-                Dictionary<string, string> additionalParts = new Dictionary<string, string>()
+                IDictionary<string, string> additionalParts = new Dictionary<string, string>()
                 {
                     { "oauth_token", _oauthToken }
                 };
 
                 string authHeader = _headerGenerator.Generate("POST", "https://api.twitter.com//oauth/access_token", additionalParts, null, null);
 
-                Dictionary<string, string> body = new Dictionary<string, string>()
+                IDictionary<string, string> body = new Dictionary<string, string>()
                 {
                     { "oauth_verifier", oauthVerifier }
                 };
@@ -302,7 +299,7 @@ namespace CI.WSANative.Twitter.Core
 
                 string content = await response.Content.ReadAsStringAsync();
 
-                Dictionary<string, string> parsed = ParseResponse(content);
+                IDictionary<string, string> parsed = ParseResponse(content);
 
                 if (!parsed.ContainsKey("oauth_token") || !parsed.ContainsKey("oauth_token_secret"))
                 {
@@ -356,11 +353,11 @@ namespace CI.WSANative.Twitter.Core
             }
         }
 
-        private Dictionary<string, string> ParseResponse(string response)
+        private IDictionary<string, string> ParseResponse(string response)
         {
             string[] parts = response.Split('&');
 
-            Dictionary<string, string> kvps = new Dictionary<string, string>();
+            IDictionary<string, string> kvps = new Dictionary<string, string>();
 
             foreach (string item in parts)
             {
@@ -375,8 +372,13 @@ namespace CI.WSANative.Twitter.Core
             return kvps;
         }
 
-        private string CombineUrlAndQuery(string url, Dictionary<string, string> items)
+        private string CombineUrlAndQuery(string url, IDictionary<string, string> items)
         {
+            if (items == null || items.Count == 0)
+            {
+                return url;
+            }
+
             return url + "?" + string.Join("&", items.Select(x => string.Format("{0}={1}", x.Key, x.Value)));
         }
     }

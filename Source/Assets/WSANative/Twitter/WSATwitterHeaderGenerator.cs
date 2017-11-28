@@ -28,7 +28,7 @@ namespace CI.WSANative.Twitter.Core
             _consumerSecret = consumerSecret;
         }
 
-        public string Generate(string method, string url, Dictionary<string, string> additionalParts, Dictionary<string, string> signatureOnlyParts, string oauthTokenSecret)
+        public string Generate(string method, string url, IDictionary<string, string> additionalParts, IDictionary<string, string> signatureOnlyParts, string oauthTokenSecret)
         {
             Dictionary<string, string> baseParts = new Dictionary<string, string>()
             {
@@ -46,7 +46,7 @@ namespace CI.WSANative.Twitter.Core
             return "OAuth " + string.Join(", ", combinedParts.Select(x => string.Format("{0}=\"{1}\"", Uri.EscapeDataString(x.Key), Uri.EscapeDataString(x.Value))));
         }
 
-        private string GenerateSignature(string method, string url, IEnumerable<KeyValuePair<string, string>> parts, Dictionary<string, string> signatureOnlyParts, string oauthTokenSecret)
+        private string GenerateSignature(string method, string url, IEnumerable<KeyValuePair<string, string>> parts, IDictionary<string, string> signatureOnlyParts, string oauthTokenSecret)
         {
             if(signatureOnlyParts != null)
             {
