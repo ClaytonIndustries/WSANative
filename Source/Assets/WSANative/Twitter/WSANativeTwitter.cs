@@ -8,7 +8,7 @@
 
 using System;
 
-#if NETFX_CORE
+#if NETFX_CORE && UNITY_WSA_10_0
 using CI.WSANative.Twitter.Core;
 #endif
 
@@ -16,7 +16,7 @@ namespace CI.WSANative.Twitter
 {
     public static class WSANativeTwitter
     {
-#if NETFX_CORE
+#if NETFX_CORE && UNITY_WSA_10_0
         private static readonly WSATwitterApi _twitterApi = new WSATwitterApi();
 #endif
 
@@ -25,7 +25,7 @@ namespace CI.WSANative.Twitter
         /// </summary>
         public static bool IsLoggedIn
         {
-#if NETFX_CORE
+#if NETFX_CORE && UNITY_WSA_10_0
             get { return _twitterApi.IsLoggedIn; }
 #else
             get { return false; }
@@ -40,7 +40,7 @@ namespace CI.WSANative.Twitter
         /// /// <param name="oauthCallback">A callback url for oauth (should match the value entered on twitter)</param>
         public static void Initialise(string consumerKey, string consumerSecret, string oauthCallback)
         {
-#if NETFX_CORE
+#if NETFX_CORE && UNITY_WSA_10_0
             _twitterApi.Initialise(consumerKey, consumerSecret, oauthCallback);
 #endif
         }
@@ -52,7 +52,7 @@ namespace CI.WSANative.Twitter
         /// <param name="response">Did the login request succeed</param>
         public static void Login(Action<WSATwitterLoginResult> response)
         {
-#if NETFX_CORE
+#if NETFX_CORE && UNITY_WSA_10_0
             UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
             {
                 WSATwitterLoginResult result = await _twitterApi.Login();
@@ -73,7 +73,7 @@ namespace CI.WSANative.Twitter
         /// </summary>
         public static void Logout()
         {
-#if NETFX_CORE
+#if NETFX_CORE && UNITY_WSA_10_0
             _twitterApi.Logout();
 #endif
         }
@@ -85,12 +85,12 @@ namespace CI.WSANative.Twitter
         /// <param name="response">Response containing user details if successful</param>
         public static void GetUserDetails(bool includeEmail, Action<WSATwitterResponse> response)
         {
-#if NETFX_CORE
+#if NETFX_CORE && UNITY_WSA_10_0
             GetUserDetailsAsync(includeEmail, response);
 #endif
         }
 
-#if NETFX_CORE
+#if NETFX_CORE && UNITY_WSA_10_0
         private static async void GetUserDetailsAsync(bool includeEmail, Action<WSATwitterResponse> response)
         {
             WSATwitterResponse result = await _twitterApi.GetUserDetails(includeEmail);
