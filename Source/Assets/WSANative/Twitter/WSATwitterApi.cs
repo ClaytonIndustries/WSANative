@@ -13,6 +13,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using UnityEngine;
 using Windows.Security.Authentication.Web;
 using Windows.Storage;
 
@@ -27,6 +28,7 @@ namespace CI.WSANative.Twitter.Core
         private string _oauthCallback;
 
         private WSATwitterHeaderGenerator _headerGenerator;
+        private Windows.UI.Xaml.Controls.Grid _dxSwapChainPanel;
 
         private const string _savedDataFilename = "TwitterData.sav";
 
@@ -63,6 +65,11 @@ namespace CI.WSANative.Twitter.Core
             _oauthCallback = oauthCallback;
 
             _headerGenerator = new WSATwitterHeaderGenerator(consumerKey, consumerSecret);
+        }
+
+        public void ConfigureDialogs(Windows.UI.Xaml.Controls.Grid dxSwapChainPanel)
+        {
+            _dxSwapChainPanel = dxSwapChainPanel;
         }
 
         public async Task<WSATwitterLoginResult> Login()
@@ -188,6 +195,18 @@ namespace CI.WSANative.Twitter.Core
             }
 
             return wsaTwitterResponse;
+        }
+
+        public void ShowTweetDialog(string baseUrl, IDictionary<string, string> parameters, Action closed)
+        {
+            if (_dxSwapChainPanel == null)
+            {
+                throw new InvalidOperationException("WSATwitterApi.ConfigureDialogs must first be called from MainPage.xaml.cs");
+            }
+
+            TwitterWebIntent dialog = new TwitterWebIntent(Screen.width, Screen.height);
+
+            dialog.Show(baseUrl, parameters, _dxSwapChainPanel, closed);
         }
 
         private async Task<WSATwitterLoginResult> GetRequestToken(WSATwitterLoginResult result)

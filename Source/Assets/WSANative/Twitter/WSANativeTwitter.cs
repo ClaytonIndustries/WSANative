@@ -11,6 +11,7 @@ using System.Collections.Generic;
 
 #if NETFX_CORE && UNITY_WSA_10_0
 using CI.WSANative.Twitter.Core;
+using Windows.UI.Xaml.Controls;
 #endif
 
 namespace CI.WSANative.Twitter
@@ -45,6 +46,13 @@ namespace CI.WSANative.Twitter
             _twitterApi.Initialise(consumerKey, consumerSecret, oauthCallback);
 #endif
         }
+
+#if NETFX_CORE
+        public static void ConfigureDialogs(Grid dxSwapChainPanel)
+        {
+            _twitterApi.ConfigureDialogs(dxSwapChainPanel);
+        }
+#endif
 
         /// <summary>
         /// Shows the login dialog to the user.
@@ -132,5 +140,100 @@ namespace CI.WSANative.Twitter
             }
         }
 #endif
+
+        /// <summary>
+        /// Allows the user to publish a tweet - this does not require any special permissions nor does it require the user to be currently logged in.
+        /// </summary>
+        /// <param name="parameters">Optional parameters to include - see the web docs for the full list</param>
+        /// <param name="closed">A callback indicating that the dialog has closed</param>
+        public static void ShowTweetDialog(IDictionary<string, string> parameters, Action closed)
+        {
+#if NETFX_CORE
+            UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+            {
+                _twitterApi.ShowTweetDialog("https://twitter.com/intent/tweet", parameters, closed);
+            }, false);
+#endif
+        }
+
+        /// <summary>
+        /// Allows the user to retweet a tweet - this does not require any special permissions nor does it require the user to be currently logged in.
+        /// </summary>
+        /// <param name="tweetId">The id of thw tweet to be retweeted</param>
+        /// <param name="closed">A callback indicating that the dialog has closed</param>
+        public static void ShowRetweetDialog(string tweetId, Action closed)
+        {
+#if NETFX_CORE
+            IDictionary<string, string> parameters = new Dictionary<string, string>()
+            {
+                { "tweet_id", tweetId }
+            };
+
+            UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+            {
+                _twitterApi.ShowTweetDialog("https://twitter.com/intent/retweet", parameters, closed);
+            }, false);
+#endif
+        }
+
+        /// <summary>
+        /// Allows the user to like a tweet - this does not require any special permissions nor does it require the user to be currently logged in.
+        /// </summary>
+        /// <param name="tweetId">The id of thw tweet to be retweeted</param>
+        /// <param name="closed">A callback indicating that the dialog has closed</param>
+        public static void ShowLikeTweetDialog(string tweetId, Action closed)
+        {
+#if NETFX_CORE
+            IDictionary<string, string> parameters = new Dictionary<string, string>()
+            {
+                { "tweet_id", tweetId }
+            };
+
+            UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+            {
+                _twitterApi.ShowTweetDialog("https://twitter.com/intent/like", parameters, closed);
+            }, false);
+#endif
+        }
+
+        /// <summary>
+        /// Shows a mini view of a profile - this does not require any special permissions nor does it require the user to be currently logged in.
+        /// </summary>
+        /// <param name="userId">The Twitter user identifier of the account</param>
+        /// <param name="closed">A callback indicating that the dialog has closed</param>
+        public static void ShowMiniProfileDialog(string userId, Action closed)
+        {
+#if NETFX_CORE
+            IDictionary<string, string> parameters = new Dictionary<string, string>()
+            {
+                { "user_id", userId }
+            };
+
+            UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+            {
+                _twitterApi.ShowTweetDialog("https://twitter.com/intent/user", parameters, closed);
+            }, false);
+#endif
+        }
+
+        /// <summary>
+        /// Allows the user to follow an account - this does not require any special permissions nor does it require the user to be currently logged in.
+        /// </summary>
+        /// <param name="userId">The Twitter user identifier of the account</param>
+        /// <param name="closed">A callback indicating that the dialog has closed</param>
+        public static void ShowFollowDialog(string userId, Action closed)
+        {
+#if NETFX_CORE
+            IDictionary<string, string> parameters = new Dictionary<string, string>()
+            {
+                { "user_id", userId }
+            };
+
+            UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+            {
+                _twitterApi.ShowTweetDialog("https://twitter.com/intent/follow", parameters, closed);
+            }, false);
+#endif
+        }
     }
 }
