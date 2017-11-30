@@ -144,7 +144,7 @@ namespace CI.WSANative.Twitter
         /// <summary>
         /// Allows the user to publish a tweet - this does not require any special permissions nor does it require the user to be currently logged in.
         /// </summary>
-        /// <param name="parameters">Optional parameters to include - see the web docs for the full list</param>
+        /// <param name="parameters">Optional parameters to include - see the web docs for the full list - can be a null or empty dictionary if there are none</param>
         /// <param name="closed">A callback indicating that the dialog has closed</param>
         public static void ShowTweetDialog(IDictionary<string, string> parameters, Action closed)
         {
