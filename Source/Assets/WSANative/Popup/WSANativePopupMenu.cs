@@ -23,7 +23,7 @@ namespace CI.WSANative.Dialogs
         /// <param name="response">User response</param>
         public static void ShowPopupMenu(double xPos, double yPos, List<WSADialogCommand> commands, WSAPopupMenuPlacement placement, Action<WSADialogResult> response)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             new WindowsStorePopupMenu(response).ShowPopupMenu(xPos, yPos, commands, placement);
 #endif
         }
