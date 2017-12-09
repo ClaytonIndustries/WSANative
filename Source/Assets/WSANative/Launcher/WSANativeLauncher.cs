@@ -6,7 +6,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
 using System;
 #endif
 
@@ -20,7 +20,7 @@ namespace CI.WSANative.Launchers
         /// <param name="uri">The uri</param>
         public static void LaunchUri(string uri)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
             {
                 await Windows.System.Launcher.LaunchUriAsync(new Uri(uri));
