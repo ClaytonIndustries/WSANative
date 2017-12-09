@@ -143,7 +143,7 @@ public class ExampleSceneManagerController : MonoBehaviour
 
     public void ShowFileSavePicker()
     {
-        WSANativeFilePicker.PickSaveFile("Save", ".jpg", "Test Image", WSAPickerLocationId.DocumentsLibrary, new List<KeyValuePair<string, IList<string>>>() { new KeyValuePair<string, IList<string>>("Image Files", new List<string>() { ".png", ".jpg" }) }, (result) =>
+        WSANativeFilePicker.PickSaveFile("Save", ".txt", "Test Text File", WSAPickerLocationId.DocumentsLibrary, new List<KeyValuePair<string, IList<string>>>() { new KeyValuePair<string, IList<string>>("Text Files", new List<string>() { ".txt" }) }, (result) =>
         {
             if (result != null)
             {
