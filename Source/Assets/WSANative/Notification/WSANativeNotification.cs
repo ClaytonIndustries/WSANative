@@ -6,7 +6,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
 using System.Collections.Generic;
 using Windows.Data.Xml.Dom;
 using System.Net.Http;
@@ -31,7 +31,7 @@ namespace CI.WSANative.Notification
         /// (optional and will not show on Windows Phone 8.1)</param>
         public static void ShowToastNotification(string title, string text, string tag, Uri image = null)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             XmlDocument toastXml = null;
 
             if (image != null)
@@ -81,7 +81,7 @@ namespace CI.WSANative.Notification
         /// (optional and will not show on Windows Phone 8.1)</param>
         public static void ShowScheduledToastNotification(string title, string text, DateTime deliveryTime, string tag, Uri image = null)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             XmlDocument toastXml = null;
 
             if (image != null)
@@ -125,7 +125,7 @@ namespace CI.WSANative.Notification
         /// <param name="tag">The tag assigned to the toast notification</param>
         public static void RemoveToastNotification(string tag)
         {
-#if (NETFX_CORE && UNITY_WSA_10_0)
+#if (NETFX_CORE && UNITY_WSA_10_0) || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             ToastNotificationManager.History.Remove(tag);
 #endif
         }
