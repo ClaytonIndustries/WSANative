@@ -9,7 +9,7 @@
 using System;
 using System.Collections.Generic;
 
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
 using System.Linq;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Store;
@@ -20,7 +20,7 @@ namespace CI.WSANative.IAPStore
 {
     public static class WSANativeStore
     {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
         private static bool _isTest = false;
 #endif
 
@@ -30,7 +30,7 @@ namespace CI.WSANative.IAPStore
         /// <param name="enable">Should test mode be enabled</param>
         public static void EnableTestMode()
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             _isTest = true;
 #endif
         }
@@ -40,7 +40,7 @@ namespace CI.WSANative.IAPStore
         /// </summary>
         public static void ReloadSimulator()
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             if (_isTest)
             {
                 ReloadSimulatorAsync();
@@ -48,7 +48,7 @@ namespace CI.WSANative.IAPStore
 #endif
         }
 
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
         public static async void ReloadSimulatorAsync()
         {
             StorageFolder installFolder = await Package.Current.InstalledLocation.GetFolderAsync("Assets");
@@ -63,12 +63,12 @@ namespace CI.WSANative.IAPStore
         /// <param name="response">Callback containing the products found</param>
         public static void GetProductListings(Action<List<WSAProduct>> response)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             GetProductListingsAsync(response);
 #endif
         }
 
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
         private static async void GetProductListingsAsync(Action<List<WSAProduct>> response)
         {
             ListingInformation listings = null;
@@ -122,7 +122,7 @@ namespace CI.WSANative.IAPStore
         /// <param name="response">A callback indicating if the action was successful</param>
         public static void PurchaseProduct(string id, Action<WSAPurchaseResult> response)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             if (_isTest)
             {
                 UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
@@ -172,7 +172,7 @@ namespace CI.WSANative.IAPStore
 #endif
         }
 
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
         private static WSAPurchaseResultStatus MapPurchaseResult(ProductPurchaseStatus result)
         {
             switch (result)
@@ -199,7 +199,7 @@ namespace CI.WSANative.IAPStore
         /// <param name="response">A callback indicating the result</param>
         public static void ReportConsumableProductFulfillment(string id, Guid transactionId, Action<WSAFulfillmentResult> response)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             if (_isTest)
             {
                 UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
@@ -233,8 +233,7 @@ namespace CI.WSANative.IAPStore
 #endif
         }
 
-#if NETFX_CORE
-
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
         private static WSAFulfillmentResult MapFulfillmentResult(FulfillmentResult result)
         {
             switch (result)
@@ -261,7 +260,7 @@ namespace CI.WSANative.IAPStore
         /// <param name="response">A callback containing the found unfulfilled consumable products</param>
         public static void GetUnfulfilledConsumableProducts(Action<List<WSAUnfulfilledConsumable>> response)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             if (_isTest)
             {
                 UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
@@ -305,7 +304,7 @@ namespace CI.WSANative.IAPStore
         /// <param name="response">A callback containing the receipt</param>
         public static void PurchaseApp(Action<string> response)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             if (_isTest)
             {
                 UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
@@ -345,7 +344,7 @@ namespace CI.WSANative.IAPStore
         /// <returns></returns>
         public static WSAProductLicense GetLicenseForApp()
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             if (_isTest)
             {
                 return new WSAProductLicense()
@@ -376,7 +375,7 @@ namespace CI.WSANative.IAPStore
         /// <returns></returns>
         public static WSAProductLicense GetLicenseForProduct(string id)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             if (_isTest)
             {
                 WSAProductLicense license = new WSAProductLicense();
