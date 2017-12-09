@@ -21,7 +21,7 @@ namespace CI.WSANative.Dialogs
         /// <param name="message">Dialog message</param>
         public static void ShowDialog(string title, string message)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             new WindowsStoreDialog().ShowDialog(title, message);
 #endif
         }
@@ -34,7 +34,7 @@ namespace CI.WSANative.Dialogs
         /// <param name="response">User response</param>
         public static void ShowDialogWithOptions(string title, string message, Action<WSADialogResult> response)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             new WindowsStoreDialog(response).ShowDialogWithOptions(title, message);
 #endif
         }
@@ -50,7 +50,7 @@ namespace CI.WSANative.Dialogs
         /// <param name="response">User response</param>
         public static void ShowDialogWithOptions(string title, string message, List<WSADialogCommand> commands, int defaultCommandIndex, int cancelCommandIndex, Action<WSADialogResult> response)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             new WindowsStoreDialog(response).ShowDialogWithOptions(title, message, commands, defaultCommandIndex, cancelCommandIndex);
 #endif
         }
