@@ -29,7 +29,7 @@ namespace CI.WSANative.Engagement
         /// <returns>Is the feedback hub supported</returns>
         public static bool IsFeedbackHubSupported()
         {
-#if UNITY_WSA_10_0
+#if NETFX_CORE
             return _IsFeedbackHubSupported();
 #else
             return false;
@@ -42,7 +42,7 @@ namespace CI.WSANative.Engagement
         /// <param name="feedbackProperties">Metadata that you want to associate with the feedback (does not need to be specified)</param>
         public static void ShowFeedbackHub(Dictionary<string, string> feedbackProperties = null)
         {
-#if UNITY_WSA_10_0
+#if NETFX_CORE
             if (_ShowFeedbackHub != null)
             {
                 UnityEngine.WSA.Application.InvokeOnUIThread(() =>
