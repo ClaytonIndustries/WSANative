@@ -6,7 +6,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
 using System;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel.DataTransfer;
@@ -24,7 +24,7 @@ namespace CI.WSANative.Social
         /// <param name="appId">Your apps id - get from Windows Dev Center under Your App -> App Management -> App Identity -> use the the last part of URL for Windows 10</param>
         public static void ShowAppStoreDescriptionPage(string appId)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
             {
                 var uri = new Uri("ms-windows-store://pdp/?ProductId=" + appId);
@@ -39,7 +39,7 @@ namespace CI.WSANative.Social
         /// <param name="appId">Your apps id - get from Windows Dev Center under Your App -> App Management -> App Identity -> use the the last part of URL for Windows 10</param>
         public static void ShowAppStoreReviewPage(string appId)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
             {
                 var uri = new Uri("ms-windows-store://review/?ProductId=" + appId);
@@ -58,7 +58,7 @@ namespace CI.WSANative.Social
         /// <param name="attachmentData">Data for the attachment - optional</param>
         public static void ComposeEmail(string to, string subject, string messageBody, string attachmentFilename = null, byte[] attachmentData = null)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
             {
                 EmailMessage emailMessage = new EmailMessage()
@@ -96,7 +96,7 @@ namespace CI.WSANative.Social
         /// <param name="content">Content to share</param>
         public static void Share<T>(string title, string description, T content)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             UnityEngine.WSA.Application.InvokeOnUIThread(() =>
             {
                 DataTransferManager.GetForCurrentView().DataRequested += (s, a) =>
