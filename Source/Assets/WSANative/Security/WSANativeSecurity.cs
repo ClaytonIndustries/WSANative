@@ -6,7 +6,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
@@ -25,7 +25,7 @@ namespace CI.WSANative.Security
         /// <returns>The encrypted data</returns>
         public static string SymmetricEncrypt(string key, string iv, string data)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             IBuffer buffMsg = CryptographicBuffer.ConvertStringToBinary(data, BinaryStringEncoding.Utf8);
 
             SymmetricKeyAlgorithmProvider aes = SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesCbcPkcs7);
@@ -48,7 +48,7 @@ namespace CI.WSANative.Security
         /// <returns>The decrypted data</returns>
         public static string SymmetricDecrypt(string key, string iv, string data)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             SymmetricKeyAlgorithmProvider aes = SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesCbcPkcs7);
 
             CryptographicKey aesKey = aes.CreateSymmetricKey(CryptographicBuffer.ConvertStringToBinary(key, BinaryStringEncoding.Utf8));
@@ -69,7 +69,7 @@ namespace CI.WSANative.Security
         /// <returns></returns>
         public static string EncodeBase64(string data)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             return CryptographicBuffer.EncodeToBase64String(CryptographicBuffer.ConvertStringToBinary(data, BinaryStringEncoding.Utf8));
 #else
             return string.Empty;
@@ -83,7 +83,7 @@ namespace CI.WSANative.Security
         /// <returns></returns>
         public static string DecodeBase64(string data)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             return CryptographicBuffer.ConvertBinaryToString(BinaryStringEncoding.Utf8, CryptographicBuffer.DecodeFromBase64String(data));
 #else
             return string.Empty;
