@@ -11,6 +11,7 @@ using CI.WSANative.Notification;
 using CI.WSANative.Pickers;
 using CI.WSANative.Security;
 using CI.WSANative.Serialisers;
+using CI.WSANative.Twitter;
 using UnityEngine;
 
 public class ExampleSceneManagerController : MonoBehaviour
@@ -235,16 +236,36 @@ public class ExampleSceneManagerController : MonoBehaviour
     public void FacebookLogin()
     {
         WSANativeFacebook.Initialise("facebookId", "packageSID");
-        WSANativeFacebook.Login(new List<string>() { "public_profile", "email", "user_birthday" }, (result) =>
+        WSANativeFacebook.Login(new List<string>() { "public_profile", "email", "user_birthday" }, result =>
         {
             if (result.Success)
             {
-                WSANativeFacebook.GetUserDetails((response) =>
+                WSANativeFacebook.GetUserDetails(response =>
                 {
                     if (response.Success)
                     {
 #pragma warning disable 0219
                         WSAFacebookUser user = response.Data;
+#pragma warning restore 0219
+                    }
+                });
+            }
+        });
+    }
+
+    public void TwitterLogin()
+    {
+        WSANativeTwitter.Initialise("consumerKey", "consumerSecret", "https://www.twitter.com");
+        WSANativeTwitter.Login(result =>
+        {
+            if (result.Success)
+            {
+                WSANativeTwitter.GetUserDetails(true, response =>
+                {
+                    if (response.Success)
+                    {
+#pragma warning disable 0219
+                        string user = response.Data;
 #pragma warning restore 0219
                     }
                 });
