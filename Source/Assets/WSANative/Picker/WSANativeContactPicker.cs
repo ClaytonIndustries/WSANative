@@ -9,7 +9,7 @@
 using System;
 using System.Collections.Generic;
 
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0) 
 using System.Linq;
 using Windows.ApplicationModel.Contacts;
 #endif
@@ -24,7 +24,7 @@ namespace CI.WSANative.Pickers
         /// <param name="response">Contains the chosen contact or null if nothing was selected</param>
         public static void PickContact(Action<WSAContact> response)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
             {
                 ContactPicker contactPicker = new ContactPicker();
@@ -52,7 +52,7 @@ namespace CI.WSANative.Pickers
         /// <param name="response">Contains the chosen contacts or null if nothing was selected</param>
         public static void PickContacts(Action<IEnumerable<WSAContact>> response)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
             {
                 ContactPicker contactPicker = new ContactPicker();
@@ -74,7 +74,7 @@ namespace CI.WSANative.Pickers
 #endif
         }
 
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
         private static WSAContact MapContactToWSAContact(Contact contact)
         {
             return new WSAContact()

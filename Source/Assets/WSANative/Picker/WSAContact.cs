@@ -8,7 +8,7 @@
 
 using System.Collections.Generic;
 
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
 using Windows.ApplicationModel.Contacts;
 #endif
 
@@ -25,7 +25,7 @@ namespace CI.WSANative.Pickers
         public IEnumerable<string> Emails { get; set; }
         public IEnumerable<string> Phones { get; set; }
 
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
         /// <summary>
         /// The original contact selected by the user - any calls to this must be wrapped in a NETFX_CORE block
         /// </summary>
