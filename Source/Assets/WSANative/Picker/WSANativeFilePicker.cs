@@ -9,7 +9,7 @@
 using System;
 using System.Collections.Generic;
 
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
 using System.Linq;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -29,7 +29,7 @@ namespace CI.WSANative.Pickers
         /// <param name="response">Contains the chosen file or null if nothing was selected</param>
         public static void PickSingleFile(string commitButtonText, WSAPickerViewMode viewMode, WSAPickerLocationId suggestedStartLocation, string[] filters, Action<WSAStorageFile> response)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
             {
                 FileOpenPicker openPicker = new FileOpenPicker();
@@ -73,7 +73,7 @@ namespace CI.WSANative.Pickers
         public static void PickMultipleFiles(string commitButtonText, WSAPickerViewMode viewMode, WSAPickerLocationId suggestedStartLocation, string[] filters, 
             Action<IEnumerable<WSAStorageFile>> response)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
             {
                 FileOpenPicker openPicker = new FileOpenPicker();
@@ -117,7 +117,7 @@ namespace CI.WSANative.Pickers
         /// <param name="response">Contains the chosen file or null if nothing was selected</param>
         public static void PickSaveFile(string commitButtonText, string defaultFileExtension, string suggestedFileName, WSAPickerLocationId suggestedStartLocation, IList<KeyValuePair<string, IList<string>>> validFileTypes, Action<WSAStorageFile> response)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
             {
                 FileSavePicker savePicker = new FileSavePicker();
@@ -147,7 +147,7 @@ namespace CI.WSANative.Pickers
 #endif
         }
 
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
         private static PickerLocationId MapWSAPickerLocationIdToPickerLocationId(WSAPickerLocationId pickerLocationId)
         {
             switch (pickerLocationId)
