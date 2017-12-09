@@ -6,7 +6,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#if (NETFX_CORE && UNITY_WSA_10_0)
+#if (NETFX_CORE && UNITY_WSA_10_0) || (ENABLE_IL2CPP && UNITY_WSA_10_0)
 using Windows.Devices.Geolocation;
 #endif
 
@@ -26,7 +26,7 @@ namespace CI.WSANative.Geolocation
         /// <param name="response">A response indicating whether the action was successful and if so containing the users position</param>
         public static void GetUsersLocation(int desiredAccuracyInMeters, Action<WSAGetLocationResponse> response)
         {
-#if (NETFX_CORE && UNITY_WSA_10_0)
+#if (NETFX_CORE && UNITY_WSA_10_0) || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
             {
                 GeolocationAccessStatus accessStatus = await Geolocator.RequestAccessAsync();
@@ -60,7 +60,7 @@ namespace CI.WSANative.Geolocation
 #endif
         }
 
-#if (NETFX_CORE && UNITY_WSA_10_0)
+#if (NETFX_CORE && UNITY_WSA_10_0) || (ENABLE_IL2CPP && UNITY_WSA_10_0)
         private static void RaiseCallback(bool success, WSAGeolocationAccessStatus accessStatus, WSAGeoPosition geoPosition, Action<WSAGetLocationResponse> response)
         {
             if (response != null)
