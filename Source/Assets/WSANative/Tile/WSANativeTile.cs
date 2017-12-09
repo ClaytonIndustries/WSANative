@@ -9,7 +9,7 @@
 using System;
 using System.Collections.Generic;
 
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
 using System.Linq;
 using Windows.UI.StartScreen;
 #endif
@@ -28,7 +28,7 @@ namespace CI.WSANative.Tile
         /// <param name="additionalTilesSizes">Additional sizes for the secondary tile - all are optional</param>
         public static void CreateSecondaryTile(string tileId, string displayName, Uri Square150x150Logo, bool ShowNameOnSquare150x150Logo, WSATileData additionalTilesSizes = null)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             SecondaryTile secondaryTile = new SecondaryTile()
             {
                 TileId = tileId,
@@ -77,12 +77,12 @@ namespace CI.WSANative.Tile
         /// <param name="tileId">Id of the secondary tile to delete</param>
         public static void RemoveSecondaryTile(string tileId)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             RemoveSecondaryTileAsync(tileId);
 #endif
         }
 
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
         private static async void RemoveSecondaryTileAsync(string tileId)
         {
             if (SecondaryTile.Exists(tileId))
@@ -105,7 +105,7 @@ namespace CI.WSANative.Tile
         {
             IEnumerable<string> existingTiles = new List<string>();
 
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             IReadOnlyList<SecondaryTile> tiles = SecondaryTile.FindAllAsync().AsTask().Result;
 
             if (tiles != null)
