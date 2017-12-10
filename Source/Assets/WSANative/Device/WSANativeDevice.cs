@@ -7,12 +7,17 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #if NETFX_CORE && UNITY_WSA_10_0
-using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Lights;
+using Windows.Foundation;
+using Windows.Media.Capture;
+using Windows.Storage;
+using Windows.Storage.Streams;
 #endif
 
+using System;
 using UnityEngine;
 
 namespace CI.WSANative.Device
@@ -81,7 +86,7 @@ namespace CI.WSANative.Device
         public static byte[] CaptureScreenshot()
         {
             Texture2D texture = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
-            texture.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
+            texture.ReadPixels(new UnityEngine.Rect(0, 0, Screen.width, Screen.height), 0, 0);
             texture.Apply();
             return texture.EncodeToPNG();
         }
@@ -99,5 +104,47 @@ namespace CI.WSANative.Device
             }
 #endif
         }
+
+        /// <summary>
+        /// Launches the camera capture UI allowing the user to take a picture
+        /// </summary>
+        /// <param name="imageWidth">Enforce that the image is this wide (specify 0 if the image can be any size)</param>
+        /// <param name="imageHeight">Enforce that the image is this high (specify 0 if the image can be any size)</param>
+        /// <param name="response">Byte array containing the raw image data or null if no image was captured</param>
+        public static void CapturePicture(int imageWidth, int imageHeight, Action<byte[]> response)
+        {
+#if NETFX_CORE && UNITY_WSA_10_0
+            UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
+            {
+                CameraCaptureUI captureUI = new CameraCaptureUI();
+                captureUI.PhotoSettings.CroppedSizeInPixels = new Size(imageWidth, imageHeight);
+                captureUI.PhotoSettings.AllowCropping = true;
+                captureUI.PhotoSettings.Format = CameraCaptureUIPhotoFormat.Png;
+                captureUI.PhotoSettings.MaxResolution = CameraCaptureUIMaxPhotoResolution.HighestAvailable;
+
+                StorageFile file = await captureUI.CaptureFileAsync(CameraCaptureUIMode.Photo);
+
+                UnityEngine.WSA.Application.InvokeOnAppThread(async () =>
+                {
+                    if (response != null)
+                    {
+                        response(file != null ? await ReadStorageFile(file): null);
+                    }
+                }, false);
+            }, false);
+#endif
+        }
+
+#if NETFX_CORE && UNITY_WSA_10_0
+        private static async Task<byte[]> ReadStorageFile(StorageFile file)
+        {
+            IBuffer buffer = await FileIO.ReadBufferAsync(file);
+            DataReader dataReader = DataReader.FromBuffer(buffer);
+            byte[] bytes = new byte[buffer.Length];
+            dataReader.ReadBytes(bytes);
+            await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
+            return bytes;
+        }
+#endif
     }
 }
