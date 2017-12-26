@@ -11,6 +11,12 @@ Support Website: http://www.claytoninds.com/
 Support Email: clayton.inds+support@gmail.com
 
 ------------------------------------------------------------------------------------------------------------------------
+Why not check out our other plugins:
+- Http Client (Http requests made easy)
+- Quick Save (Saving made easy)
+- Task Parallel (Threading made easy)
+
+------------------------------------------------------------------------------------------------------------------------
 Basics - all functions listed below have detailed comments in the code
 
 ***All the functions below except the Dispatcher, Image and Serialisation functions will only work once you build a Windows Store Solution - however they are safe to use in the editor***
