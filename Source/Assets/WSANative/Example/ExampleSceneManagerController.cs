@@ -4,7 +4,6 @@ using CI.WSANative.Device;
 using CI.WSANative.Dialogs;
 using CI.WSANative.Facebook;
 using CI.WSANative.FileStorage;
-using CI.WSANative.Geolocation;
 using CI.WSANative.IAPStore;
 using CI.WSANative.Mapping;
 using CI.WSANative.Notification;
@@ -71,24 +70,29 @@ public class ExampleSceneManagerController : MonoBehaviour
 
     public void SaveFile()
     {
+        var file = WSANativeStorageLibrary.CreateFile(WSAStorageLibrary.Local, "Test.txt");
+
         string result = WSANativeSerialisation.SerialiseToXML(new Test());
-        WSANativeStorage.SaveFile("Test.txt", result);
+
+        file.WriteText(result);
     }
 
     public void LoadFile()
     {
-        if (WSANativeStorage.DoesFileExist("Test.txt"))
+        if (WSANativeStorageLibrary.DoesFileExist(WSAStorageLibrary.Local, "Test.txt"))
         {
-            string result = WSANativeStorage.LoadFile("Test.txt");
-            WSANativeSerialisation.DeserialiseXML<Test>(result);
+            WSANativeStorageLibrary.GetFile(WSAStorageLibrary.Local, "Test.txt", result =>
+            {
+                WSANativeSerialisation.DeserialiseXML<Test>(result.ReadText());
+            });
         }
     }
 
     public void DeleteFile()
     {
-        if (WSANativeStorage.DoesFileExist("Test.txt"))
+        if (WSANativeStorageLibrary.DoesFileExist(WSAStorageLibrary.Local, "Test.txt"))
         {
-            WSANativeStorage.DeleteFile("Test.txt");
+            WSANativeStorageLibrary.DeleteFile(WSAStorageLibrary.Local, "Test.txt");
         }
     }
 
@@ -130,7 +134,7 @@ public class ExampleSceneManagerController : MonoBehaviour
 
     public void ShowFileOpenPicker()
     {
-        WSANativeFilePicker.PickSingleFile("Select", WSAPickerViewMode.Thumbnail, WSAPickerLocationId.PicturesLibrary, new[] { ".png", ".jpg" }, (result) =>
+        WSANativeFilePicker.PickSingleFile("Select", WSAPickerViewMode.Thumbnail, WSAPickerLocationId.PicturesLibrary, new[] { ".png", ".jpg" }, result =>
         {
             if (result != null)
             {
@@ -144,13 +148,20 @@ public class ExampleSceneManagerController : MonoBehaviour
 
     public void ShowFileSavePicker()
     {
-        WSANativeFilePicker.PickSaveFile("Save", ".txt", "Test Text File", WSAPickerLocationId.DocumentsLibrary, new List<KeyValuePair<string, IList<string>>>() { new KeyValuePair<string, IList<string>>("Text Files", new List<string>() { ".txt" }) }, (result) =>
+        WSANativeFilePicker.PickSaveFile("Save", ".txt", "Test Text File", WSAPickerLocationId.DocumentsLibrary, new List<KeyValuePair<string, IList<string>>>() { new KeyValuePair<string, IList<string>>("Text Files", new List<string>() { ".txt" }) }, result =>
         {
             if (result != null)
             {
                 result.WriteBytes(new byte[2]);
                 result.WriteText("Hello World");
             }
+        });
+    }
+
+    public void ShowFolderPicker()
+    {
+        WSANativeFolderPicker.PickSingleFolder("Ok", WSAPickerViewMode.List, WSAPickerLocationId.DocumentsLibrary, null, result =>
+        {
         });
     }
 
@@ -201,21 +212,6 @@ public class ExampleSceneManagerController : MonoBehaviour
         WSANativeMap.CenterMap(new WSAGeoPoint() { Latitude = 52, Longitude = 5 });
     }
 
-    public void GetMyLocation()
-    {
-        WSANativeGeolocation.GetUsersLocation(10, (response) =>
-        {
-            if (response.Success)
-            {
-                WSANativeDialog.ShowDialog("My Location Is", string.Format("Latitude: {0} Longitude: {1}", response.GeoPosition.Latitude, response.GeoPosition.Longitude));
-            }
-            else
-            {
-                WSANativeDialog.ShowDialog("Failed to get location", string.Format("Access was {0}", response.AccessStatus.ToString()));
-            }
-        });
-    }
-
     public void EnableFlashlight()
     {
         WSANativeDevice.EnableFlashlight(new WSANativeColour() { Red = 0, Green = 0, Blue = 255 });
@@ -224,6 +220,13 @@ public class ExampleSceneManagerController : MonoBehaviour
     public void DisableFlashlight()
     {
         WSANativeDevice.DisableFlashlight();
+    }
+
+    public void CameraCapture()
+    {
+        WSANativeDevice.CapturePicture(512, 512, result =>
+        {
+        });
     }
 
     public void EncryptDecrypt()
