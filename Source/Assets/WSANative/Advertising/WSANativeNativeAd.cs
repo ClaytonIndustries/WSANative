@@ -1,4 +1,12 @@
-﻿using System;
+﻿////////////////////////////////////////////////////////////////////////////////
+//  
+// @module WSA Native for Unity3D 
+// @author Michael Clayton
+// @support clayton.inds+support@gmail.com 
+//
+////////////////////////////////////////////////////////////////////////////////
+
+using System;
 
 namespace CI.WSANative.Advertising
 {
@@ -17,12 +25,7 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// For internal use only
         /// </summary>
-        public static Action<string, string> _Initialise;
-
-        /// <summary>
-        /// For internal use only
-        /// </summary>
-        public static Action _Request;
+        public static Action<string, string> _Request;
 
         /// <summary>
         /// For internal use only
@@ -34,22 +37,18 @@ namespace CI.WSANative.Advertising
         /// </summary>
         public static Action _Destroy;
 
+        private static string _appId = string.Empty;
+        private static string _adUnitId = string.Empty;
+
         /// <summary>
-        /// Initialise the native ad
+        /// Initialise the native ad - this only needs to be called once
         /// </summary>
         /// <param name="appId">Your apps id</param>
         /// <param name="adUnitId">Your apps ad unit id</param>
         public static void Initialise(string appId, string adUnitId)
         {
-#if NETFX_CORE
-            if (_Initialise != null)
-            {
-                UnityEngine.WSA.Application.InvokeOnUIThread(() =>
-                {
-                    _Initialise(appId, adUnitId);
-                }, false);
-            }
-#endif
+            _appId = appId;
+            _adUnitId = adUnitId;
         }
 
         /// <summary>
@@ -62,7 +61,7 @@ namespace CI.WSANative.Advertising
             {
                 UnityEngine.WSA.Application.InvokeOnUIThread(() =>
                 {
-                    _Request();
+                    _Request(_appId, _adUnitId);
                 }, false);
             }
 #endif
