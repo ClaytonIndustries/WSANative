@@ -130,5 +130,21 @@ namespace CI.WSANative.Mapping
             }
 #endif
         }
+
+        /// <summary>
+        /// Launches the Maps app
+        /// </summary>
+        /// <param name="query">A query to control which part of the map is shown. Examples can be found in the online docs</param>
+        public static void LaunchMapsApp(string query = "")
+        {
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+            UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
+            {
+                var launcherOptions = new Windows.System.LauncherOptions();
+                launcherOptions.TargetApplicationPackageFamilyName = "Microsoft.WindowsMaps_8wekyb3d8bbwe";
+                await Windows.System.Launcher.LaunchUriAsync(new Uri("bingmaps:?" + query), launcherOptions);
+            }, false);
+#endif
+        }
     }
 }
