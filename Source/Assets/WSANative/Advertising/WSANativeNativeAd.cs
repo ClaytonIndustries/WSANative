@@ -37,8 +37,10 @@ namespace CI.WSANative.Advertising
         /// </summary>
         public static Action _Destroy;
 
+#pragma warning disable 0414
         private static string _appId = string.Empty;
         private static string _adUnitId = string.Empty;
+#pragma warning restore 0414
 
         /// <summary>
         /// Initialise the native ad - this only needs to be called once
