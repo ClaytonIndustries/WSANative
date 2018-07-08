@@ -184,6 +184,11 @@ public class ExampleSceneManagerController : MonoBehaviour
         WSANativeBannerAd.CreatAd(WSABannerAdType.Microsoft, 728, 90, WSAAdVerticalPlacement.Top, WSAAdHorizontalPlacement.Centre);
     }
 
+    public void LaunchMapsApp()
+    {
+        WSANativeMap.LaunchMapsApp("collection=point.40.726966_-74.006076_Some Business");
+    }
+
     public void CreateMap()
     {
         int xPos = (Screen.width / 2) - 350;
