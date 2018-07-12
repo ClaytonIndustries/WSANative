@@ -9,7 +9,6 @@
 #if NETFX_CORE
 using System;
 using System.Collections.Generic;
-using CI.WSANative.Twitter.Core;
 using Windows.UI.Xaml.Controls;
 
 namespace CI.WSANative.Twitter.Core

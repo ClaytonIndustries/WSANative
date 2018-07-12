@@ -39,7 +39,7 @@ namespace CI.WSANative.Store
         }
 
         /// <summary>
-        /// Gets license info for the current app, including licenses for add-ons for the current app
+        /// Gets license info for the current app, including licenses for add-ons
         /// </summary>
         /// <returns>License info for the current app and its associated add-ons</returns>
         public static WSAStoreAppLicense GetAppLicense()
