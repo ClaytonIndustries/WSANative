@@ -1,7 +1,15 @@
-﻿using System;
-using System.Linq;
+﻿////////////////////////////////////////////////////////////////////////////////
+//  
+// @module WSA Native for Unity3D 
+// @author Michael Clayton
+// @support clayton.inds+support@gmail.com 
+//
+////////////////////////////////////////////////////////////////////////////////
+
+using System;
 
 #if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+using System.Linq;
 using Windows.Services.Store;
 #endif
 
@@ -9,10 +17,14 @@ namespace CI.WSANative.StoreNew
 {
     public static class WSANativeStore
     {
+        /// <summary>
+        /// Raised when the status of the app's license changes (for example, the trial period has expired or the user has purchased the full version of the app)
+        /// </summary>
         public static Action<WSAStoreAppLicense> OfflineLicensesChanged { get; set; }
 
         static WSANativeStore()
         {
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             StoreContext.GetDefault().OfflineLicensesChanged += delegate
             {
                 if (OfflineLicensesChanged != null)
@@ -20,8 +32,13 @@ namespace CI.WSANative.StoreNew
                     OfflineLicensesChanged(GetAppLicense());
                 }
             };
+#endif
         }
 
+        /// <summary>
+        /// Gets license info for the current app, including licenses for add-ons for the current app
+        /// </summary>
+        /// <returns>License info for the current app and its associated add-ons</returns>
         public static WSAStoreAppLicense GetAppLicense()
         {
 #if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
@@ -43,9 +60,15 @@ namespace CI.WSANative.StoreNew
                 TrialTimeRemaining = result.TrialTimeRemaining,
                 TrialUniqueId = result.TrialUniqueId
             };
+#else
+            return new WSAStoreAppLicense();
 #endif
         }
 
+        /// <summary>
+        /// Gets Microsoft Store listing info for the current app
+        /// </summary>
+        /// <param name="response">A callback containing product info about the current app</param>
         public static void GetAppInfo(Action<WSAStoreProductResult> response)
         {
 #if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
@@ -84,6 +107,10 @@ namespace CI.WSANative.StoreNew
         }
 #endif
 
+        /// <summary>
+        /// ets Microsoft Store listing info for the products that can be purchased from within the current app
+        /// </summary>
+        /// <param name="response">A callback containing product info about each available add-on</param>
         public static void GetAddOns(Action<WSAStoreProductQueryResult> response)
         {
 #if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
@@ -112,7 +139,15 @@ namespace CI.WSANative.StoreNew
                     ProductKind = y.Value.ProductKind,
                     StoreId = y.Value.StoreId,
                     Title = y.Value.Title,
-                    Videos = y.Value.Videos.Select(x => x.Uri).ToList()
+                    Videos = y.Value.Videos.Select(x => x.Uri).ToList(),
+                    SubscriptionInfo = y.Value.Skus.First().SubscriptionInfo != null ? new WSAStoreSubscriptionInfo()
+                    {
+                        BillingPeriod = (int)y.Value.Skus.First().SubscriptionInfo.BillingPeriod,
+                        BillingPeriodUnit = (WSAStoreDurationUnit)y.Value.Skus.First().SubscriptionInfo.BillingPeriodUnit,
+                        HasTrialPeriod = y.Value.Skus.First().SubscriptionInfo.HasTrialPeriod,
+                        TrialPeriod = (int)y.Value.Skus.First().SubscriptionInfo.TrialPeriod,
+                        TrialPeriodUnit = (WSAStoreDurationUnit)y.Value.Skus.First().SubscriptionInfo.TrialPeriodUnit
+                    } : null
                 }),
                 Error = result.ExtendedError
             };
@@ -124,7 +159,12 @@ namespace CI.WSANative.StoreNew
         }
 #endif
 
-        public static void PurchaseAddOn(string storeId, Action<WSAStorePurchaseResult> response)
+        /// <summary>
+        /// Requests the purchase for the specified app or add-on and displays the UI that is used to complete the transaction via the Microsoft Store
+        /// </summary>
+        /// <param name="storeId">The store id of the app or add-on</param>
+        /// <param name="response">A callback indicating if the purchase was successful</param>
+        public static void RequestPurchase(string storeId, Action<WSAStorePurchaseResult> response)
         {
 #if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
@@ -148,6 +188,12 @@ namespace CI.WSANative.StoreNew
 #endif
         }
 
+        /// <summary>
+        /// Reports a consumable add-on for the current app as fulfilled in the Microsoft Store
+        /// </summary>
+        /// <param name="storeId">The store id of the add-on</param>
+        /// <param name="quantity">The quantity to report as consumed - specify 1 if this is a developer managed consumable</param>
+        /// <param name="response">A callback indicating if the action was succesful</param>
         public static void ConsumeAddOn(string storeId, int quantity, Action<WSAStoreConsumableResult> response)
         {
 #if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
@@ -175,6 +221,11 @@ namespace CI.WSANative.StoreNew
         }
 #endif
 
+        /// <summary>
+        /// Gets the remaining balance for the specified consumable add-on for the current app
+        /// </summary>
+        /// <param name="storeId">The store id of the add-on</param>
+        /// <param name="response">A callback containing balance information about the specified consumable add-on</param>
         public static void GetRemainingBalanceForConsumableAddOn(string storeId, Action<WSAStoreConsumableResult> response)
         {
 #if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
@@ -201,21 +252,5 @@ namespace CI.WSANative.StoreNew
             }
         }
 #endif
-    }
-
-
-
-
-
-    public class WSAStoreProductResult
-    {
-        public WSAStoreProduct Product { get; set; }
-        public Exception Error { get; set; }
-    }
-
-    public class WSAStoreProductQueryResult
-    {
-        public System.Collections.Generic.Dictionary<string, WSAStoreProduct> Products { get; set; }
-        public Exception Error { get; set; }
     }
 }

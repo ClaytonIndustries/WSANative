@@ -8,12 +8,13 @@
 
 namespace CI.WSANative.StoreNew
 {
-    public enum WSAStorePurchaseStatus
+    public enum WSAStoreDurationUnit
     {
-        Succeeded = 0,
-        AlreadyPurchased = 1,
-        NetworkError = 2,
-        NotPurchased = 3,
-        ServerError = 4
+        Minute = 0,
+        Hour = 1,
+        Day = 2,
+        Week = 3,
+        Month = 4,
+        Year = 5
     }
 }

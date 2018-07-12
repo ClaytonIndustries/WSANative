@@ -8,12 +8,12 @@
 
 namespace CI.WSANative.StoreNew
 {
-    public enum WSAStorePurchaseStatus
+    public class WSAStoreSubscriptionInfo
     {
-        Succeeded = 0,
-        AlreadyPurchased = 1,
-        NetworkError = 2,
-        NotPurchased = 3,
-        ServerError = 4
+        public int BillingPeriod { get; set; }
+        public WSAStoreDurationUnit BillingPeriodUnit { get; set; }
+        public bool HasTrialPeriod { get; set; }
+        public int TrialPeriod { get; set; }
+        public WSAStoreDurationUnit TrialPeriodUnit { get; set; }
     }
 }

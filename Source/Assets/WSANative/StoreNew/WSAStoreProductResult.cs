@@ -6,14 +6,13 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+using System;
+
 namespace CI.WSANative.StoreNew
 {
-    public enum WSAStorePurchaseStatus
+    public class WSAStoreProductResult
     {
-        Succeeded = 0,
-        AlreadyPurchased = 1,
-        NetworkError = 2,
-        NotPurchased = 3,
-        ServerError = 4
+        public WSAStoreProduct Product { get; set; }
+        public Exception Error { get; set; }
     }
 }

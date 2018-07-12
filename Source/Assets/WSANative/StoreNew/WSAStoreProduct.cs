@@ -16,5 +16,6 @@ namespace CI.WSANative.StoreNew
         public string StoreId { get; set; }
         public string Title { get; set; }
         public List<Uri> Videos { get; set; }
+        public WSAStoreSubscriptionInfo SubscriptionInfo { get; set; }
     }
 }
