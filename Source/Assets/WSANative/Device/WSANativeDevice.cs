@@ -6,7 +6,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#if NETFX_CORE && UNITY_WSA_10_0
+#if (NETFX_CORE && UNITY_WSA_10_0) || (ENABLE_IL2CPP && UNITY_WSA_10_0)
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
@@ -24,7 +24,7 @@ namespace CI.WSANative.Device
 {
     public static class WSANativeDevice
     {
-#if NETFX_CORE && UNITY_WSA_10_0
+#if (NETFX_CORE && UNITY_WSA_10_0) || (ENABLE_IL2CPP && UNITY_WSA_10_0)
         private static Lamp _lamp;
 #endif
 
@@ -34,12 +34,12 @@ namespace CI.WSANative.Device
         /// <param name="colour">Set the colour of the flashlight - does nothing if the device doesn't support it</param>
         public static void EnableFlashlight(WSANativeColour colour = null)
         {
-#if NETFX_CORE && UNITY_WSA_10_0
+#if (NETFX_CORE && UNITY_WSA_10_0) || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             EnableFlashlightAsync(colour);
 #endif
         }
 
-#if NETFX_CORE && UNITY_WSA_10_0
+#if (NETFX_CORE && UNITY_WSA_10_0) || (ENABLE_IL2CPP && UNITY_WSA_10_0)
         private static async void EnableFlashlightAsync(WSANativeColour colour = null)
         {
             string selectorString = Lamp.GetDeviceSelector();
@@ -69,8 +69,8 @@ namespace CI.WSANative.Device
         /// </summary>
         public static void DisableFlashlight()
         {
-#if NETFX_CORE && UNITY_WSA_10_0
-            if(_lamp != null)
+#if (NETFX_CORE && UNITY_WSA_10_0) || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+            if (_lamp != null)
             {
                 _lamp.IsEnabled = false;
                 _lamp.Dispose();
@@ -97,7 +97,7 @@ namespace CI.WSANative.Device
         /// <param name="seconds">The number of seconds to vibrate for</param>
         public static void Vibrate(int seconds)
         {
-#if NETFX_CORE && UNITY_WSA_10_0
+#if (NETFX_CORE && UNITY_WSA_10_0) || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.Devices.Notification.VibrationDevice"))
             {
                 Windows.Phone.Devices.Notification.VibrationDevice.GetDefault().Vibrate(TimeSpan.FromSeconds(seconds));
@@ -113,7 +113,7 @@ namespace CI.WSANative.Device
         /// <param name="response">Byte array containing the raw image data or null if no image was captured</param>
         public static void CapturePicture(int imageWidth, int imageHeight, Action<byte[]> response)
         {
-#if NETFX_CORE && UNITY_WSA_10_0
+#if (NETFX_CORE && UNITY_WSA_10_0) || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
             {
                 CameraCaptureUI captureUI = new CameraCaptureUI();
@@ -135,7 +135,7 @@ namespace CI.WSANative.Device
 #endif
         }
 
-#if NETFX_CORE && UNITY_WSA_10_0
+#if (NETFX_CORE && UNITY_WSA_10_0) || (ENABLE_IL2CPP && UNITY_WSA_10_0)
         private static async Task<byte[]> ReadStorageFile(StorageFile file)
         {
             IBuffer buffer = await FileIO.ReadBufferAsync(file);
