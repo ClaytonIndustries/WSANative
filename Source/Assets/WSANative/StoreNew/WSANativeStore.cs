@@ -6,6 +6,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+//#define NEW_STORE_ENABLED
+
+#if NEW_STORE_ENABLED
 using System;
 
 #if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
@@ -13,7 +16,7 @@ using System.Linq;
 using Windows.Services.Store;
 #endif
 
-namespace CI.WSANative.StoreNew
+namespace CI.WSANative.Store
 {
     public static class WSANativeStore
     {
@@ -254,3 +257,4 @@ namespace CI.WSANative.StoreNew
 #endif
     }
 }
+#endif

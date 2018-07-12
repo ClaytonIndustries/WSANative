@@ -6,7 +6,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace CI.WSANative.StoreNew
+namespace CI.WSANative.Store
 {
     public enum WSAStoreConsumableStatus
     {
