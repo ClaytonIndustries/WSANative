@@ -20,6 +20,8 @@ public class ExampleSceneManagerController : MonoBehaviour
         // Uncomment these lines when testing in app purchases 
         // ReloadSimulator will throw an exception if it is not correctly configured - see website for details
 
+        // A new store implementation is now available - see the online docs for details
+
         //WSANativeStore.EnableTestMode();
 
         //WSANativeStore.ReloadSimulator();
@@ -98,6 +100,8 @@ public class ExampleSceneManagerController : MonoBehaviour
 
     public void PurchaseProduct()
     {
+        // A new store implementation is now available - see the online docs for details
+
         WSANativeStore.GetProductListings((List<WSAProduct> products) =>
         {
             if (products != null && products.Count > 0)
@@ -119,6 +123,8 @@ public class ExampleSceneManagerController : MonoBehaviour
 
     public void PurchaseApp()
     {
+        // A new store implementation is now available - see the online docs for details
+
         WSANativeStore.PurchaseApp((string response) =>
         {
             if (!string.IsNullOrEmpty(response))
