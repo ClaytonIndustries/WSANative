@@ -111,7 +111,7 @@ namespace CI.WSANative.Store
 #endif
 
         /// <summary>
-        /// ets Microsoft Store listing info for the products that can be purchased from within the current app
+        /// Gets Microsoft Store listing info for the products that can be purchased from within the current app
         /// </summary>
         /// <param name="response">A callback containing product info about each available add-on</param>
         public static void GetAddOns(Action<WSAStoreProductQueryResult> response)
