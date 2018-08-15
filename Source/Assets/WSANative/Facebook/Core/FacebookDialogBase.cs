@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////////
+﻿////////////////////////////////////////////////////////////////////////////////
 //  
 // @module WSA Native for Unity3D 
 // @author Michael Clayton
@@ -6,10 +6,10 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
 using System;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -17,13 +17,12 @@ using Windows.UI.Xaml.Media;
 
 namespace CI.WSANative.Facebook.Core
 {
-    public sealed class FacebookLogin : UserControl
+    public abstract class FacebookDialogBase : UserControl
     {
-        private readonly WebView _iFrame;
-        private readonly Button _closeButton;		
-		private readonly TaskCompletionSource<string> _taskCompletionSource;
+        protected readonly WebView _iFrame;
+        protected readonly Button _closeButton;
 
-        public FacebookLogin(int screenWidth, int screenHeight)
+        public FacebookDialogBase(int screenWidth, int screenHeight)
         {
             _iFrame = new WebView();
             _iFrame.SetValue(Grid.RowProperty, 0);
@@ -40,8 +39,6 @@ namespace CI.WSANative.Facebook.Core
             };
 
             _closeButton.SetValue(Grid.RowProperty, 1);
-			
-			_taskCompletionSource = new TaskCompletionSource<string>();
 
             int horizontalMargin = (screenWidth / 100) * 2;
             int verticalMargin = (screenHeight / 100) * 5;
@@ -63,41 +60,23 @@ namespace CI.WSANative.Facebook.Core
             Content = container;
         }
 
-        Uri _uri = null;
-
-        public async Task<string> Show(string requestUri, string responseUri, Grid parent)
+        protected void Show(string uri, Dictionary<string,string> parameters, Grid parent)
         {
-            _iFrame.NavigationStarting += (s, e) =>
-            {
-                System.Diagnostics.Debug.WriteLine(e.Uri.AbsoluteUri);
+            uri = parameters.Aggregate(uri, (total, current) => total = AddParameter(total, current.Key, current.Value));
 
-                _uri = e.Uri;
-
-                if (e.Uri.AbsolutePath == responseUri)
-                {
-                    Match match = Regex.Match(e.Uri.Fragment, "access_token=(.+)&");
-
-                    Close(parent, match.Groups.Count >= 2 ? match.Groups[1].Value : string.Empty);
-                }
-            };
-
-            _closeButton.Click += (s, e) =>
-            {
-                Close(parent, string.Empty);
-            };
-
-            _iFrame.Navigate(new Uri(requestUri));
+            _iFrame.Navigate(new Uri(uri));
 
             parent.Children.Add(this);
-
-            return await _taskCompletionSource.Task;
         }
 
-        private void Close(Grid parent, string result)
+        protected string AddParameter(string currentUri, string parameterName, string parameterValue)
         {
-            parent.Children.Remove(this);
-			
-			_taskCompletionSource.SetResult(result);
+            if(!string.IsNullOrEmpty(parameterValue))
+            {
+                return string.Format("{0}&{1}={2}", currentUri, parameterName, Uri.EscapeUriString(parameterValue));
+            }
+
+            return currentUri;
         }
     }
 }

@@ -6,7 +6,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
 using Windows.UI.Xaml.Controls;
 #endif
 
@@ -17,7 +17,7 @@ namespace CI.WSANative.Facebook
 {
     public static class WSANativeFacebook
     {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
         private static readonly WSAFacebookApi _facebookApi = new WSAFacebookApi();
 #endif
 
@@ -26,7 +26,7 @@ namespace CI.WSANative.Facebook
         /// </summary>
         public static bool IsLoggedIn
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             get { return _facebookApi.IsLoggedIn; }
 #else
             get { return false; }
@@ -40,7 +40,7 @@ namespace CI.WSANative.Facebook
         /// <param name="packageSID">Your apps SID</param>
         public static void Initialise(string facebookAppId, string packageSID)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             _facebookApi.Initialise(facebookAppId, packageSID);
 #endif
         }
@@ -61,7 +61,7 @@ namespace CI.WSANative.Facebook
         /// <param name="response">Did the login request succeed</param>
         public static void Login(List<string> permissions, Action<WSAFacebookLoginResult> response)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
             {
                 WSAFacebookLoginResult result = await _facebookApi.Login(permissions);
@@ -83,7 +83,7 @@ namespace CI.WSANative.Facebook
         /// <param name="uninstall">If true attempts to uninstall your app from their profile (i.e removes all permissions)</param>
         public static void Logout(bool uninstall)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             _facebookApi.Logout(uninstall);
 #endif
         }
@@ -94,12 +94,12 @@ namespace CI.WSANative.Facebook
         /// <param name="response">Response containing user details if successful</param>
         public static void GetUserDetails(Action<WSAFacebookResponse<WSAFacebookUser>> response)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             GetUserDetailsAsync(response);
 #endif
         }
 
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
         private static async void GetUserDetailsAsync(Action<WSAFacebookResponse<WSAFacebookUser>> response)
         {
             WSAFacebookResponse<WSAFacebookUser> result = await _facebookApi.GetUserDetails();
@@ -118,12 +118,12 @@ namespace CI.WSANative.Facebook
         /// <param name="response">Response indicating whether the user has liked the page</param>
         public static void HasUserLikedPage(string pageId, Action<WSAFacebookResponse<bool>> response)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             HasUserLikedPageAsync(pageId, response);
 #endif
         }
 
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
         private static async void HasUserLikedPageAsync(string pageId, Action<WSAFacebookResponse<bool>> response)
         {
             WSAFacebookResponse<bool> result = await _facebookApi.HasUserLikedPage(pageId);
@@ -138,21 +138,20 @@ namespace CI.WSANative.Facebook
         /// <summary>
         /// Allows you to read from the facebook graph api - see the facebook developer guide for a full list of available actions
         /// </summary>
-        /// <typeparam name="T">A type that will contain the serialised response - see WSAFacebookUser for an example and also check the facebook developer guide for details on what each call returns</typeparam>
         /// <param name="edge">The api edge e.g me/photos</param>
         /// <param name="parameters">Parameters to include in the request - null or empty if none</param>
         /// <param name="response">A callback containing the response</param>
-        public static void GraphApiRead<T>(string edge, Dictionary<string, string> parameters, Action<WSAFacebookResponse<T>> response)
+        public static void GraphApiRead(string edge, Dictionary<string, string> parameters, Action<WSAFacebookResponse<string>> response)
         {
-#if NETFX_CORE
-            GraphApiReadAsync<T>(edge, parameters, response);
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+            GraphApiReadAsync(edge, parameters, response);
 #endif
         }
 
-#if NETFX_CORE
-        private static async void GraphApiReadAsync<T>(string edge, Dictionary<string, string> parameters, Action<WSAFacebookResponse<T>> response)
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+        private static async void GraphApiReadAsync(string edge, Dictionary<string, string> parameters, Action<WSAFacebookResponse<string>> response)
         {
-            WSAFacebookResponse<T> result = await _facebookApi.GraphApiRead<T>(edge, parameters);
+            WSAFacebookResponse<string> result = await _facebookApi.GraphApiRead(edge, parameters);
 
             if (response != null)
             {
@@ -170,7 +169,7 @@ namespace CI.WSANative.Facebook
         /// <param name="closed">A callback indicating that the dialog has closed</param>
         public static void ShowFeedDialog(string link, string source, Action closed)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             UnityEngine.WSA.Application.InvokeOnUIThread(() =>
             {
                 _facebookApi.ShowFeedDialog(link, source, closed);
@@ -186,7 +185,7 @@ namespace CI.WSANative.Facebook
         /// <param name="closed">A callback indicating that the dialog has closed. Containing a list of user ids that were invited</param>
         public static void ShowRequestDialog(string title, string message, Action<IEnumerable<string>> closed)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             UnityEngine.WSA.Application.InvokeOnUIThread(() =>
             {
                 _facebookApi.ShowRequestDialog(title, message, closed);
@@ -201,7 +200,7 @@ namespace CI.WSANative.Facebook
         /// <param name="closed">A callback indicating that the dialog has closed</param>
         public static void ShowSendDialog(string link, Action closed)
         {
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
             UnityEngine.WSA.Application.InvokeOnUIThread(() =>
             {
                 _facebookApi.ShowSendDialog(link, closed);

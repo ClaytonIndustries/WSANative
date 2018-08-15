@@ -6,7 +6,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#if NETFX_CORE
+#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,12 +14,16 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Windows.Storage;
 using CI.WSANative.Facebook.Core;
-using Newtonsoft.Json;
+using CI.WSANative.Facebook.Models;
 using UnityEngine;
 
 #if UNITY_WSA_10_0
 using System.Text.RegularExpressions;
 using Windows.Security.Authentication.Web;
+#endif
+
+#if (ENABLE_IL2CPP && UNITY_WSA_10_0)
+using System.Runtime.InteropServices;
 #endif
 
 namespace CI.WSANative.Facebook
@@ -39,6 +43,10 @@ namespace CI.WSANative.Facebook
         public WSAFacebookApi()
         {
             Startup();
+
+#if (ENABLE_IL2CPP && UNITY_WSA_10_0)
+            //_dxSwapChainPanel = GetSwapChainPanel();
+#endif
         }
 
         private async void Startup()
@@ -62,10 +70,17 @@ namespace CI.WSANative.Facebook
             _packageSID = packageSID;
         }
 
+#if NETFX_CORE
         public void ConfigureDialogs(Windows.UI.Xaml.Controls.Grid dxSwapChainPanel)
         {
             _dxSwapChainPanel = dxSwapChainPanel;
         }
+#endif
+
+#if (ENABLE_IL2CPP && UNITY_WSA_10_0)
+        [DllImport("__Internal")]
+        private static extern Windows.UI.Xaml.Controls.SwapChainPanel GetSwapChainPanel();
+#endif
 
         public async Task<WSAFacebookLoginResult> Login(List<string> permissions)
         {
@@ -188,7 +203,6 @@ namespace CI.WSANative.Facebook
                 Uri requestUri = new Uri(
                     string.Format("{0}me?fields={1}&access_token={2}", WSAFacebookConstants.GraphApiUri, fields, _accessToken));
 
-
                 try
                 {
                     using (HttpClient client = new HttpClient())
@@ -199,12 +213,12 @@ namespace CI.WSANative.Facebook
 
                         if (response.IsSuccessStatusCode)
                         {
-                            userDetailsResponse.Data = JsonConvert.DeserializeObject<WSAFacebookUser>(responseAsString);
+                            userDetailsResponse.Data = WSAFacebookUser.FromDto(JsonUtility.FromJson<WSAFacebookUserDto>(responseAsString));
                             userDetailsResponse.Success = true;
                         }
                         else
                         {
-                            WSAFacebookError errorMessage = JsonConvert.DeserializeObject<WSAFacebookError>(responseAsString);
+                            WSAFacebookError errorMessage = WSAFacebookError.FromDto(JsonUtility.FromJson<WSAFacebookErrorDto>(responseAsString));
 
                             if (errorMessage.Code == _authenticationErrorCode)
                             {
@@ -252,14 +266,14 @@ namespace CI.WSANative.Facebook
 
                         if (response.IsSuccessStatusCode)
                         {
-                            WSAFacebookDataResponse parsedResponse = JsonConvert.DeserializeObject<WSAFacebookDataResponse>(responseAsString);
+                            WSAFacebookDataResponse parsedResponse = JsonUtility.FromJson<WSAFacebookDataResponse>(responseAsString);
 
-                            hasUserLikedPageResponse.Data = parsedResponse.Data != null;
+                            hasUserLikedPageResponse.Data = parsedResponse.data != null;
                             hasUserLikedPageResponse.Success = true;
                         }
                         else
                         {
-                            WSAFacebookError errorMessage = JsonConvert.DeserializeObject<WSAFacebookError>(responseAsString);
+                            WSAFacebookError errorMessage = WSAFacebookError.FromDto(JsonUtility.FromJson<WSAFacebookErrorDto>(responseAsString));
 
                             if (errorMessage.Code == _authenticationErrorCode)
                             {
@@ -289,9 +303,9 @@ namespace CI.WSANative.Facebook
             return hasUserLikedPageResponse;
         }
 
-        public async Task<WSAFacebookResponse<T>> GraphApiRead<T>(string edge, Dictionary<string, string> parameters)
+        public async Task<WSAFacebookResponse<string>> GraphApiRead(string edge, Dictionary<string, string> parameters)
         {
-            WSAFacebookResponse<T> graphApiReadResponse = new WSAFacebookResponse<T>();
+            WSAFacebookResponse<string> graphApiReadResponse = new WSAFacebookResponse<string>();
 
             if (IsLoggedIn)
             {
@@ -314,12 +328,12 @@ namespace CI.WSANative.Facebook
 
                         if (response.IsSuccessStatusCode)
                         {
-                            graphApiReadResponse.Data = JsonConvert.DeserializeObject<T>(responseAsString);
+                            graphApiReadResponse.Data = responseAsString;
                             graphApiReadResponse.Success = true;
                         }
                         else
                         {
-                            WSAFacebookError errorMessage = JsonConvert.DeserializeObject<WSAFacebookError>(responseAsString);
+                            WSAFacebookError errorMessage = WSAFacebookError.FromDto(JsonUtility.FromJson<WSAFacebookErrorDto>(responseAsString));
 
                             if (errorMessage.Code == _authenticationErrorCode)
                             {

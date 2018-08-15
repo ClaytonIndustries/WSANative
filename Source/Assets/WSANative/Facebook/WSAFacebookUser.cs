@@ -7,10 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System;
-
-#if NETFX_CORE
-using Newtonsoft.Json;
-#endif
+using CI.WSANative.Facebook.Models;
 
 namespace CI.WSANative.Facebook
 {
@@ -19,119 +16,131 @@ namespace CI.WSANative.Facebook
         /// <summary>
         /// Requires no permissions
         /// </summary>
-#if NETFX_CORE
-        [JsonProperty("id")]
-#endif
         public string Id { get; set; }
         /// <summary>
         /// Requires public_profile
         /// </summary>
-#if NETFX_CORE
-        [JsonProperty("age_range")]
-#endif
         public WSAFacebookAgeRange AgeRange { get; set; }
         /// <summary>
         /// Requires no permissions
         /// </summary>
-#if NETFX_CORE
-        [JsonProperty("name")]
-#endif
         public string Name { get; set; }
         /// <summary>
         /// Requires public_profile
         /// </summary>
-#if NETFX_CORE
-        [JsonProperty("first_name")]
-#endif
         public string FirstName { get; set; }
         /// <summary>
         /// Requires public_profile
         /// </summary>
-#if NETFX_CORE
-        [JsonProperty("last_name")]
-#endif
         public string LastName { get; set; }
         /// <summary>
         /// Requires public_profile
         /// </summary>
-#if NETFX_CORE
-        [JsonProperty("link")]
-#endif
         public string Link { get; set; }
         /// <summary>
         /// Requires public_profile
         /// </summary>
-#if NETFX_CORE
-        [JsonProperty("gender")]
-#endif
         public string Gender { get; set; }
         /// <summary>
         /// Requires public_profile
         /// </summary>
-#if NETFX_CORE
-        [JsonProperty("locale")]
-#endif
         public string Locale { get; set; }
         /// <summary>
         /// Requires public_profile
         /// </summary>
-#if NETFX_CORE
-        [JsonProperty("picture")]
-#endif
         public WSAFacebookPicture Picture { get; set; }
         /// <summary>
         /// Requires public_profile
         /// </summary>
-#if NETFX_CORE
-        [JsonProperty("timezone")]
-#endif
         public int TimeZone { get; set; }
         /// <summary>
         /// Requires email
         /// </summary>
-#if NETFX_CORE
-        [JsonProperty("email")]
-#endif
         public string Email { get; set; }
         /// <summary>
         /// Requires user_birthday
         /// </summary>
-#if NETFX_CORE
-        [JsonProperty("birthday")]
-#endif
-        public DateTime? Birthday { get; set; }
+        public string Birthday { get; set; }
+
+        public static WSAFacebookUser FromDto(WSAFacebookUserDto dto)
+        {
+            return new WSAFacebookUser()
+            {
+                AgeRange = WSAFacebookAgeRange.FromDto(dto.age_range),
+                Birthday = dto.birthday,
+                Email = dto.email,
+                FirstName = dto.first_name,
+                Gender = dto.gender,
+                Id = dto.id,
+                LastName = dto.last_name,
+                Link = dto.link,
+                Locale = dto.locale,
+                Name = dto.name,
+                Picture = WSAFacebookPicture.FromDto(dto.picture),
+                TimeZone = dto.timezone
+            };
+        }
     }
 
     public class WSAFacebookAgeRange
     {
-#if NETFX_CORE
-        [JsonProperty("min")]
-#endif
         public int Min { get; set; }
-#if NETFX_CORE
-        [JsonProperty("Max")]
-#endif
         public int Max { get; set; }
+
+        public static WSAFacebookAgeRange FromDto(WSAFacebookAgeRangeDto dto)
+        {
+            if (dto == null)
+            {
+                return null;
+            }
+
+            return new WSAFacebookAgeRange()
+            {
+                Max = dto.Max,
+                Min = dto.min
+            };
+        }
     }
 
     public class WSAFacebookPicture
     {
-#if NETFX_CORE
-        [JsonProperty("data")]
-#endif
         public WSAFacebookPictureData Data { get; set; }
-    }
 
+        public static WSAFacebookPicture FromDto(WSAFacebookPictureDto dto)
+        {
+            if (dto == null)
+            {
+                return null;
+            }
+
+            return new WSAFacebookPicture()
+            {
+                Data = WSAFacebookPictureData.FromDto(dto.data)
+            };
+        }
+    }
     
     public class WSAFacebookPictureData
     {
-#if NETFX_CORE
-        [JsonProperty("url")]
-#endif
         public string Url { get; set; }
-#if NETFX_CORE
-        [JsonProperty("is_silhouette")]
-#endif
         public bool IsSilhouette { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+
+        public static WSAFacebookPictureData FromDto(WSAFacebookPictureDataDto dto)
+        {
+            if (dto == null)
+            {
+                return null;
+            }
+
+            return new WSAFacebookPictureData()
+            {
+                IsSilhouette = dto.is_silhouette,
+                Url = dto.url,
+                Width = dto.width,
+                Height = dto.height
+            };
+        }
     }
 }

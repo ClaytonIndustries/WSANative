@@ -6,6 +6,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+using CI.WSANative.Facebook.Models;
+
 namespace CI.WSANative.Facebook
 {
     public class WSAFacebookError
@@ -29,5 +31,15 @@ namespace CI.WSANative.Facebook
         /// Is the users access token expired - if they so will need to login again
         /// </summary>
         public bool AccessTokenExpired { get; set; }
+
+        public static WSAFacebookError FromDto(WSAFacebookErrorDto dto)
+        {
+            return new WSAFacebookError()
+            {
+                Message = dto.message,
+                Type = dto.type,
+                Code = dto.code
+            };
+        }
     }
 }
