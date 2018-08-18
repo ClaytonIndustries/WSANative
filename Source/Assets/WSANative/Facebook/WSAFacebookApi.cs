@@ -10,9 +10,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Windows.Storage;
+using CI.WSANative.Common.Http;
 using CI.WSANative.Facebook.Core;
 using CI.WSANative.Facebook.Models;
 using UnityEngine;
@@ -162,15 +162,13 @@ namespace CI.WSANative.Facebook
                 {
                     try
                     {
-                        Uri requestUri = new Uri(
-                                string.Format("{0}me/permissions?access_token={1}", WSAFacebookConstants.GraphApiUri, _accessToken));
+                        string requestUri = string.Format("{0}me/permissions?access_token={1}", WSAFacebookConstants.GraphApiUri, _accessToken);
 
-                        using (HttpClient client = new HttpClient())
-                        {
-                            HttpResponseMessage message = await client.DeleteAsync(requestUri);
+                        HttpClient client = new HttpClient();
 
-                            string response = await message.Content.ReadAsStringAsync();
-                        }
+                        HttpResponseMessage message = await client.Delete(requestUri);
+
+                        string response = message.Data;
                     }
                     catch
                     {
@@ -200,35 +198,33 @@ namespace CI.WSANative.Facebook
             {
                 string fields = "id,age_range,birthday,email,first_name,gender,last_name,link,locale,name,picture,timezone";
 
-                Uri requestUri = new Uri(
-                    string.Format("{0}me?fields={1}&access_token={2}", WSAFacebookConstants.GraphApiUri, fields, _accessToken));
+                string requestUri = string.Format("{0}me?fields={1}&access_token={2}", WSAFacebookConstants.GraphApiUri, fields, _accessToken);
 
                 try
                 {
-                    using (HttpClient client = new HttpClient())
+                    HttpClient client = new HttpClient();
+
+                    HttpResponseMessage response = await client.Get(requestUri);
+
+                    string responseAsString = response.Data;
+
+                    if (response.IsSuccessStatusCode)
                     {
-                        HttpResponseMessage response = await client.GetAsync(requestUri);
+                        userDetailsResponse.Data = WSAFacebookUser.FromDto(JsonUtility.FromJson<WSAFacebookUserDto>(responseAsString));
+                        userDetailsResponse.Success = true;
+                    }
+                    else
+                    {
+                        WSAFacebookError errorMessage = WSAFacebookError.FromDto(JsonUtility.FromJson<WSAFacebookErrorDto>(responseAsString));
 
-                        string responseAsString = await response.Content.ReadAsStringAsync();
-
-                        if (response.IsSuccessStatusCode)
+                        if (errorMessage.Code == _authenticationErrorCode)
                         {
-                            userDetailsResponse.Data = WSAFacebookUser.FromDto(JsonUtility.FromJson<WSAFacebookUserDto>(responseAsString));
-                            userDetailsResponse.Success = true;
+                            Logout(false);
+                            errorMessage.AccessTokenExpired = true;
                         }
-                        else
-                        {
-                            WSAFacebookError errorMessage = WSAFacebookError.FromDto(JsonUtility.FromJson<WSAFacebookErrorDto>(responseAsString));
 
-                            if (errorMessage.Code == _authenticationErrorCode)
-                            {
-                                Logout(false);
-                                errorMessage.AccessTokenExpired = true;
-                            }
-
-                            userDetailsResponse.Success = false;
-                            userDetailsResponse.Error = errorMessage;
-                        }
+                        userDetailsResponse.Success = false;
+                        userDetailsResponse.Error = errorMessage;
                     }
                 }
                 catch
@@ -254,36 +250,35 @@ namespace CI.WSANative.Facebook
 
             if (IsLoggedIn)
             {
-                Uri requestUri = new Uri(string.Format("{0}me/likes/{1}?access_token={2}", WSAFacebookConstants.GraphApiUri, pageId, _accessToken));
+                string requestUri = string.Format("{0}me/likes/{1}?access_token={2}", WSAFacebookConstants.GraphApiUri, pageId, _accessToken);
 
                 try
                 {
-                    using (HttpClient client = new HttpClient())
+                    HttpClient client = new HttpClient();
+
+                    HttpResponseMessage response = await client.Get(requestUri);
+
+                    string responseAsString = response.Data;
+
+                    if (response.IsSuccessStatusCode)
                     {
-                        HttpResponseMessage response = await client.GetAsync(requestUri);
+                        WSAFacebookDataResponse parsedResponse = JsonUtility.FromJson<WSAFacebookDataResponse>(responseAsString);
 
-                        string responseAsString = await response.Content.ReadAsStringAsync();
+                        hasUserLikedPageResponse.Data = parsedResponse.data != null;
+                        hasUserLikedPageResponse.Success = true;
+                    }
+                    else
+                    {
+                        WSAFacebookError errorMessage = WSAFacebookError.FromDto(JsonUtility.FromJson<WSAFacebookErrorDto>(responseAsString));
 
-                        if (response.IsSuccessStatusCode)
+                        if (errorMessage.Code == _authenticationErrorCode)
                         {
-                            WSAFacebookDataResponse parsedResponse = JsonUtility.FromJson<WSAFacebookDataResponse>(responseAsString);
-
-                            hasUserLikedPageResponse.Data = parsedResponse.data != null;
-                            hasUserLikedPageResponse.Success = true;
+                            Logout(false);
+                            errorMessage.AccessTokenExpired = true;
                         }
-                        else
-                        {
-                            WSAFacebookError errorMessage = WSAFacebookError.FromDto(JsonUtility.FromJson<WSAFacebookErrorDto>(responseAsString));
 
-                            if (errorMessage.Code == _authenticationErrorCode)
-                            {
-                                Logout(false);
-                                errorMessage.AccessTokenExpired = true;
-                            }
-
-                            hasUserLikedPageResponse.Success = false;
-                            hasUserLikedPageResponse.Error = errorMessage;
-                        }
+                        hasUserLikedPageResponse.Success = false;
+                        hasUserLikedPageResponse.Error = errorMessage;
                     }
                 }
                 catch
@@ -316,34 +311,33 @@ namespace CI.WSANative.Facebook
                     fields = parameters.Aggregate(string.Empty, (total, next) => total += (next.Key + "=" + next.Value + "&"));
                 }
 
-                Uri requestUri = new Uri(string.Format("{0}{1}?{2}access_token={3}", WSAFacebookConstants.GraphApiUri, edge, fields, _accessToken));
+                string requestUri = string.Format("{0}{1}?{2}access_token={3}", WSAFacebookConstants.GraphApiUri, edge, fields, _accessToken);
 
                 try
                 {
-                    using (HttpClient client = new HttpClient())
+                    HttpClient client = new HttpClient();
+
+                    HttpResponseMessage response = await client.Get(requestUri);
+
+                    string responseAsString = response.Data;
+
+                    if (response.IsSuccessStatusCode)
                     {
-                        HttpResponseMessage response = await client.GetAsync(requestUri);
+                        graphApiReadResponse.Data = responseAsString;
+                        graphApiReadResponse.Success = true;
+                    }
+                    else
+                    {
+                        WSAFacebookError errorMessage = WSAFacebookError.FromDto(JsonUtility.FromJson<WSAFacebookErrorDto>(responseAsString));
 
-                        string responseAsString = await response.Content.ReadAsStringAsync();
-
-                        if (response.IsSuccessStatusCode)
+                        if (errorMessage.Code == _authenticationErrorCode)
                         {
-                            graphApiReadResponse.Data = responseAsString;
-                            graphApiReadResponse.Success = true;
+                            Logout(false);
+                            errorMessage.AccessTokenExpired = true;
                         }
-                        else
-                        {
-                            WSAFacebookError errorMessage = WSAFacebookError.FromDto(JsonUtility.FromJson<WSAFacebookErrorDto>(responseAsString));
 
-                            if (errorMessage.Code == _authenticationErrorCode)
-                            {
-                                Logout(false);
-                                errorMessage.AccessTokenExpired = true;
-                            }
-
-                            graphApiReadResponse.Success = false;
-                            graphApiReadResponse.Error = errorMessage;
-                        }
+                        graphApiReadResponse.Success = false;
+                        graphApiReadResponse.Error = errorMessage;
                     }
                 }
                 catch
