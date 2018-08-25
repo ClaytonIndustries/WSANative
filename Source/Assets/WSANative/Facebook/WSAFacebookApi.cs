@@ -43,10 +43,6 @@ namespace CI.WSANative.Facebook
         public WSAFacebookApi()
         {
             Startup();
-
-#if (ENABLE_IL2CPP && UNITY_WSA_10_0)
-            //_dxSwapChainPanel = GetSwapChainPanel();
-#endif
         }
 
         private async void Startup()

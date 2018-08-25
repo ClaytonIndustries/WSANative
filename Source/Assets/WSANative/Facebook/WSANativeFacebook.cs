@@ -169,11 +169,13 @@ namespace CI.WSANative.Facebook
         /// <param name="closed">A callback indicating that the dialog has closed</param>
         public static void ShowFeedDialog(string link, string source, Action closed)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if NETFX_CORE
             UnityEngine.WSA.Application.InvokeOnUIThread(() =>
             {
                 _facebookApi.ShowFeedDialog(link, source, closed);
             }, false);
+#elif (ENABLE_IL2CPP && UNITY_WSA_10_0)
+            throw new Exception("Dialogs are not currently supported in IL2CPP");
 #endif
         }
 
@@ -185,11 +187,13 @@ namespace CI.WSANative.Facebook
         /// <param name="closed">A callback indicating that the dialog has closed. Containing a list of user ids that were invited</param>
         public static void ShowRequestDialog(string title, string message, Action<IEnumerable<string>> closed)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if NETFX_CORE
             UnityEngine.WSA.Application.InvokeOnUIThread(() =>
             {
                 _facebookApi.ShowRequestDialog(title, message, closed);
             }, false);
+#elif (ENABLE_IL2CPP && UNITY_WSA_10_0)
+            throw new Exception("Dialogs are not currently supported in IL2CPP");
 #endif
         }
 
@@ -200,11 +204,13 @@ namespace CI.WSANative.Facebook
         /// <param name="closed">A callback indicating that the dialog has closed</param>
         public static void ShowSendDialog(string link, Action closed)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if NETFX_CORE
             UnityEngine.WSA.Application.InvokeOnUIThread(() =>
             {
                 _facebookApi.ShowSendDialog(link, closed);
             }, false);
+#elif (ENABLE_IL2CPP && UNITY_WSA_10_0)
+            throw new Exception("Dialogs are not currently supported in IL2CPP");
 #endif
         }
     }
