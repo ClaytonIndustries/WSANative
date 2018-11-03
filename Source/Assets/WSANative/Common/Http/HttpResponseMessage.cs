@@ -6,6 +6,7 @@ namespace CI.WSANative.Common.Http
     {
         public string Data { get; set; }
         public HttpStatusCode StatusCode { get; set; }
+        public string ErrorMessage { get; set; }
 
         public bool IsSuccessStatusCode
         {

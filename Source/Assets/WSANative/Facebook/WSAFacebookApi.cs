@@ -209,6 +209,14 @@ namespace CI.WSANative.Facebook
                         userDetailsResponse.Data = WSAFacebookUser.FromDto(JsonUtility.FromJson<WSAFacebookUserDto>(responseAsString));
                         userDetailsResponse.Success = true;
                     }
+                    else if (response.StatusCode == System.Net.HttpStatusCode.Ambiguous)
+                    {
+                        userDetailsResponse.Success = false;
+                        userDetailsResponse.Error = new WSAFacebookError()
+                        {
+                            Message = response.ErrorMessage
+                        };
+                    }
                     else
                     {
                         WSAFacebookError errorMessage = WSAFacebookError.FromDto(JsonUtility.FromJson<WSAFacebookErrorDto>(responseAsString));

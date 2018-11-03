@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using CI.WSANative.Dialogs;
 
 namespace CI.WSANative.Common.Http
 {
@@ -34,16 +35,18 @@ namespace CI.WSANative.Common.Http
                 {
                     response = (HttpWebResponse)await request.GetResponseAsync();
                 }
-                catch (AggregateException e)
+                catch (Exception e)
                 {
-                    if (e.InnerExceptions.Any() && e.InnerExceptions.First() is WebException)
+                    return new HttpResponseMessage()
                     {
-                        response = (HttpWebResponse)(e.InnerExceptions.First() as WebException).Response;
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                        StatusCode = HttpStatusCode.Ambiguous,
+                        ErrorMessage = e.Message
+                    };
+                }
+
+                if (response == null)
+                {
+                    throw new Exception("Server did not return a response");
                 }
 
                 using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
