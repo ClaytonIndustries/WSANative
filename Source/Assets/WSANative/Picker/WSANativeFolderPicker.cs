@@ -8,9 +8,10 @@
 
 using System;
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using CI.WSANative.Common;
 #endif
 
 namespace CI.WSANative.Pickers
@@ -27,8 +28,8 @@ namespace CI.WSANative.Pickers
         /// <param name="response">Contains the chosen folder or null if nothing was selected</param>
         public static void PickSingleFolder(string commitButtonText, WSAPickerViewMode viewMode, WSAPickerLocationId suggestedStartLocation, string[] filters, Action<WSAStorageFolder> response)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
-            UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
+#if ENABLE_WINMD_SUPPORT
+            ThreadRunner.RunOnUIThread(async () =>
             {
                 FolderPicker folderPicker = new FolderPicker();
                 folderPicker.SuggestedStartLocation = MapWSAPickerLocationIdToPickerLocationId(suggestedStartLocation);
@@ -49,18 +50,18 @@ namespace CI.WSANative.Pickers
 
                 StorageFolder folder = await folderPicker.PickSingleFolderAsync();
 
-                UnityEngine.WSA.Application.InvokeOnAppThread(() =>
+                ThreadRunner.RunOnAppThread(() =>
                 {
                     if (response != null)
                     {
                         response(folder != null ? MapStorageFolderToWSAStorageFolder(folder) : null);
                     }
                 }, true);
-            }, false);
+            });
 #endif
         }
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
         private static PickerLocationId MapWSAPickerLocationIdToPickerLocationId(WSAPickerLocationId pickerLocationId)
         {
             switch (pickerLocationId)

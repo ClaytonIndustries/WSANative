@@ -6,8 +6,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
 using System;
+using CI.WSANative.Common;
 #endif
 
 namespace CI.WSANative.Launchers
@@ -20,11 +21,11 @@ namespace CI.WSANative.Launchers
         /// <param name="uri">The uri</param>
         public static void LaunchUri(string uri)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
-            UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
+#if ENABLE_WINMD_SUPPORT
+            ThreadRunner.RunOnUIThread(async () =>
             {
                 await Windows.System.Launcher.LaunchUriAsync(new Uri(uri));
-            }, false);
+            });
 #endif
         }
     }

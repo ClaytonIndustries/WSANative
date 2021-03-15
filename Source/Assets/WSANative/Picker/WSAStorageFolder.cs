@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
 using Windows.Storage;
 #endif
 
@@ -26,7 +26,7 @@ namespace CI.WSANative.Pickers
         public string Path { get; set; }
         public string DisplayType { get; set; }
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
         /// <summary>
         /// The original folder selected by the user - any calls to this must be wrapped in a NETFX_CORE block
         /// </summary>
@@ -40,7 +40,7 @@ namespace CI.WSANative.Pickers
         /// <param name="result">A handle to the file</param>
         public void GetFile(string name, Action<WSAStorageFile> result)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             if (result != null)
             {
                 GetFileAsync(name, result);
@@ -48,7 +48,7 @@ namespace CI.WSANative.Pickers
 #endif
         }
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
         private async void GetFileAsync(string name, Action<WSAStorageFile> result)
         {
             StorageFile file = await OriginalFolder.GetFileAsync(name);
@@ -65,7 +65,7 @@ namespace CI.WSANative.Pickers
         /// <param name="result">Collection of files</param>
         public void GetFiles(Action<IEnumerable<WSAStorageFile>> result)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             if (result != null)
             {
                 GetFilesAsync(result);
@@ -73,7 +73,7 @@ namespace CI.WSANative.Pickers
 #endif
         }
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
         private async void GetFilesAsync(Action<IEnumerable<WSAStorageFile>> result)
         {
             IEnumerable<WSAStorageFile> files = (await OriginalFolder.GetFilesAsync()).Select(x => MapStorageFileToWSAStorageFile(x)).ToList();
@@ -88,7 +88,7 @@ namespace CI.WSANative.Pickers
         /// <param name="result">Collection of folder names</param>
         public void GetFolders(Action<IEnumerable<WSAStorageFolder>> result)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             if (result != null)
             {
                 GetFoldersAsync(result);
@@ -96,7 +96,7 @@ namespace CI.WSANative.Pickers
 #endif
         }
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
         private async void GetFoldersAsync(Action<IEnumerable<WSAStorageFolder>> result)
         {
             IEnumerable<WSAStorageFolder> folders = (await OriginalFolder.GetFoldersAsync()).Select(x => MapStorageFolderToWSAStorageFolder(x)).ToList();
@@ -112,7 +112,7 @@ namespace CI.WSANative.Pickers
         /// <returns>True if the file exists, otherwise false</returns>
         public bool DoesFileExist(string name)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             try
             {
                 OriginalFolder.GetFileAsync(name).AsTask().Wait();
@@ -133,7 +133,7 @@ namespace CI.WSANative.Pickers
         /// <returns>True if the folder exists, otherwise false</returns>
         public bool DoesFolderExist(string name)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             try
             {
                 OriginalFolder.GetFolderAsync(name).AsTask().Wait();
@@ -154,7 +154,7 @@ namespace CI.WSANative.Pickers
         /// <returns>A handle to the created file</returns>
         public WSAStorageFile CreateFile(string name)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             StorageFile file = OriginalFolder.CreateFileAsync(name, CreationCollisionOption.ReplaceExisting).AsTask().Result;
 
             WSAStorageFile mappedFile = MapStorageFileToWSAStorageFile(file);
@@ -172,7 +172,7 @@ namespace CI.WSANative.Pickers
         /// <returns>A handle to the created folder</returns>
         public WSAStorageFolder CreateFolder(string name)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             StorageFolder createdFolder = OriginalFolder.CreateFolderAsync(name, CreationCollisionOption.ReplaceExisting).AsTask().Result;
 
             return MapStorageFolderToWSAStorageFolder(createdFolder);
@@ -187,7 +187,7 @@ namespace CI.WSANative.Pickers
         /// <param name="name">Name of the file to delete</param>
         public void DeleteFile(string name)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             StorageFile file = OriginalFolder.GetFileAsync(name).AsTask().Result;
 
             file.DeleteAsync().AsTask().Wait();
@@ -200,14 +200,14 @@ namespace CI.WSANative.Pickers
         /// <param name="name">Name of the folder to delete</param>
         public void DeleteFolder(string name)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             StorageFolder folderToDelete = OriginalFolder.GetFolderAsync(name).AsTask().Result;
 
             folderToDelete.DeleteAsync().AsTask().Wait();
 #endif
         }
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
         private WSAStorageFile MapStorageFileToWSAStorageFile(StorageFile file)
         {
             if (file != null)

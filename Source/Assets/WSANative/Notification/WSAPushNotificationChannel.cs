@@ -6,7 +6,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#if NETFX_CORE
+#if ENABLE_WINMD_SUPPORT
 using Windows.Networking.PushNotifications;
 #endif
 
@@ -16,7 +16,7 @@ namespace CI.WSANative.Notification
 {
     public class WSAPushNotificationChannel
     {
-#if NETFX_CORE
+#if ENABLE_WINMD_SUPPORT
         private PushNotificationChannel _pushNotificationChannel;
 
         public WSAPushNotificationChannel(PushNotificationChannel pushNotificationChannel)
@@ -38,7 +38,7 @@ namespace CI.WSANative.Notification
         {
             get
             {
-#if NETFX_CORE
+#if ENABLE_WINMD_SUPPORT
                 return _pushNotificationChannel.Uri;
 #else
                 return string.Empty;
@@ -53,7 +53,7 @@ namespace CI.WSANative.Notification
         {
             get
             {
-#if NETFX_CORE
+#if ENABLE_WINMD_SUPPORT
                 return _pushNotificationChannel.ExpirationTime;
 #else
                 return DateTimeOffset.MinValue;
@@ -66,7 +66,7 @@ namespace CI.WSANative.Notification
         /// </summary>
         public void Close()
         {
-#if NETFX_CORE
+#if ENABLE_WINMD_SUPPORT
             _pushNotificationChannel.Close();
 #endif
         }

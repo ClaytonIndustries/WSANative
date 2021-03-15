@@ -14,7 +14,7 @@ namespace CI.WSANative.Dialogs
     public static class WSANativePopupMenu
     {
         /// <summary>
-        /// Display a popup menu with a specified and options, a callback indicates the users choice - currently experimental, positioning may not work correctly on some platforms
+        /// Display a popup menu with a specified and options, a callback indicates the users choice - positioning may not work correctly on some platforms
         /// </summary>
         /// <param name="xPos">The xpos to center on in screen co-ordinates</param>
         /// <param name="yPos">The ypos to center on in screen co-ordinates</param>
@@ -23,7 +23,7 @@ namespace CI.WSANative.Dialogs
         /// <param name="response">User response</param>
         public static void ShowPopupMenu(double xPos, double yPos, List<WSADialogCommand> commands, WSAPopupMenuPlacement placement, Action<WSADialogResult> response)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             new WindowsStorePopupMenu(response).ShowPopupMenu(xPos, yPos, commands, placement);
 #endif
         }

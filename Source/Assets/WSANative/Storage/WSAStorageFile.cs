@@ -8,7 +8,7 @@
 
 using System;
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
 using Windows.Storage;
 using Windows.Storage.Streams;
 #endif
@@ -29,7 +29,7 @@ namespace CI.WSANative.FileStorage
         /// </summary>
         public bool IsAvailable { get; set; }
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
         /// <summary>
         /// The original file selected by the user - any calls to this must be wrapped in a NETFX_CORE block
         /// </summary>
@@ -41,7 +41,7 @@ namespace CI.WSANative.FileStorage
         /// </summary>
         public byte[] ReadBytes()
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             IBuffer buffer = FileIO.ReadBufferAsync(OriginalFile).AsTask().Result;
             DataReader dataReader = DataReader.FromBuffer(buffer);
             byte[] bytes = new byte[buffer.Length];
@@ -57,7 +57,7 @@ namespace CI.WSANative.FileStorage
         /// </summary>
         public string ReadText()
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             return FileIO.ReadTextAsync(OriginalFile).AsTask().Result;
 #else
             return string.Empty;
@@ -70,7 +70,7 @@ namespace CI.WSANative.FileStorage
         /// <param name="bytes">The bytes to write</param>
         public void WriteBytes(byte[] bytes)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             FileIO.WriteBytesAsync(OriginalFile, bytes).AsTask().Wait();
 #endif
         }
@@ -81,7 +81,7 @@ namespace CI.WSANative.FileStorage
         /// <param name="text">The string to write</param>
         public void WriteText(string text)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             FileIO.WriteTextAsync(OriginalFile, text).AsTask().Wait();
 #endif
         }

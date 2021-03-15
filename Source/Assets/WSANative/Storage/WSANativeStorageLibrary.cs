@@ -9,7 +9,7 @@
 using System;
 using System.Collections.Generic;
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
 using System.Linq;
 using Windows.Storage;
 #endif
@@ -26,7 +26,7 @@ namespace CI.WSANative.FileStorage
         /// <param name="result">The specified file</param>
         public static void GetFile(WSAStorageLibrary library, string relativePath, Action<WSAStorageFile> result)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             if (result != null)
             {
                 StorageFolder folder = GetStorageFolderForWSAKnownLibrary(library);
@@ -36,7 +36,7 @@ namespace CI.WSANative.FileStorage
 #endif
         }
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
         private static async void GetFileAsync(StorageFolder knownFolder, string path, Action<WSAStorageFile> result)
         {
             StorageFile file = await knownFolder.GetFileAsync(path);
@@ -55,7 +55,7 @@ namespace CI.WSANative.FileStorage
         /// <param name="result">Collection of files at the specified path</param>
         public static void GetFiles(WSAStorageLibrary library, string relativePath, Action<IEnumerable<WSAStorageFile>> result)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             if (result != null)
             {
                 StorageFolder knownFolder = GetStorageFolderForWSAKnownLibrary(library);
@@ -65,7 +65,7 @@ namespace CI.WSANative.FileStorage
 #endif
         }
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
         private static async void GetFilesAsync(StorageFolder knownFolder, string path, Action<IEnumerable<WSAStorageFile>> result)
         {
             StorageFolder folder = string.IsNullOrWhiteSpace(path) ? knownFolder : await knownFolder.GetFolderAsync(path);
@@ -85,7 +85,7 @@ namespace CI.WSANative.FileStorage
         /// <param name="result">Collection of folders at the specified path</param>
         public static void GetFolders(WSAStorageLibrary library, string relativePath, Action<IEnumerable<string>> result)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             if (result != null)
             {
                 StorageFolder folder = GetStorageFolderForWSAKnownLibrary(library);
@@ -95,7 +95,7 @@ namespace CI.WSANative.FileStorage
 #endif
         }
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
         private static async void GetFoldersAsync(StorageFolder knownFolder, string path, Action<IEnumerable<string>> result)
         {
             StorageFolder folder = string.IsNullOrWhiteSpace(path) ? knownFolder : await knownFolder.GetFolderAsync(path);
@@ -115,7 +115,7 @@ namespace CI.WSANative.FileStorage
         /// <returns>True if the file exists, otherwise false</returns>
         public static bool DoesFileExist(WSAStorageLibrary library, string relativePath)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             StorageFolder folder = GetStorageFolderForWSAKnownLibrary(library);
 
             try
@@ -139,7 +139,7 @@ namespace CI.WSANative.FileStorage
         /// <returns>True if the folder exists, otherwise false</returns>
         public static bool DoesFolderExist(WSAStorageLibrary library, string relativePath)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             StorageFolder folder = GetStorageFolderForWSAKnownLibrary(library);
 
             try
@@ -164,7 +164,7 @@ namespace CI.WSANative.FileStorage
         /// <returns>A handle to the created file</returns>
         public static WSAStorageFile CreateFile(WSAStorageLibrary library, string relativePath)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             StorageFolder folder = GetStorageFolderForWSAKnownLibrary(library);
 
             StorageFile file = folder.CreateFileAsync(relativePath, CreationCollisionOption.ReplaceExisting).AsTask().Result;
@@ -184,7 +184,7 @@ namespace CI.WSANative.FileStorage
         /// <param name="relativePath">Path to the folder in which to create the new folder</param>
         public static void CreateFolder(WSAStorageLibrary library, string relativePath)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             StorageFolder folder = GetStorageFolderForWSAKnownLibrary(library);
 
             StorageFolder createdFolder = folder.CreateFolderAsync(relativePath, CreationCollisionOption.ReplaceExisting).AsTask().Result;
@@ -198,7 +198,7 @@ namespace CI.WSANative.FileStorage
         /// <param name="relativePath">Path to the folder in which the file exists</param>
         public static void DeleteFile(WSAStorageLibrary library, string relativePath)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             StorageFolder folder = GetStorageFolderForWSAKnownLibrary(library);
 
             StorageFile file = folder.GetFileAsync(relativePath).AsTask().Result;
@@ -214,7 +214,7 @@ namespace CI.WSANative.FileStorage
         /// <param name="relativePath">Path to the folder which should be deleted</param>
         public static void DeleteFolder(WSAStorageLibrary library, string relativePath)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             StorageFolder folder = GetStorageFolderForWSAKnownLibrary(library);
 
             StorageFolder folderToDelete = folder.GetFolderAsync(relativePath).AsTask().Result;
@@ -223,7 +223,7 @@ namespace CI.WSANative.FileStorage
 #endif
         }
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
         private static StorageFolder GetStorageFolderForWSAKnownLibrary(WSAStorageLibrary wsaStorageLibrary)
         {
             switch(wsaStorageLibrary)

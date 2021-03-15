@@ -6,11 +6,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
 using System;
 using System.Collections.Generic;
 using Windows.UI.Core;
 using Windows.UI.Popups;
+using CI.WSANative.Common;
 
 namespace CI.WSANative.Dialogs
 {
@@ -29,19 +30,19 @@ namespace CI.WSANative.Dialogs
 
         public void ShowDialog(string title, string message)
         {
-             UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
+             ThreadRunner.RunOnUIThread(async () =>
              {
                 var messageDialog = new MessageDialog(message, title);
                 messageDialog.Commands.Add(new UICommand("Ok"));
                 messageDialog.DefaultCommandIndex = 0;
                 messageDialog.CancelCommandIndex = 0;
                 await messageDialog.ShowAsync();
-            }, false);
+            });
         }
 
         public void ShowDialogWithOptions(string title, string message)
         {
-            UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
+            ThreadRunner.RunOnUIThread(async () =>
             {
                 var messageDialog = new MessageDialog(message, title);
                 messageDialog.Commands.Add(new UICommand("Yes", new UICommandInvokedHandler(this.CommandInvokedHandler)));
@@ -54,7 +55,7 @@ namespace CI.WSANative.Dialogs
 
         public void ShowDialogWithOptions(string title, string message, List<WSADialogCommand> commands, int defaultCommandIndex, int cancelCommandIndex)
         {
-            UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
+            ThreadRunner.RunOnUIThread(async () =>
             {
                 var messageDialog = new MessageDialog(message, title);
                 if (commands != null)
@@ -72,13 +73,13 @@ namespace CI.WSANative.Dialogs
 
         private void CommandInvokedHandler(IUICommand command)
         {
-            UnityEngine.WSA.Application.InvokeOnAppThread(() =>
+            ThreadRunner.RunOnAppThread(() =>
             {
                 if (OnComplete != null)
                 {
                     OnComplete(new WSADialogResult(command.Label));
                 }
-            }, false);
+            });
         }
     }
 }

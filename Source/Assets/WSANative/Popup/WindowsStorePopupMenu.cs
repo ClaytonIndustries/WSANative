@@ -6,11 +6,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
 using System;
 using System.Collections.Generic;
 using Windows.Foundation;
 using Windows.UI.Popups;
+using CI.WSANative.Common;
 
 namespace CI.WSANative.Dialogs
 {
@@ -25,7 +26,7 @@ namespace CI.WSANative.Dialogs
 
         public void ShowPopupMenu(double xPos, double yPos, List<WSADialogCommand> commands, WSAPopupMenuPlacement placement)
         {
-            UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
+            ThreadRunner.RunOnUIThread(async () =>
             {
                 var menu = new PopupMenu();
                 if (commands != null)
@@ -37,7 +38,7 @@ namespace CI.WSANative.Dialogs
                 }
 
                 await menu.ShowForSelectionAsync(new Rect(new Point(xPos, yPos), new Point(xPos, yPos)), GetPlacement(placement));
-            }, false);
+            });
         }
 
         private Placement GetPlacement(WSAPopupMenuPlacement placement)
@@ -59,13 +60,13 @@ namespace CI.WSANative.Dialogs
 
         private void CommandInvokedHandler(IUICommand command)
         {
-            UnityEngine.WSA.Application.InvokeOnAppThread(() =>
+            ThreadRunner.RunOnAppThread(() =>
             {
                 if (OnComplete != null)
                 {
                     OnComplete(new WSADialogResult(command.Label));
                 }
-            }, false);
+            });
         }
     }
 }

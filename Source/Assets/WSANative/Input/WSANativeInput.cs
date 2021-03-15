@@ -7,6 +7,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System;
+using CI.WSANative.Common;
+
+#if ENABLE_WINMD_SUPPORT
+using Windows.Devices.Input;
+using Windows.UI.Input;
+using Windows.UI.Xaml;
+#endif
 
 namespace CI.WSANative.Input
 {
@@ -21,5 +28,60 @@ namespace CI.WSANative.Input
         /// Raised when a pointer is released
         /// </summary>
         public static Action<WSAPointerProperties> PointerReleased { get; set; }
+
+#if ENABLE_WINMD_SUPPORT
+        private static bool _isInitialised;
+#endif
+
+        public static void Initialise()
+        {
+#if ENABLE_WINMD_SUPPORT
+            if (!_isInitialised)
+            { 
+                ThreadRunner.RunOnUIThread(() =>
+                {
+                    Window.Current.CoreWindow.PointerPressed += (s, e) =>
+                    {
+                        if (WSANativeInput.PointerPressed != null)
+                        {
+                            PointerPointProperties pointerProperties = e.CurrentPoint.Properties;
+                            ThreadRunner.RunOnUIThread(() =>
+                            {
+                                PointerPressed(new WSAPointerProperties()
+                                {
+                                    InputType = e.CurrentPoint.PointerDevice.PointerDeviceType == PointerDeviceType.Touch ? WSAInputType.Touch :
+                                        e.CurrentPoint.PointerDevice.PointerDeviceType == PointerDeviceType.Pen ? WSAInputType.Pen : WSAInputType.Mouse,
+                                    IsLeftButtonPressed = pointerProperties.IsLeftButtonPressed,
+                                    IsRightButtonPressed = pointerProperties.IsRightButtonPressed,
+                                    IsEraser = pointerProperties.IsEraser,
+                                    IsInverted = pointerProperties.IsInverted
+                                });
+                            });
+                        }
+                    };
+                    Window.Current.CoreWindow.PointerReleased += (s, e) =>
+                    {
+                        if (WSANativeInput.PointerReleased != null)
+                        {
+                            PointerPointProperties pointerProperties = e.CurrentPoint.Properties;
+                            ThreadRunner.RunOnUIThread(() =>
+                            {
+                                PointerReleased(new WSAPointerProperties()
+                                {
+                                    InputType = e.CurrentPoint.PointerDevice.PointerDeviceType == PointerDeviceType.Touch ? WSAInputType.Touch :
+                                        e.CurrentPoint.PointerDevice.PointerDeviceType == PointerDeviceType.Pen ? WSAInputType.Pen : WSAInputType.Mouse,
+                                    IsLeftButtonPressed = pointerProperties.IsLeftButtonPressed,
+                                    IsRightButtonPressed = pointerProperties.IsRightButtonPressed,
+                                    IsEraser = pointerProperties.IsEraser,
+                                    IsInverted = pointerProperties.IsInverted
+                                });
+                            });
+                        }
+                    };
+                    _isInitialised = true;
+                });
+            }
+#endif
+            }
     }
 }

@@ -6,7 +6,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
 using System.Collections.Generic;
 using Windows.Data.Xml.Dom;
 using System.Net.Http;
@@ -31,7 +31,7 @@ namespace CI.WSANative.Notification
         /// (optional and will not show on Windows Phone 8.1)</param>
         public static void ShowToastNotification(string title, string text, string tag, Uri image = null)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             XmlDocument toastXml = null;
 
             if (image != null)
@@ -81,7 +81,7 @@ namespace CI.WSANative.Notification
         /// (optional and will not show on Windows Phone 8.1)</param>
         public static void ShowScheduledToastNotification(string title, string text, DateTime deliveryTime, string tag, Uri image = null)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             XmlDocument toastXml = null;
 
             if (image != null)
@@ -125,7 +125,7 @@ namespace CI.WSANative.Notification
         /// <param name="tag">The tag assigned to the toast notification</param>
         public static void RemoveToastNotification(string tag)
         {
-#if (NETFX_CORE && UNITY_WSA_10_0) || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             ToastNotificationManager.History.Remove(tag);
 #endif
         }
@@ -136,12 +136,12 @@ namespace CI.WSANative.Notification
         /// <param name="response">The push notification channel</param>
         public static void CreatePushNotificationChannel(Action<WSAPushNotificationChannel> response)
         {
-#if NETFX_CORE
+#if ENABLE_WINMD_SUPPORT
             CreatePushNotificationChannelAsync(response);
 #endif
         }
 
-#if NETFX_CORE
+#if ENABLE_WINMD_SUPPORT
         private static async void CreatePushNotificationChannelAsync(Action<WSAPushNotificationChannel> response)
         {
             PushNotificationChannel channel = null;
@@ -175,12 +175,12 @@ namespace CI.WSANative.Notification
         /// <param name="response">Indicates whether the request was successful along with any text response the server sends</param>
         public static void SendPushNotificationUriToServer(string serverUrl, string channelUri, string authorisation, Action<bool, string> response)
         {
-#if NETFX_CORE
+#if ENABLE_WINMD_SUPPORT
             SendPushNotificationUriToServerAsync(serverUrl, channelUri, authorisation, response);
 #endif
         }
 
-#if NETFX_CORE
+#if ENABLE_WINMD_SUPPORT
         private static async void SendPushNotificationUriToServerAsync(string serverUrl, string channelUri, string authorisation, Action<bool, string> response)
         {
             string result = string.Empty;

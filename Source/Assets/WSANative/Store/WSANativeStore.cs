@@ -7,416 +7,251 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System;
-using System.Collections.Generic;
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
 using System.Linq;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Store;
-using Windows.Storage;
+using Windows.Services.Store;
+using CI.WSANative.Common;
 #endif
 
-namespace CI.WSANative.IAPStore
+namespace CI.WSANative.Store
 {
     public static class WSANativeStore
     {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
-        private static bool _isTest = false;
+        /// <summary>
+        /// Raised when the status of the app's license changes (for example, the trial period has expired or the user has purchased the full version of the app)
+        /// </summary>
+        public static Action<WSAStoreAppLicense> OfflineLicensesChanged { get; set; }
+
+        static WSANativeStore()
+        {
+#if ENABLE_WINMD_SUPPORT
+            StoreContext.GetDefault().OfflineLicensesChanged += delegate
+            {
+                if (OfflineLicensesChanged != null)
+                {
+                    OfflineLicensesChanged(GetAppLicense());
+                }
+            };
 #endif
+        }
 
         /// <summary>
-        /// Configures the store to run in test mode - test mode must be disabled when you publish your app to the store, removing any calls to this function is sufficient
+        /// Gets license info for the current app, including licenses for add-ons
         /// </summary>
-        /// <param name="enable">Should test mode be enabled</param>
-        public static void EnableTestMode()
+        /// <returns>License info for the current app and its associated add-ons</returns>
+        public static WSAStoreAppLicense GetAppLicense()
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
-            _isTest = true;
+#if ENABLE_WINMD_SUPPORT
+            var result = StoreContext.GetDefault().GetAppLicenseAsync().AsTask().Result;
+
+            return new WSAStoreAppLicense()
+            {
+                AddOnLicenses = result.AddOnLicenses.ToDictionary(x => x.Key, y => new WSAStoreLicense()
+                {
+                    ExpirationDate = y.Value.ExpirationDate,
+                    InAppOfferToken = y.Value.InAppOfferToken,
+                    IsActive = y.Value.IsActive,
+                    StoreId = y.Value.SkuStoreId
+                }),
+                ExpirationDate = result.ExpirationDate,
+                IsActive = result.IsActive,
+                IsTrial = result.IsTrial,
+                StoreId = result.SkuStoreId,
+                TrialTimeRemaining = result.TrialTimeRemaining,
+                TrialUniqueId = result.TrialUniqueId
+            };
+#else
+            return new WSAStoreAppLicense();
 #endif
         }
 
         /// <summary>
-        /// Reloads the simulator with an xml file containing test products - see the documentation for detailed usage
+        /// Gets Microsoft Store listing info for the current app
         /// </summary>
-        public static void ReloadSimulator()
+        /// <param name="response">A callback containing product info about the current app</param>
+        public static void GetAppInfo(Action<WSAStoreProductResult> response)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
-            if (_isTest)
-            {
-                ReloadSimulatorAsync();
-            }
+#if ENABLE_WINMD_SUPPORT
+            GetAppInfoAsync(response);
 #endif
         }
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
-        public static async void ReloadSimulatorAsync()
+#if ENABLE_WINMD_SUPPORT
+        private static async void GetAppInfoAsync(Action<WSAStoreProductResult> response)
         {
-            StorageFolder installFolder = await Package.Current.InstalledLocation.GetFolderAsync("Assets");
-            StorageFile appSimulatorStorageFile = await installFolder.GetFileAsync("WindowsStoreProxy.xml");
-            await CurrentAppSimulator.ReloadSimulatorAsync(appSimulatorStorageFile);
-        }
-#endif
+            StoreProductResult result = await StoreContext.GetDefault().GetStoreProductForCurrentAppAsync();
 
-        /// <summary>
-        /// Gets the in app products for this app
-        /// </summary>
-        /// <param name="response">Callback containing the products found</param>
-        public static void GetProductListings(Action<List<WSAProduct>> response)
-        {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
-            GetProductListingsAsync(response);
-#endif
-        }
-
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
-        private static async void GetProductListingsAsync(Action<List<WSAProduct>> response)
-        {
-            ListingInformation listings = null;
-
-            try
+            WSAStoreProductResult wsaStoreProductResult = new WSAStoreProductResult()
             {
-                if (_isTest)
+                Product = new WSAStoreProduct()
                 {
-                    listings = await CurrentAppSimulator.LoadListingInformationAsync();
-                }
-                else
-                {
-                    listings = await CurrentApp.LoadListingInformationAsync();
-                }
-            }
-            catch
-            {
-            }
-
-            List<WSAProduct> products = new List<WSAProduct>();
-
-            if (listings != null)
-            {
-                foreach (ProductListing product in listings.ProductListings.Values)
-                {
-                    products.Add(new WSAProduct()
-                    {
-                        Id = product.ProductId,
-                        Name = product.Name,
-#if (UNITY_WSA_10_0 || UNITY_WP8_1)
-                        Description = product.Description,
-                        ImageUri = product.ImageUri,
-#endif
-                        FormattedPrice = product.FormattedPrice,
-                        ProductType = Enum.GetName(typeof(ProductType), product.ProductType)
-                    });
-                }
-            }
+                    Description = result.Product.Description,
+                    FormattedPrice = result.Product.Price.FormattedPrice,
+                    Images = result.Product.Images.Select(x => x.Uri).ToList(),
+                    InAppOfferToken = result.Product.InAppOfferToken,
+                    IsInUserCollection = result.Product.IsInUserCollection,
+                    Language = result.Product.Language,
+                    LinkUri = result.Product.LinkUri,
+                    ProductKind = result.Product.ProductKind,
+                    StoreId = result.Product.StoreId,
+                    Title = result.Product.Title,
+                    Videos = result.Product.Videos.Select(x => x.Uri).ToList()
+                },
+                Error = result.ExtendedError
+            };
 
             if (response != null)
             {
-                response(products);
+                response(wsaStoreProductResult);
             }
         }
 #endif
 
         /// <summary>
-        /// Purchase a product
+        /// Gets Microsoft Store listing info for the products that can be purchased from within the current app
         /// </summary>
-        /// <param name="id">The products id</param>
-        /// <param name="response">A callback indicating if the action was successful</param>
-        public static void PurchaseProduct(string id, Action<WSAPurchaseResult> response)
+        /// <param name="response">A callback containing product info about each available add-on</param>
+        public static void GetAddOns(Action<WSAStoreProductQueryResult> response)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
-            if (_isTest)
-            {
-                UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
-                {
-                    PurchaseResults purchaseResults = await CurrentAppSimulator.RequestProductPurchaseAsync(id);
-
-                    WSAPurchaseResult result = new WSAPurchaseResult()
-                    {
-                        OfferId = purchaseResults.OfferId,
-                        ReceiptXml = purchaseResults.ReceiptXml,
-                        Status = MapPurchaseResult(purchaseResults.Status),
-                        TransactionId = purchaseResults.TransactionId
-                    };
-
-                    UnityEngine.WSA.Application.InvokeOnAppThread(() =>
-                    {
-                        if (response != null)
-                        {
-                            response(result);
-                        }
-                    }, true);
-                }, false);
-            }
-            else
-            {
-                UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
-                {
-                    PurchaseResults purchaseResults = await CurrentApp.RequestProductPurchaseAsync(id);
-
-                    WSAPurchaseResult result = new WSAPurchaseResult()
-                    {
-                        OfferId = purchaseResults.OfferId,
-                        ReceiptXml = purchaseResults.ReceiptXml,
-                        Status = MapPurchaseResult(purchaseResults.Status),
-                        TransactionId = purchaseResults.TransactionId
-                    };
-
-                    UnityEngine.WSA.Application.InvokeOnAppThread(() =>
-                    {
-                        if (response != null)
-                        {
-                            response(result);
-                        }
-                    }, true);
-                }, false);
-            }
+#if ENABLE_WINMD_SUPPORT
+            GetAddOnsAsync(response);
 #endif
         }
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
-        private static WSAPurchaseResultStatus MapPurchaseResult(ProductPurchaseStatus result)
+#if ENABLE_WINMD_SUPPORT
+        private static async void GetAddOnsAsync(Action<WSAStoreProductQueryResult> response)
         {
-            switch (result)
-            {
-                case ProductPurchaseStatus.AlreadyPurchased:
-                    return WSAPurchaseResultStatus.AlreadyPurchased;
-                case ProductPurchaseStatus.NotFulfilled:
-                    return WSAPurchaseResultStatus.NotFulfilled;
-                case ProductPurchaseStatus.NotPurchased:
-                    return WSAPurchaseResultStatus.NotPurchased;
-                case ProductPurchaseStatus.Succeeded:
-                    return WSAPurchaseResultStatus.Succeeded;
-            }
+            string[] productKinds = { "Durable", "Consumable", "UnmanagedConsumable" };
 
-            return WSAPurchaseResultStatus.NotPurchased;
+            StoreProductQueryResult result = await StoreContext.GetDefault().GetAssociatedStoreProductsAsync(productKinds.ToList());
+
+            WSAStoreProductQueryResult wsaStoreProductQuery = new WSAStoreProductQueryResult()
+            {
+                Products = result.Products.ToDictionary(x => x.Key, y => new WSAStoreProduct()
+                {
+                    Description = y.Value.Description,
+                    FormattedPrice = y.Value.Price.FormattedPrice,
+                    Images = y.Value.Images.Select(x => x.Uri).ToList(),
+                    InAppOfferToken = y.Value.InAppOfferToken,
+                    IsInUserCollection = y.Value.IsInUserCollection,
+                    Language = y.Value.Language,
+                    LinkUri = y.Value.LinkUri,
+                    ProductKind = y.Value.ProductKind,
+                    StoreId = y.Value.StoreId,
+                    Title = y.Value.Title,
+                    Videos = y.Value.Videos.Select(x => x.Uri).ToList(),
+                    SubscriptionInfo = y.Value.Skus.First().SubscriptionInfo != null ? new WSAStoreSubscriptionInfo()
+                    {
+                        BillingPeriod = (int)y.Value.Skus.First().SubscriptionInfo.BillingPeriod,
+                        BillingPeriodUnit = (WSAStoreDurationUnit)y.Value.Skus.First().SubscriptionInfo.BillingPeriodUnit,
+                        HasTrialPeriod = y.Value.Skus.First().SubscriptionInfo.HasTrialPeriod,
+                        TrialPeriod = (int)y.Value.Skus.First().SubscriptionInfo.TrialPeriod,
+                        TrialPeriodUnit = (WSAStoreDurationUnit)y.Value.Skus.First().SubscriptionInfo.TrialPeriodUnit
+                    } : null
+                }),
+                Error = result.ExtendedError
+            };
+
+            if (response != null)
+            {
+                response(wsaStoreProductQuery);
+            }
         }
 #endif
 
         /// <summary>
-        /// Reports that your app has fullfilled the consumable product, the product cannot be purchased again until this is called
+        /// Requests the purchase for the specified app or add-on and displays the UI that is used to complete the transaction via the Microsoft Store
         /// </summary>
-        /// <param name="id">The id of the product</param>
-        /// <param name="transactionId">The transaction id</param>
-        /// <param name="response">A callback indicating the result</param>
-        public static void ReportConsumableProductFulfillment(string id, Guid transactionId, Action<WSAFulfillmentResult> response)
+        /// <param name="storeId">The store id of the app or add-on</param>
+        /// <param name="response">A callback indicating if the purchase was successful</param>
+        public static void RequestPurchase(string storeId, Action<WSAStorePurchaseResult> response)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
-            if (_isTest)
+#if ENABLE_WINMD_SUPPORT
+            ThreadRunner.RunOnUIThread(async () =>
             {
-                UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
+                StorePurchaseResult result = await StoreContext.GetDefault().RequestPurchaseAsync(storeId);
+
+                WSAStorePurchaseResult wsaStorePurchaseResult = new WSAStorePurchaseResult()
                 {
-                    FulfillmentResult result = await CurrentAppSimulator.ReportConsumableFulfillmentAsync(id, transactionId);
-
-                    UnityEngine.WSA.Application.InvokeOnAppThread(() =>
-                    {
-                        if (response != null)
-                        {
-                            response(MapFulfillmentResult(result));
-                        }
-                    }, true);
-                }, false);
-            }
-            else
-            {
-                UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
-                {
-                    FulfillmentResult result = await CurrentApp.ReportConsumableFulfillmentAsync(id, transactionId);
-
-                    UnityEngine.WSA.Application.InvokeOnAppThread(() =>
-                    {
-                        if (response != null)
-                        {
-                            response(MapFulfillmentResult(result));
-                        }
-                    }, true);
-                }, false);
-            }
-#endif
-        }
-
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
-        private static WSAFulfillmentResult MapFulfillmentResult(FulfillmentResult result)
-        {
-            switch (result)
-            {
-                case FulfillmentResult.NothingToFulfill:
-                    return WSAFulfillmentResult.NothingToFulfill;
-                case FulfillmentResult.PurchasePending:
-                    return WSAFulfillmentResult.PurchasePending;
-                case FulfillmentResult.PurchaseReverted:
-                    return WSAFulfillmentResult.PurchaseReverted;
-                case FulfillmentResult.ServerError:
-                    return WSAFulfillmentResult.ServerError;
-                case FulfillmentResult.Succeeded:
-                    return WSAFulfillmentResult.Succeeded;
-            }
-
-            return WSAFulfillmentResult.NothingToFulfill;
-        }
-#endif
-
-        /// <summary>
-        /// Gets a list of unfulfilled consumable products
-        /// </summary>
-        /// <param name="response">A callback containing the found unfulfilled consumable products</param>
-        public static void GetUnfulfilledConsumableProducts(Action<List<WSAUnfulfilledConsumable>> response)
-        {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
-            if (_isTest)
-            {
-                UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
-                {
-                    IReadOnlyList<UnfulfilledConsumable> products = await CurrentAppSimulator.GetUnfulfilledConsumablesAsync();
-
-                    List<WSAUnfulfilledConsumable> unfulfilled = products.Select(x => new WSAUnfulfilledConsumable() { OfferId = x.OfferId, ProductId = x.ProductId, TransactionId = x.TransactionId }).ToList();
-
-                    UnityEngine.WSA.Application.InvokeOnAppThread(() =>
-                    {
-                        if (response != null)
-                        {
-                            response(unfulfilled != null ? unfulfilled : new List<WSAUnfulfilledConsumable>());
-                        }
-                    }, true);
-                }, false);
-            }
-            else
-            {
-                UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
-                {
-                    IReadOnlyList<UnfulfilledConsumable> products = await CurrentApp.GetUnfulfilledConsumablesAsync();
-
-                    List<WSAUnfulfilledConsumable> unfulfilled = products.Select(x => new WSAUnfulfilledConsumable() { OfferId = x.OfferId, ProductId = x.ProductId, TransactionId = x.TransactionId }).ToList();
-
-                    UnityEngine.WSA.Application.InvokeOnAppThread(() =>
-                    {
-                        if (response != null)
-                        {
-                            response(unfulfilled != null ? unfulfilled : new List<WSAUnfulfilledConsumable>());
-                        }
-                    }, true);
-                }, false);
-            }
-#endif
-        }
-
-        /// <summary>
-        /// Requests purchase of your app if it is in trial mode, returns an xml reciept if successful
-        /// </summary>
-        /// <param name="response">A callback containing the receipt</param>
-        public static void PurchaseApp(Action<string> response)
-        {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
-            if (_isTest)
-            {
-                UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
-                {
-                    string result = await CurrentAppSimulator.RequestAppPurchaseAsync(true);
-
-                    UnityEngine.WSA.Application.InvokeOnAppThread(() =>
-                    {
-                        if (response != null)
-                        {
-                            response(result);
-                        }
-                    }, true);
-                }, true);
-            }
-            else
-            {
-                UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
-                {
-                    string result = await CurrentApp.RequestAppPurchaseAsync(true);
-
-                    UnityEngine.WSA.Application.InvokeOnAppThread(() =>
-                    {
-                        if (response != null)
-                        {
-                            response(result);
-                        }
-                    }, true);
-                }, true);
-            }
-#endif
-        }
-
-        /// <summary>
-        /// The get license info for your app
-        /// </summary>
-        /// <returns></returns>
-        public static WSAProductLicense GetLicenseForApp()
-        {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
-            if (_isTest)
-            {
-                return new WSAProductLicense()
-                {
-                    ExpirationDate = CurrentAppSimulator.LicenseInformation.ExpirationDate,
-                    IsActive = CurrentAppSimulator.LicenseInformation.IsActive,
-                    IsTrial = CurrentAppSimulator.LicenseInformation.IsTrial
+                    Error = result.ExtendedError,
+                    Status = (WSAStorePurchaseStatus)result.Status
                 };
-            }
-            else
-            {
-                return new WSAProductLicense()
+
+                ThreadRunner.RunOnAppThread(() =>
                 {
-                    ExpirationDate = CurrentApp.LicenseInformation.ExpirationDate,
-                    IsActive = CurrentApp.LicenseInformation.IsActive,
-                    IsTrial = CurrentApp.LicenseInformation.IsTrial
-                };
-            }
-#else
-            return new WSAProductLicense();
+                    if (response != null)
+                    {
+                        response(wsaStorePurchaseResult);
+                    }
+                }, true);
+            });
 #endif
         }
 
         /// <summary>
-        /// Get the license info for the specified product
+        /// Reports a consumable add-on for the current app as fulfilled in the Microsoft Store
         /// </summary>
-        /// <param name="id">The id of the product</param>
-        /// <returns></returns>
-        public static WSAProductLicense GetLicenseForProduct(string id)
+        /// <param name="storeId">The store id of the add-on</param>
+        /// <param name="quantity">The quantity to report as consumed - specify 1 if this is a developer managed consumable</param>
+        /// <param name="response">A callback indicating if the action was succesful</param>
+        public static void ConsumeAddOn(string storeId, int quantity, Action<WSAStoreConsumableResult> response)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
-            if (_isTest)
-            {
-                WSAProductLicense license = new WSAProductLicense();
-
-                license.ExpirationDate = CurrentAppSimulator.LicenseInformation.ProductLicenses[id].ExpirationDate;
-                license.IsActive = CurrentAppSimulator.LicenseInformation.ProductLicenses[id].IsActive;
-
-                try
-                {
-#if (UNITY_WSA_10_0 || UNITY_WP8_1)
-                    license.IsConsumable = CurrentAppSimulator.LicenseInformation.ProductLicenses[id].IsConsumable;
-#endif
-                }
-                catch
-                {
-                }
-
-                return license;
-            }
-            else
-            {
-                WSAProductLicense license = new WSAProductLicense();
-
-                license.ExpirationDate = CurrentApp.LicenseInformation.ProductLicenses[id].ExpirationDate;
-                license.IsActive = CurrentApp.LicenseInformation.ProductLicenses[id].IsActive;
-
-                try
-                {
-#if (UNITY_WSA_10_0 || UNITY_WP8_1)
-                    license.IsConsumable = CurrentApp.LicenseInformation.ProductLicenses[id].IsConsumable;
-#endif
-                }
-                catch
-                {
-                }
-
-                return license;
-            }
-#else
-            return new WSAProductLicense();
+#if ENABLE_WINMD_SUPPORT
+            ConsumeAddOnAsync(storeId, quantity, response);
 #endif
         }
+
+#if ENABLE_WINMD_SUPPORT
+        private static async void ConsumeAddOnAsync(string storeId, int quantity, Action<WSAStoreConsumableResult> response)
+        {
+            StoreConsumableResult result = await StoreContext.GetDefault().ReportConsumableFulfillmentAsync(storeId, (uint)quantity, Guid.NewGuid());
+
+            WSAStoreConsumableResult wsaStoreConsumableResult = new WSAStoreConsumableResult()
+            {
+                BalanceRemaining = (int)result.BalanceRemaining,
+                Status = (WSAStoreConsumableStatus)result.Status,
+                TrackingId = result.TrackingId,
+                Error = result.ExtendedError
+            };
+
+            if (response != null)
+            {
+                response(wsaStoreConsumableResult);
+            }
+        }
+#endif
+
+        /// <summary>
+        /// Gets the remaining balance for the specified consumable add-on for the current app
+        /// </summary>
+        /// <param name="storeId">The store id of the add-on</param>
+        /// <param name="response">A callback containing balance information about the specified consumable add-on</param>
+        public static void GetRemainingBalanceForConsumableAddOn(string storeId, Action<WSAStoreConsumableResult> response)
+        {
+#if ENABLE_WINMD_SUPPORT
+            GetRemainingBalanceForConsumableAddOnAsync(storeId, response);
+#endif
+        }
+
+#if ENABLE_WINMD_SUPPORT
+        private static async void GetRemainingBalanceForConsumableAddOnAsync(string storeId, Action<WSAStoreConsumableResult> response)
+        {
+            StoreConsumableResult result = await StoreContext.GetDefault().GetConsumableBalanceRemainingAsync(storeId);
+
+            WSAStoreConsumableResult wsaStoreConsumableResult = new WSAStoreConsumableResult()
+            {
+                BalanceRemaining = (int)result.BalanceRemaining,
+                Status = (WSAStoreConsumableStatus)result.Status,
+                TrackingId = result.TrackingId,
+                Error = result.ExtendedError
+            };
+
+            if (response != null)
+            {
+                response(wsaStoreConsumableResult);
+            }
+        }
+#endif
     }
 }

@@ -73,11 +73,6 @@ namespace CI.WSANative.Facebook
         }
 #endif
 
-#if (ENABLE_IL2CPP && UNITY_WSA_10_0)
-        [DllImport("__Internal")]
-        private static extern Windows.UI.Xaml.Controls.SwapChainPanel GetSwapChainPanel();
-#endif
-
         public async Task<WSAFacebookLoginResult> Login(List<string> permissions)
         {
             WSAFacebookLoginResult loginResult = new WSAFacebookLoginResult();

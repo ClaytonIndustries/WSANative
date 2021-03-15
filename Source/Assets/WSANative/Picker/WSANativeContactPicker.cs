@@ -9,9 +9,10 @@
 using System;
 using System.Collections.Generic;
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0) 
+#if ENABLE_WINMD_SUPPORT
 using System.Linq;
 using Windows.ApplicationModel.Contacts;
+using CI.WSANative.Common;
 #endif
 
 namespace CI.WSANative.Pickers
@@ -24,8 +25,8 @@ namespace CI.WSANative.Pickers
         /// <param name="response">Contains the chosen contact or null if nothing was selected</param>
         public static void PickContact(Action<WSAContact> response)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
-            UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
+#if ENABLE_WINMD_SUPPORT
+            ThreadRunner.RunOnUIThread(async () =>
             {
                 ContactPicker contactPicker = new ContactPicker();
 
@@ -35,14 +36,14 @@ namespace CI.WSANative.Pickers
 
                 Contact contact = await contactPicker.PickContactAsync();
 
-                UnityEngine.WSA.Application.InvokeOnAppThread(() =>
+                ThreadRunner.RunOnAppThread(() =>
                 {
                     if (response != null)
                     {
                         response(contact != null ? MapContactToWSAContact(contact) : null);
                     }
                 }, true);
-            }, false);
+            });
 #endif
         }
 
@@ -52,8 +53,8 @@ namespace CI.WSANative.Pickers
         /// <param name="response">Contains the chosen contacts or null if nothing was selected</param>
         public static void PickContacts(Action<IEnumerable<WSAContact>> response)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
-            UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
+#if ENABLE_WINMD_SUPPORT
+            ThreadRunner.RunOnUIThread(async () =>
             {
                 ContactPicker contactPicker = new ContactPicker();
 
@@ -63,18 +64,18 @@ namespace CI.WSANative.Pickers
 
                 IList<Contact> contacts = await contactPicker.PickContactsAsync();
 
-                UnityEngine.WSA.Application.InvokeOnAppThread(() =>
+                ThreadRunner.RunOnAppThread(() =>
                 {
                     if (response != null)
                     {
                         response(contacts != null && contacts.Any() ? contacts.Select(x => MapContactToWSAContact(x)) : null);
                     }
                 }, true);
-            }, false);
+            });
 #endif
         }
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
         private static WSAContact MapContactToWSAContact(Contact contact)
         {
             return new WSAContact()
