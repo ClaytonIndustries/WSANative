@@ -1,0 +1,17 @@
+﻿////////////////////////////////////////////////////////////////////////////////
+//  
+// @module WSA Native for Unity3D 
+// @author Michael Clayton
+// @support clayton.inds+support@gmail.com 
+//
+////////////////////////////////////////////////////////////////////////////////
+///
+namespace CI.WSANative.Common
+{
+    public enum WSAHorizontalPlacement
+    {
+        Left = 0,
+        Centre = 1,
+        Right = 2
+    }
+}
