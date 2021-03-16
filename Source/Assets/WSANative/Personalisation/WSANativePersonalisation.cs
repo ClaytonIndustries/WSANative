@@ -6,28 +6,31 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-using System;
 using UnityEngine;
+
+#if ENABLE_WINMD_SUPPORT
+using CI.WSANative.Common;
+#endif
 
 namespace CI.WSANative.Personalisation
 {
     public static class WSANativePersonalisation
     {
         /// <summary>
-        /// For internal use only
-        /// </summary>
-        public static Func<Color> _GetAccentColour;
-
-        /// <summary>
         /// Attempts to return the system accent colour
         /// </summary>
         /// <returns>The accent colour or white if it fails</returns>
         public static Color GetSystemAccentColour()
         {
-#if NETFX_CORE
-            if (_GetAccentColour != null)
+#if ENABLE_WINMD_SUPPORT
+            if (WSANativeCore.IsDxSwapChainPanelConfigured())
             {
-                return _GetAccentColour();
+                Windows.UI.Color colour = new Windows.UI.Color();
+                ThreadRunner.RunOnUIThread(() =>
+                {
+                    colour = (Windows.UI.Color)WSANativeCore.DxSwapChainPanel.Resources["SystemAccentColor"];
+                }, true);
+                return new Color(colour.R, colour.G, colour.B, colour.A);
             }
 #endif
             return Color.white;

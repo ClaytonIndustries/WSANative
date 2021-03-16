@@ -25,7 +25,7 @@ namespace CI.WSANative.Device
 {
     public static class WSANativeDevice
     {
-#if (ENABLE_WINMD_SUPPORT && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
         private static Lamp _lamp;
 #endif
 
@@ -35,12 +35,12 @@ namespace CI.WSANative.Device
         /// <param name="colour">Set the colour of the flashlight - does nothing if the device doesn't support it</param>
         public static void EnableFlashlight(WSANativeColour colour = null)
         {
-#if (ENABLE_WINMD_SUPPORT && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             EnableFlashlightAsync(colour);
 #endif
         }
 
-#if (ENABLE_WINMD_SUPPORT && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
         private static async void EnableFlashlightAsync(WSANativeColour colour = null)
         {
             string selectorString = Lamp.GetDeviceSelector();
@@ -70,7 +70,7 @@ namespace CI.WSANative.Device
         /// </summary>
         public static void DisableFlashlight()
         {
-#if (ENABLE_WINMD_SUPPORT && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             if (_lamp != null)
             {
                 _lamp.IsEnabled = false;
@@ -98,7 +98,7 @@ namespace CI.WSANative.Device
         /// <param name="seconds">The number of seconds to vibrate for</param>
         public static void Vibrate(int seconds)
         {
-#if (ENABLE_WINMD_SUPPORT && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.Devices.Notification.VibrationDevice"))
             {
                 Windows.Phone.Devices.Notification.VibrationDevice.GetDefault().Vibrate(TimeSpan.FromSeconds(seconds));
@@ -114,7 +114,7 @@ namespace CI.WSANative.Device
         /// <param name="response">Byte array containing the raw image data or null if no image was captured</param>
         public static void CapturePicture(int imageWidth, int imageHeight, Action<byte[]> response)
         {
-#if (ENABLE_WINMD_SUPPORT && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             ThreadRunner.RunOnUIThread(async () =>
             {
                 CameraCaptureUI captureUI = new CameraCaptureUI();
@@ -136,7 +136,7 @@ namespace CI.WSANative.Device
 #endif
         }
 
-#if (ENABLE_WINMD_SUPPORT && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
         private static async Task<byte[]> ReadStorageFile(StorageFile file)
         {
             IBuffer buffer = await FileIO.ReadBufferAsync(file);

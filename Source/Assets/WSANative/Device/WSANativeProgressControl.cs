@@ -6,24 +6,20 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#if NETFX_CORE
+#if ENABLE_WINMD_SUPPORT
+using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using CI.WSANative.Common; 
 #endif
 
 namespace CI.WSANative.Device
 {
     public static class WSANativeProgressControl
     {
-#if NETFX_CORE
+#if ENABLE_WINMD_SUPPORT
         private static ProgressBar _progressBar;
         private static ProgressRing _progressRing;
-        private static Grid _dxSwapChainPanel;
-
-        public static void Configure(Grid dxSwapChainPanel)
-        {
-            _dxSwapChainPanel = dxSwapChainPanel;
-        }
 #endif
 
         /// <summary>
@@ -32,10 +28,10 @@ namespace CI.WSANative.Device
         /// <param name="width">The width of the progress bar</param>
         public static void CreateProgressBar(int width)
         {
-#if NETFX_CORE
-            if(_dxSwapChainPanel != null && _progressBar == null)
+#if ENABLE_WINMD_SUPPORT
+            ThreadRunner.RunOnUIThread(() =>
             {
-                UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+                if(WSANativeCore.IsDxSwapChainPanelConfigured() && _progressBar == null)
                 {
                     _progressBar = new ProgressBar()
                     {
@@ -45,23 +41,23 @@ namespace CI.WSANative.Device
                         Width = width,
                     };
 
-                    _dxSwapChainPanel.Children.Add(_progressBar);
-                }, true);
-            }
+                    WSANativeCore.DxSwapChainPanel.Children.Add(_progressBar);
+                }
+            }, true);
 #endif
         }
 
         /// <summary>
-        /// Destroy the progress bar if is it currently active
+        /// Destroy the progress bar if it is currently active
         /// </summary>
         public static void DestroyProgressBar()
         {
-#if NETFX_CORE
-            if (_dxSwapChainPanel != null && _progressBar != null)
+#if ENABLE_WINMD_SUPPORT
+            if (WSANativeCore.IsDxSwapChainPanelConfigured() && _progressBar != null)
             {
-                UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+                ThreadRunner.RunOnUIThread(() =>
                 {
-                    _dxSwapChainPanel.Children.Remove(_progressBar);
+                    WSANativeCore.DxSwapChainPanel.Children.Remove(_progressBar);
                     _progressBar = null;
                 }, true);
             }
@@ -75,10 +71,10 @@ namespace CI.WSANative.Device
         /// <param name="height">The height of the progress ring</param>
         public static void CreateProgressRing(int width, int height)
         {
-#if NETFX_CORE
-            if (_dxSwapChainPanel != null && _progressRing == null)
+#if ENABLE_WINMD_SUPPORT
+            if (WSANativeCore.IsDxSwapChainPanelConfigured() && _progressRing == null)
             {
-                UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+                ThreadRunner.RunOnUIThread(() =>
                 {
                     _progressRing = new ProgressRing()
                     {
@@ -89,23 +85,23 @@ namespace CI.WSANative.Device
                         IsActive = true
                     };
 
-                    _dxSwapChainPanel.Children.Add(_progressRing);
+                    WSANativeCore.DxSwapChainPanel.Children.Add(_progressRing);
                 }, true);
             }
 #endif
         }
 
         /// <summary>
-        /// Destroy the progress ring if is it currently active
+        /// Destroy the progress ring if it is currently active
         /// </summary>
         public static void DestroyProgressRing()
         {
-#if NETFX_CORE
-            if (_dxSwapChainPanel != null && _progressRing != null)
+#if ENABLE_WINMD_SUPPORT
+            if (WSANativeCore.IsDxSwapChainPanelConfigured() && _progressRing != null)
             {
-                UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+                ThreadRunner.RunOnUIThread(() =>
                 {
-                    _dxSwapChainPanel.Children.Remove(_progressRing);
+                    WSANativeCore.DxSwapChainPanel.Children.Remove(_progressRing);
                     _progressRing = null;
                 }, true);
             }
