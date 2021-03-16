@@ -69,14 +69,14 @@ namespace CI.WSANative.Web
         public static void Create(WSAHorizontalPlacement horizontalPlacement, WSAVerticalPlacement verticalPlacement, int width, int height, int offsetX, int offsetY, Uri uri)
         {
 #if ENABLE_WINMD_SUPPORT
-            if (WSANativeCore.IsDxSwapChainPanelConfigured())
+            if (WSANativeCore.IsDxSwapChainPanelConfigured() && _webView == null)
             {
                 ThreadRunner.RunOnUIThread(() =>
                 {
                     _webView = new WebView()
                     {
-                        VerticalAlignment = (VerticalAlignment)verticalPlacement,
                         HorizontalAlignment = (HorizontalAlignment)horizontalPlacement,
+                        VerticalAlignment = (VerticalAlignment)verticalPlacement,
                         Width = width,
                         Height = height,
                         Margin = new Thickness(offsetX, offsetY, 0, 0)
@@ -119,7 +119,7 @@ namespace CI.WSANative.Web
         public static void Navigate(Uri uri)
         {
 #if ENABLE_WINMD_SUPPORT
-            if (WSANativeCore.IsDxSwapChainPanelConfigured() && _webView != null)
+            if (_webView != null)
             {
                 ThreadRunner.RunOnUIThread(() =>
                 {
@@ -138,7 +138,7 @@ namespace CI.WSANative.Web
         public static void InvokeScript(string scriptName, IEnumerable<string> arguments, Action<string> callback)
         {
 #if ENABLE_WINMD_SUPPORT
-            if (WSANativeCore.IsDxSwapChainPanelConfigured() && _webView != null)
+            if (_webView != null)
             {
                 ThreadRunner.RunOnUIThread(async () =>
                 {

@@ -11,6 +11,7 @@ using CI.WSANative.Common;
 
 #if ENABLE_WINMD_SUPPORT
 using Windows.Devices.Input;
+using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
 #endif
@@ -40,7 +41,7 @@ namespace CI.WSANative.Input
             { 
                 ThreadRunner.RunOnUIThread(() =>
                 {
-                    Window.Current.CoreWindow.PointerPressed += (s, e) =>
+                    CoreWindow.GetForCurrentThread().PointerPressed += (s, e) =>
                     {
                         if (WSANativeInput.PointerPressed != null)
                         {
@@ -59,7 +60,7 @@ namespace CI.WSANative.Input
                             });
                         }
                     };
-                    Window.Current.CoreWindow.PointerReleased += (s, e) =>
+                    CoreWindow.GetForCurrentThread().PointerReleased += (s, e) =>
                     {
                         if (WSANativeInput.PointerReleased != null)
                         {
@@ -82,6 +83,6 @@ namespace CI.WSANative.Input
                 });
             }
 #endif
-            }
+        }
     }
 }

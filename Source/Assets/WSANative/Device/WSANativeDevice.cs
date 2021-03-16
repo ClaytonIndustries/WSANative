@@ -30,18 +30,17 @@ namespace CI.WSANative.Device
 #endif
 
         /// <summary>
-        /// Turns on the flashlight if the device supports it and optionally allows setting of the colour
+        /// Turns on the flashlight if the device supports it
         /// </summary>
-        /// <param name="colour">Set the colour of the flashlight - does nothing if the device doesn't support it</param>
-        public static void EnableFlashlight(WSANativeColour colour = null)
+        public static void EnableFlashlight()
         {
 #if ENABLE_WINMD_SUPPORT
-            EnableFlashlightAsync(colour);
+            EnableFlashlightAsync();
 #endif
         }
 
 #if ENABLE_WINMD_SUPPORT
-        private static async void EnableFlashlightAsync(WSANativeColour colour = null)
+        private static async void EnableFlashlightAsync()
         {
             string selectorString = Lamp.GetDeviceSelector();
 
@@ -54,11 +53,6 @@ namespace CI.WSANative.Device
             if(deviceInfo != null)
             {
                 _lamp = await Lamp.FromIdAsync(deviceInfo.Id);
-
-                if (_lamp.IsColorSettable && colour != null)
-                {
-                    _lamp.Color = Windows.UI.Color.FromArgb(255, colour.Red, colour.Green, colour.Blue);
-                }
 
                 _lamp.IsEnabled = true;
             }
