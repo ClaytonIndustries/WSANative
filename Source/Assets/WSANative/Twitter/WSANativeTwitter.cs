@@ -9,16 +9,17 @@
 using System;
 using System.Collections.Generic;
 
-#if NETFX_CORE && UNITY_WSA_10_0
+#if ENABLE_WINMD_SUPPORT
 using CI.WSANative.Twitter.Core;
 using Windows.UI.Xaml.Controls;
+using CI.WSANative.Common;
 #endif
 
 namespace CI.WSANative.Twitter
 {
     public static class WSANativeTwitter
     {
-#if NETFX_CORE && UNITY_WSA_10_0
+#if ENABLE_WINMD_SUPPORT
         private static readonly WSATwitterApi _twitterApi = new WSATwitterApi();
 #endif
 
@@ -27,7 +28,7 @@ namespace CI.WSANative.Twitter
         /// </summary>
         public static bool IsLoggedIn
         {
-#if NETFX_CORE && UNITY_WSA_10_0
+#if ENABLE_WINMD_SUPPORT
             get { return _twitterApi.IsLoggedIn; }
 #else
             get { return false; }
@@ -42,17 +43,10 @@ namespace CI.WSANative.Twitter
         /// /// <param name="oauthCallback">A callback url for oauth (should match the value entered on twitter)</param>
         public static void Initialise(string consumerKey, string consumerSecret, string oauthCallback)
         {
-#if NETFX_CORE && UNITY_WSA_10_0
+#if ENABLE_WINMD_SUPPORT
             _twitterApi.Initialise(consumerKey, consumerSecret, oauthCallback);
 #endif
         }
-
-#if NETFX_CORE
-        public static void ConfigureDialogs(Grid dxSwapChainPanel)
-        {
-            _twitterApi.ConfigureDialogs(dxSwapChainPanel);
-        }
-#endif
 
         /// <summary>
         /// Shows the login dialog to the user.
@@ -61,19 +55,19 @@ namespace CI.WSANative.Twitter
         /// <param name="response">Did the login request succeed</param>
         public static void Login(Action<WSATwitterLoginResult> response)
         {
-#if NETFX_CORE && UNITY_WSA_10_0
-            UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
+#if ENABLE_WINMD_SUPPORT
+            ThreadRunner.RunOnUIThread(async () =>
             {
                 WSATwitterLoginResult result = await _twitterApi.Login();
 
-                UnityEngine.WSA.Application.InvokeOnAppThread(() =>
+                ThreadRunner.RunOnAppThread(() =>
                 {
                     if (response != null)
                     {
                         response(result);
                     }
                 }, true);
-            }, false);
+            });
 #endif
         }
 
@@ -82,7 +76,7 @@ namespace CI.WSANative.Twitter
         /// </summary>
         public static void Logout()
         {
-#if NETFX_CORE && UNITY_WSA_10_0
+#if ENABLE_WINMD_SUPPORT
             _twitterApi.Logout();
 #endif
         }
@@ -94,12 +88,12 @@ namespace CI.WSANative.Twitter
         /// <param name="response">Response containing user details if successful</param>
         public static void GetUserDetails(bool includeEmail, Action<WSATwitterResponse> response)
         {
-#if NETFX_CORE && UNITY_WSA_10_0
+#if ENABLE_WINMD_SUPPORT
             GetUserDetailsAsync(includeEmail, response);
 #endif
         }
 
-#if NETFX_CORE && UNITY_WSA_10_0
+#if ENABLE_WINMD_SUPPORT
         private static async void GetUserDetailsAsync(bool includeEmail, Action<WSATwitterResponse> response)
         {
             IDictionary<string, string> parameters = new Dictionary<string, string>()
@@ -124,12 +118,12 @@ namespace CI.WSANative.Twitter
         /// <param name="response">Response containing the requested data if successful</param>
         public static void ApiRead(string url, IDictionary<string, string> parameters, Action<WSATwitterResponse> response)
         {
-#if NETFX_CORE && UNITY_WSA_10_0
+#if ENABLE_WINMD_SUPPORT
             ApiReadAsync(url, parameters, response);
 #endif
         }
 
-#if NETFX_CORE && UNITY_WSA_10_0
+#if ENABLE_WINMD_SUPPORT
         private static async void ApiReadAsync(string url, IDictionary<string, string> parameters, Action<WSATwitterResponse> response)
         {
             WSATwitterResponse result = await _twitterApi.ApiRead(url, parameters);
@@ -148,11 +142,11 @@ namespace CI.WSANative.Twitter
         /// <param name="closed">A callback indicating that the dialog has closed</param>
         public static void ShowTweetDialog(IDictionary<string, string> parameters, Action closed)
         {
-#if NETFX_CORE
-            UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+#if ENABLE_WINMD_SUPPORT
+            ThreadRunner.RunOnUIThread(() =>
             {
                 _twitterApi.ShowTweetDialog("https://twitter.com/intent/tweet", parameters, closed);
-            }, false);
+            });
 #endif
         }
 
@@ -163,16 +157,16 @@ namespace CI.WSANative.Twitter
         /// <param name="closed">A callback indicating that the dialog has closed</param>
         public static void ShowRetweetDialog(string tweetId, Action closed)
         {
-#if NETFX_CORE
+#if ENABLE_WINMD_SUPPORT
             IDictionary<string, string> parameters = new Dictionary<string, string>()
             {
                 { "tweet_id", tweetId }
             };
 
-            UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+            ThreadRunner.RunOnUIThread(() =>
             {
                 _twitterApi.ShowTweetDialog("https://twitter.com/intent/retweet", parameters, closed);
-            }, false);
+            });
 #endif
         }
 
@@ -183,16 +177,16 @@ namespace CI.WSANative.Twitter
         /// <param name="closed">A callback indicating that the dialog has closed</param>
         public static void ShowLikeTweetDialog(string tweetId, Action closed)
         {
-#if NETFX_CORE
+#if ENABLE_WINMD_SUPPORT
             IDictionary<string, string> parameters = new Dictionary<string, string>()
             {
                 { "tweet_id", tweetId }
             };
 
-            UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+            ThreadRunner.RunOnUIThread(() =>
             {
                 _twitterApi.ShowTweetDialog("https://twitter.com/intent/like", parameters, closed);
-            }, false);
+            });
 #endif
         }
 
@@ -203,16 +197,16 @@ namespace CI.WSANative.Twitter
         /// <param name="closed">A callback indicating that the dialog has closed</param>
         public static void ShowMiniProfileDialog(string userId, Action closed)
         {
-#if NETFX_CORE
+#if ENABLE_WINMD_SUPPORT
             IDictionary<string, string> parameters = new Dictionary<string, string>()
             {
                 { "user_id", userId }
             };
 
-            UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+            ThreadRunner.RunOnUIThread(() =>
             {
                 _twitterApi.ShowTweetDialog("https://twitter.com/intent/user", parameters, closed);
-            }, false);
+            });
 #endif
         }
 
@@ -223,16 +217,16 @@ namespace CI.WSANative.Twitter
         /// <param name="closed">A callback indicating that the dialog has closed</param>
         public static void ShowFollowDialog(string userId, Action closed)
         {
-#if NETFX_CORE
+#if ENABLE_WINMD_SUPPORT
             IDictionary<string, string> parameters = new Dictionary<string, string>()
             {
                 { "user_id", userId }
             };
 
-            UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+            ThreadRunner.RunOnUIThread(() =>
             {
                 _twitterApi.ShowTweetDialog("https://twitter.com/intent/follow", parameters, closed);
-            }, false);
+            });
 #endif
         }
     }

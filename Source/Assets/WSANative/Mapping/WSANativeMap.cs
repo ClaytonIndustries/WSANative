@@ -50,7 +50,7 @@ namespace CI.WSANative.Mapping
         /// <param name="center">Center the map on this lat / long</param>
         /// <param name="zoomLevel">How zoomed in should the map initially be (1 - 20)</param>
         /// <param name="interactionMode">How should the user be allowed to interact with the map</param>
-        public static void CreateMap(WSANativeMapSettings settings)
+        public static void CreateMap(WSAMapSettings settings)
         {
 #if ENABLE_WINMD_SUPPORT
             if (WSANativeCore.IsDxSwapChainPanelConfigured() && _mapControl == null)

@@ -6,7 +6,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#if NETFX_CORE
+#if ENABLE_WINMD_SUPPORT
 using System;
 using System.Collections.Generic;
 using System.Linq;

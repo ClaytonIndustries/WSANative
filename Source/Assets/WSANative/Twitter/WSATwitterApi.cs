@@ -6,16 +6,17 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#if NETFX_CORE && UNITY_WSA_10_0
+#if ENABLE_WINMD_SUPPORT
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using UnityEngine;
 using Windows.Security.Authentication.Web;
 using Windows.Storage;
+using CI.WSANative.Common;
+using CI.WSANative.Common.Http;
 
 namespace CI.WSANative.Twitter.Core
 {
@@ -28,7 +29,6 @@ namespace CI.WSANative.Twitter.Core
         private string _oauthCallback;
 
         private WSATwitterHeaderGenerator _headerGenerator;
-        private Windows.UI.Xaml.Controls.Grid _dxSwapChainPanel;
 
         private const string _savedDataFilename = "TwitterData.sav";
 
@@ -65,11 +65,6 @@ namespace CI.WSANative.Twitter.Core
             _oauthCallback = oauthCallback;
 
             _headerGenerator = new WSATwitterHeaderGenerator(consumerKey, consumerSecret);
-        }
-
-        public void ConfigureDialogs(Windows.UI.Xaml.Controls.Grid dxSwapChainPanel)
-        {
-            _dxSwapChainPanel = dxSwapChainPanel;
         }
 
         public async Task<WSATwitterLoginResult> Login()
@@ -161,11 +156,11 @@ namespace CI.WSANative.Twitter.Core
 
                 string authHeader = _headerGenerator.Generate("GET", url, additionalParts, parameters, _oauthTokenSecret);
 
-                HttpResponseMessage response = await MakeRequest(CombineUrlAndQuery(url, parameters), authHeader, null, HttpMethod.Get);
+                HttpResponseMessage response = await MakeRequest(CombineUrlAndQuery(url, parameters), authHeader, null, HttpAction.Get);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    string content = await response.Content.ReadAsStringAsync();
+                    string content = response.ReadAsString();
 
                     wsaTwitterResponse.Success = true;
                     wsaTwitterResponse.Data = content;
@@ -174,7 +169,7 @@ namespace CI.WSANative.Twitter.Core
                 {
                     wsaTwitterResponse.Error = new WSATwitterError()
                     {
-                        Message = await response.Content.ReadAsStringAsync()
+                        Message = response.ReadAsString()
                     };
 
                     if (response.StatusCode == HttpStatusCode.Unauthorized)
@@ -199,14 +194,14 @@ namespace CI.WSANative.Twitter.Core
 
         public void ShowTweetDialog(string baseUrl, IDictionary<string, string> parameters, Action closed)
         {
-            if (_dxSwapChainPanel == null)
+            if (!WSANativeCore.IsDxSwapChainPanelConfigured())
             {
-                throw new InvalidOperationException("WSATwitterApi.ConfigureDialogs must first be called from MainPage.xaml.cs");
+                throw new InvalidOperationException("CI.WSANative.Common.Initialise() must first be called first");
             }
 
             TwitterWebIntent dialog = new TwitterWebIntent(Screen.width, Screen.height);
 
-            dialog.Show(baseUrl, parameters, _dxSwapChainPanel, closed);
+            dialog.Show(baseUrl, parameters, WSANativeCore.DxSwapChainPanel, closed);
         }
 
         private async Task<WSATwitterLoginResult> GetRequestToken(WSATwitterLoginResult result)
@@ -220,16 +215,16 @@ namespace CI.WSANative.Twitter.Core
 
                 string authHeader = _headerGenerator.Generate("POST", "https://api.twitter.com/oauth/request_token", additionalParts, null, null);
 
-                HttpResponseMessage response = await MakeRequest("https://api.twitter.com/oauth/request_token", authHeader, null, HttpMethod.Post);
+                HttpResponseMessage response = await MakeRequest("https://api.twitter.com/oauth/request_token", authHeader, null, HttpAction.Post);
 
                 if (!response.IsSuccessStatusCode)
                 {
                     result.Success = false;
-                    result.ErrorMessage = await response.Content.ReadAsStringAsync();
+                    result.ErrorMessage = response.ReadAsString();
                     return result;
                 }
 
-                string content = await response.Content.ReadAsStringAsync();
+                string content = response.ReadAsString();
 
                 IDictionary<string, string> parsed = ParseResponse(content);
 
@@ -300,23 +295,23 @@ namespace CI.WSANative.Twitter.Core
                     { "oauth_token", _oauthToken }
                 };
 
-                string authHeader = _headerGenerator.Generate("POST", "https://api.twitter.com//oauth/access_token", additionalParts, null, null);
+                string authHeader = _headerGenerator.Generate("POST", "https://api.twitter.com/oauth/access_token", additionalParts, null, null);
 
                 IDictionary<string, string> body = new Dictionary<string, string>()
                 {
                     { "oauth_verifier", oauthVerifier }
                 };
 
-                HttpResponseMessage response = await MakeRequest("https://api.twitter.com//oauth/access_token", authHeader, new FormUrlEncodedContent(body), HttpMethod.Post);
+                HttpResponseMessage response = await MakeRequest("https://api.twitter.com/oauth/access_token", authHeader, new FormUrlEncodedContent(body), HttpAction.Post);
 
                 if (!response.IsSuccessStatusCode)
                 {
                     result.Success = false;
-                    result.ErrorMessage = await response.Content.ReadAsStringAsync();
+                    result.ErrorMessage = response.ReadAsString();
                     return result;
                 }
 
-                string content = await response.Content.ReadAsStringAsync();
+                string content = response.ReadAsString();
 
                 IDictionary<string, string> parsed = ParseResponse(content);
 
@@ -350,26 +345,35 @@ namespace CI.WSANative.Twitter.Core
             }
         }
 
-        private async Task<HttpResponseMessage> MakeRequest(string url, string authHeader, HttpContent content, HttpMethod method)
+        private Task<HttpResponseMessage> MakeRequest(string url, string authHeader, IHttpContent content, HttpAction method)
         {
-            HttpClientHandler handler = new HttpClientHandler()
+            var task = new TaskCompletionSource<HttpResponseMessage>();
+
+            var client = new HttpClient()
             {
                 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
             };
 
-            using (HttpClient client = new HttpClient(handler))
+            var headers = new Dictionary<string, string>()
             {
-                client.DefaultRequestHeaders.Add("Authorization", authHeader);
+                { "Authorization", authHeader },
+                { "Accept-Encoding", "gzip, deflate" }
+            };
 
-                if (method == HttpMethod.Post)
-                {
-                    return await client.PostAsync(url, content);
-                }
-                else
-                {
-                    return await client.GetAsync(url);
-                }
-            }
+            var request = new HttpRequestMessage()
+            {
+                Uri = new Uri(url),
+                Method = method,
+                Headers = headers,
+                Content = content
+            }; 
+
+            client.Send(request, HttpCompletionOption.AllResponseContent, r =>
+            {
+                task.SetResult(r);
+            });
+
+            return task.Task;
         }
 
         private IDictionary<string, string> ParseResponse(string response)
