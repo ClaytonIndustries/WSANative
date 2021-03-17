@@ -36,9 +36,9 @@ namespace CI.WSANative.Facebook
         {
             return new WSAFacebookError()
             {
-                Message = dto.message,
-                Type = dto.type,
-                Code = dto.code
+                Message = dto.error.message,
+                Type = dto.error.type,
+                Code = dto.error.code
             };
         }
     }

@@ -6,7 +6,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
 using System;
 using System.Collections.Generic;
 using System.Linq;

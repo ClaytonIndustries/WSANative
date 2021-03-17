@@ -6,7 +6,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,8 +40,8 @@ namespace CI.WSANative.Facebook.Core
 
             _closeButton.SetValue(Grid.RowProperty, 1);
 
-            int horizontalMargin = (screenWidth / 100) * 2;
-            int verticalMargin = (screenHeight / 100) * 5;
+            int horizontalMargin = (screenWidth - 600) / 2;
+            int verticalMargin = (screenHeight - 700) / 2;
 
             Margin = new Thickness(horizontalMargin, verticalMargin, horizontalMargin, verticalMargin);
             VerticalAlignment = VerticalAlignment.Stretch;

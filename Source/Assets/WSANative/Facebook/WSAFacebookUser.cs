@@ -6,98 +6,43 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-using System;
 using CI.WSANative.Facebook.Models;
 
 namespace CI.WSANative.Facebook
 {
     public class WSAFacebookUser
     {
+        public string UserId { get; set; }
+
         /// <summary>
-        /// Requires no permissions
-        /// </summary>
-        public string Id { get; set; }
-        /// <summary>
-        /// Requires public_profile
-        /// </summary>
-        public WSAFacebookAgeRange AgeRange { get; set; }
-        /// <summary>
-        /// Requires no permissions
-        /// </summary>
-        public string Name { get; set; }
-        /// <summary>
-        /// Requires public_profile
+        /// The users first name
         /// </summary>
         public string FirstName { get; set; }
+
         /// <summary>
-        /// Requires public_profile
+        /// The users full name - this will probably only contain their first name
         /// </summary>
-        public string LastName { get; set; }
+        public string Name { get; set; }
+
         /// <summary>
-        /// Requires public_profile
-        /// </summary>
-        public string Link { get; set; }
-        /// <summary>
-        /// Requires public_profile
-        /// </summary>
-        public string Gender { get; set; }
-        /// <summary>
-        /// Requires public_profile
-        /// </summary>
-        public string Locale { get; set; }
-        /// <summary>
-        /// Requires public_profile
-        /// </summary>
-        public WSAFacebookPicture Picture { get; set; }
-        /// <summary>
-        /// Requires public_profile
-        /// </summary>
-        public int TimeZone { get; set; }
-        /// <summary>
-        /// Requires email
+        /// The users email address
         /// </summary>
         public string Email { get; set; }
+
         /// <summary>
-        /// Requires user_birthday
+        /// The users profile picture
         /// </summary>
-        public string Birthday { get; set; }
+        public WSAFacebookPicture Picture { get; set; }
 
         public static WSAFacebookUser FromDto(WSAFacebookUserDto dto)
         {
             return new WSAFacebookUser()
             {
-                AgeRange = WSAFacebookAgeRange.FromDto(dto.age_range),
-                Birthday = dto.birthday,
                 Email = dto.email,
                 FirstName = dto.first_name,
-                Gender = dto.gender,
-                Id = dto.id,
-                LastName = dto.last_name,
-                Link = dto.link,
-                Locale = dto.locale,
+                UserId = dto.id,
                 Name = dto.name,
                 Picture = WSAFacebookPicture.FromDto(dto.picture),
-                TimeZone = dto.timezone
-            };
-        }
-    }
-
-    public class WSAFacebookAgeRange
-    {
-        public int Min { get; set; }
-        public int Max { get; set; }
-
-        public static WSAFacebookAgeRange FromDto(WSAFacebookAgeRangeDto dto)
-        {
-            if (dto == null)
-            {
-                return null;
-            }
-
-            return new WSAFacebookAgeRange()
-            {
-                Max = dto.Max,
-                Min = dto.min
             };
         }
     }
@@ -119,7 +64,7 @@ namespace CI.WSANative.Facebook
             };
         }
     }
-    
+
     public class WSAFacebookPictureData
     {
         public string Url { get; set; }

@@ -6,7 +6,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
 using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -43,8 +43,8 @@ namespace CI.WSANative.Facebook.Core
 			
 			_taskCompletionSource = new TaskCompletionSource<string>();
 
-            int horizontalMargin = (screenWidth / 100) * 2;
-            int verticalMargin = (screenHeight / 100) * 5;
+            int horizontalMargin = (screenWidth - 600) / 2;
+            int verticalMargin = (screenHeight - 700) / 2;
 
             Margin = new Thickness(horizontalMargin, verticalMargin, horizontalMargin, verticalMargin);
             VerticalAlignment = VerticalAlignment.Stretch;
@@ -69,13 +69,13 @@ namespace CI.WSANative.Facebook.Core
         {
             _iFrame.NavigationStarting += (s, e) =>
             {
-                System.Diagnostics.Debug.WriteLine(e.Uri.AbsoluteUri);
-
                 _uri = e.Uri;
 
                 if (e.Uri.AbsolutePath == responseUri)
                 {
-                    Match match = Regex.Match(e.Uri.Fragment, "access_token=(.+)&");
+                    Match match = Regex.Match(e.Uri.Fragment, "access_token=(.+?)&");
+
+                    System.Diagnostics.Debug.WriteLine(match.Groups[1].Value);
 
                     Close(parent, match.Groups.Count >= 2 ? match.Groups[1].Value : string.Empty);
                 }

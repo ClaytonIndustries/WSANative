@@ -6,8 +6,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
 using Windows.UI.Xaml.Controls;
+using CI.WSANative.Common;
 #endif
 
 using System;
@@ -17,7 +18,7 @@ namespace CI.WSANative.Facebook
 {
     public static class WSANativeFacebook
     {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
         private static readonly WSAFacebookApi _facebookApi = new WSAFacebookApi();
 #endif
 
@@ -26,7 +27,7 @@ namespace CI.WSANative.Facebook
         /// </summary>
         public static bool IsLoggedIn
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             get { return _facebookApi.IsLoggedIn; }
 #else
             get { return false; }
@@ -38,42 +39,35 @@ namespace CI.WSANative.Facebook
         /// </summary>
         /// <param name="facebookAppId">Your apps facebook id</param>
         /// <param name="packageSID">Your apps SID</param>
-        public static void Initialise(string facebookAppId, string packageSID)
+        public static void Initialise(string facebookAppId)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
-            _facebookApi.Initialise(facebookAppId, packageSID);
+#if ENABLE_WINMD_SUPPORT
+            _facebookApi.Initialise(facebookAppId);
 #endif
         }
-
-#if NETFX_CORE
-        public static void ConfigureDialogs(Grid dxSwapChainPanel)
-        {
-            _facebookApi.ConfigureDialogs(dxSwapChainPanel);
-        }
-#endif
 
         /// <summary>
         /// Shows the login dialog to the user and request permissions.
         /// If login is successful an access token will be generated and automatically stored.
         /// The token normally lasts for about 60 days at which point the user will have to be re-authenticated
         /// </summary>
-        /// <param name="permissions">Any combination of permissions eg "public_profile, email, user_birthday, user_likes" etc - only request what you need</param>
+        /// <param name="permissions">Any combination of permissions that you need - public profile and email are requested by default, any others require approval from facebook</param>
         /// <param name="response">Did the login request succeed</param>
         public static void Login(List<string> permissions, Action<WSAFacebookLoginResult> response)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
-            UnityEngine.WSA.Application.InvokeOnUIThread(async () =>
+#if ENABLE_WINMD_SUPPORT
+            ThreadRunner.RunOnUIThread(async () =>
             {
                 WSAFacebookLoginResult result = await _facebookApi.Login(permissions);
 
-                UnityEngine.WSA.Application.InvokeOnAppThread(() =>
+                ThreadRunner.RunOnAppThread(() =>
                 {
                     if (response != null)
                     {
                         response(result);
                     }
                 }, true);
-            }, false);
+            });
 #endif
         }
 
@@ -83,7 +77,7 @@ namespace CI.WSANative.Facebook
         /// <param name="uninstall">If true attempts to uninstall your app from their profile (i.e removes all permissions)</param>
         public static void Logout(bool uninstall)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             _facebookApi.Logout(uninstall);
 #endif
         }
@@ -94,39 +88,15 @@ namespace CI.WSANative.Facebook
         /// <param name="response">Response containing user details if successful</param>
         public static void GetUserDetails(Action<WSAFacebookResponse<WSAFacebookUser>> response)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             GetUserDetailsAsync(response);
 #endif
         }
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
         private static async void GetUserDetailsAsync(Action<WSAFacebookResponse<WSAFacebookUser>> response)
         {
-            WSAFacebookResponse<WSAFacebookUser> result = await _facebookApi.GetUserDetails();
-
-            if (response != null)
-            {
-                response(result);
-            }
-        }
-#endif
-
-        /// <summary>
-        /// Determines whether the user has liked a page - you must have requested the permission user_likes at login
-        /// </summary>
-        /// <param name="pageId">The id of the page - see the documentation for details on how to find this</param>
-        /// <param name="response">Response indicating whether the user has liked the page</param>
-        public static void HasUserLikedPage(string pageId, Action<WSAFacebookResponse<bool>> response)
-        {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
-            HasUserLikedPageAsync(pageId, response);
-#endif
-        }
-
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
-        private static async void HasUserLikedPageAsync(string pageId, Action<WSAFacebookResponse<bool>> response)
-        {
-            WSAFacebookResponse<bool> result = await _facebookApi.HasUserLikedPage(pageId);
+            WSAFacebookResponse<WSAFacebookUser> result = await _facebookApi.GetUserDetails(true);
 
             if (response != null)
             {
@@ -138,17 +108,17 @@ namespace CI.WSANative.Facebook
         /// <summary>
         /// Allows you to read from the facebook graph api - see the facebook developer guide for a full list of available actions
         /// </summary>
-        /// <param name="edge">The api edge e.g me/photos</param>
+        /// <param name="edge">The api edge e.g me/</param>
         /// <param name="parameters">Parameters to include in the request - null or empty if none</param>
         /// <param name="response">A callback containing the response</param>
         public static void GraphApiRead(string edge, Dictionary<string, string> parameters, Action<WSAFacebookResponse<string>> response)
         {
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
             GraphApiReadAsync(edge, parameters, response);
 #endif
         }
 
-#if NETFX_CORE || (ENABLE_IL2CPP && UNITY_WSA_10_0)
+#if ENABLE_WINMD_SUPPORT
         private static async void GraphApiReadAsync(string edge, Dictionary<string, string> parameters, Action<WSAFacebookResponse<string>> response)
         {
             WSAFacebookResponse<string> result = await _facebookApi.GraphApiRead(edge, parameters);
@@ -169,13 +139,11 @@ namespace CI.WSANative.Facebook
         /// <param name="closed">A callback indicating that the dialog has closed</param>
         public static void ShowFeedDialog(string link, string source, Action closed)
         {
-#if NETFX_CORE
-            UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+#if ENABLE_WINMD_SUPPORT
+            ThreadRunner.RunOnUIThread(() =>
             {
                 _facebookApi.ShowFeedDialog(link, source, closed);
-            }, false);
-#elif (ENABLE_IL2CPP && UNITY_WSA_10_0)
-            throw new Exception("Dialogs are not currently supported in IL2CPP");
+            });
 #endif
         }
 
@@ -187,13 +155,11 @@ namespace CI.WSANative.Facebook
         /// <param name="closed">A callback indicating that the dialog has closed. Containing a list of user ids that were invited</param>
         public static void ShowRequestDialog(string title, string message, Action<IEnumerable<string>> closed)
         {
-#if NETFX_CORE
-            UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+#if ENABLE_WINMD_SUPPORT
+            ThreadRunner.RunOnUIThread(() =>
             {
                 _facebookApi.ShowRequestDialog(title, message, closed);
-            }, false);
-#elif (ENABLE_IL2CPP && UNITY_WSA_10_0)
-            throw new Exception("Dialogs are not currently supported in IL2CPP");
+            });
 #endif
         }
 
@@ -204,13 +170,11 @@ namespace CI.WSANative.Facebook
         /// <param name="closed">A callback indicating that the dialog has closed</param>
         public static void ShowSendDialog(string link, Action closed)
         {
-#if NETFX_CORE
-            UnityEngine.WSA.Application.InvokeOnUIThread(() =>
+#if ENABLE_WINMD_SUPPORT
+            ThreadRunner.RunOnUIThread(() =>
             {
                 _facebookApi.ShowSendDialog(link, closed);
-            }, false);
-#elif (ENABLE_IL2CPP && UNITY_WSA_10_0)
-            throw new Exception("Dialogs are not currently supported in IL2CPP");
+            });
 #endif
         }
     }

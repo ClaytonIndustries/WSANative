@@ -16,9 +16,14 @@ namespace CI.WSANative.Facebook
         public bool Success { get; set; }
 
         /// <summary>
-        /// The access token which will be automatically used in future requests to the facebook api. Will be null if the login was not successful
+        /// The users access token which will be automatically used in future requests to the facebook api. Will be null if the login was not successful
         /// </summary>
         public string AccessToken { get; set; }
+
+        /// <summary>
+        /// Data about the user
+        /// </summary>
+        public WSAFacebookUser User { get; set; }
 
         /// <summary>
         /// Error message if the login was not successful
