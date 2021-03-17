@@ -206,7 +206,7 @@ namespace CI.WSANative.Facebook
             return userDetailsResponse;
         }
 
-        public async Task<WSAFacebookResponse<string>> GraphApiRead(string edge, Dictionary<string, string> parameters)
+        public async Task<WSAFacebookResponse<string>> GraphApiRead(string edge, IDictionary<string, string> parameters)
         {
             WSAFacebookResponse<string> graphApiReadResponse = new WSAFacebookResponse<string>();
 

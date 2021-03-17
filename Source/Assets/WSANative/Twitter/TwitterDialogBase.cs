@@ -40,8 +40,8 @@ namespace CI.WSANative.Twitter.Core
 
             _closeButton.SetValue(Grid.RowProperty, 1);
 
-            int horizontalMargin = (screenWidth / 100) * 2;
-            int verticalMargin = (screenHeight / 100) * 5;
+            int horizontalMargin = (screenWidth - 600) / 2;
+            int verticalMargin = (screenHeight - 700) / 2;
 
             Margin = new Thickness(horizontalMargin, verticalMargin, horizontalMargin, verticalMargin);
             VerticalAlignment = VerticalAlignment.Stretch;

@@ -111,7 +111,7 @@ namespace CI.WSANative.Facebook
         /// <param name="edge">The api edge e.g me/</param>
         /// <param name="parameters">Parameters to include in the request - null or empty if none</param>
         /// <param name="response">A callback containing the response</param>
-        public static void GraphApiRead(string edge, Dictionary<string, string> parameters, Action<WSAFacebookResponse<string>> response)
+        public static void GraphApiRead(string edge, IDictionary<string, string> parameters, Action<WSAFacebookResponse<string>> response)
         {
 #if ENABLE_WINMD_SUPPORT
             GraphApiReadAsync(edge, parameters, response);
@@ -119,7 +119,7 @@ namespace CI.WSANative.Facebook
         }
 
 #if ENABLE_WINMD_SUPPORT
-        private static async void GraphApiReadAsync(string edge, Dictionary<string, string> parameters, Action<WSAFacebookResponse<string>> response)
+        private static async void GraphApiReadAsync(string edge, IDictionary<string, string> parameters, Action<WSAFacebookResponse<string>> response)
         {
             WSAFacebookResponse<string> result = await _facebookApi.GraphApiRead(edge, parameters);
 

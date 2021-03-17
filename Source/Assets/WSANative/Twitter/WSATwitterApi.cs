@@ -41,11 +41,11 @@ namespace CI.WSANative.Twitter.Core
         {
             try
             {
-                StorageFile file = await ApplicationData.Current.LocalFolder.GetFileAsync(_savedDataFilename);
+                var file = await ApplicationData.Current.LocalFolder.GetFileAsync(_savedDataFilename);
 
-                string content = await FileIO.ReadTextAsync(file);
+                var content = await FileIO.ReadTextAsync(file);
 
-                string[] items = content.Split('&');
+                var items = content.Split('&');
 
                 if(items.Length == 2)
                 {
@@ -98,7 +98,7 @@ namespace CI.WSANative.Twitter.Core
 
             try
             {
-                StorageFile file = await ApplicationData.Current.LocalFolder.CreateFileAsync(_savedDataFilename, CreationCollisionOption.ReplaceExisting);
+                var file = await ApplicationData.Current.LocalFolder.CreateFileAsync(_savedDataFilename, CreationCollisionOption.ReplaceExisting);
 
                 await FileIO.WriteTextAsync(file, string.Format("{0}&{1}", _oauthToken, _oauthTokenSecret));
             }
@@ -119,7 +119,7 @@ namespace CI.WSANative.Twitter.Core
 
                 try
                 {
-                    StorageFile file = await ApplicationData.Current.LocalFolder.GetFileAsync(_savedDataFilename);
+                    var file = await ApplicationData.Current.LocalFolder.GetFileAsync(_savedDataFilename);
 
                     await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
                 }
@@ -154,13 +154,13 @@ namespace CI.WSANative.Twitter.Core
                     { "oauth_token", _oauthToken }
                 };
 
-                string authHeader = _headerGenerator.Generate("GET", url, additionalParts, parameters, _oauthTokenSecret);
+                var authHeader = _headerGenerator.Generate("GET", url, additionalParts, parameters, _oauthTokenSecret);
 
-                HttpResponseMessage response = await MakeRequest(CombineUrlAndQuery(url, parameters), authHeader, null, HttpAction.Get);
+                var response = await MakeRequest(CombineUrlAndQuery(url, parameters), authHeader, null, HttpAction.Get);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    string content = response.ReadAsString();
+                    var content = response.ReadAsString();
 
                     wsaTwitterResponse.Success = true;
                     wsaTwitterResponse.Data = content;
@@ -199,7 +199,7 @@ namespace CI.WSANative.Twitter.Core
                 throw new InvalidOperationException("CI.WSANative.Common.Initialise() must first be called first");
             }
 
-            TwitterWebIntent dialog = new TwitterWebIntent(Screen.width, Screen.height);
+            var dialog = new TwitterWebIntent(Screen.width, Screen.height);
 
             dialog.Show(baseUrl, parameters, WSANativeCore.DxSwapChainPanel, closed);
         }
@@ -213,9 +213,9 @@ namespace CI.WSANative.Twitter.Core
                     { "oauth_callback", _oauthCallback }
                 };
 
-                string authHeader = _headerGenerator.Generate("POST", "https://api.twitter.com/oauth/request_token", additionalParts, null, null);
+                var authHeader = _headerGenerator.Generate("POST", "https://api.twitter.com/oauth/request_token", additionalParts, null, null);
 
-                HttpResponseMessage response = await MakeRequest("https://api.twitter.com/oauth/request_token", authHeader, null, HttpAction.Post);
+                var response = await MakeRequest("https://api.twitter.com/oauth/request_token", authHeader, null, HttpAction.Post);
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -224,7 +224,7 @@ namespace CI.WSANative.Twitter.Core
                     return result;
                 }
 
-                string content = response.ReadAsString();
+                var content = response.ReadAsString();
 
                 IDictionary<string, string> parsed = ParseResponse(content);
 
@@ -252,11 +252,11 @@ namespace CI.WSANative.Twitter.Core
         {
             try
             {
-                Uri requestUri = new Uri(string.Format("https://api.twitter.com/oauth/authenticate?oauth_token={0}", _oauthToken));
+                var requestUri = new Uri(string.Format("https://api.twitter.com/oauth/authenticate?oauth_token={0}", _oauthToken));
 
-                Uri callbackUri = new Uri(_oauthCallback);
+                var callbackUri = new Uri(_oauthCallback);
 
-                WebAuthenticationResult authentication = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, requestUri, callbackUri);
+                var authentication = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, requestUri, callbackUri);
 
                 if (authentication.ResponseStatus != WebAuthenticationStatus.Success)
                 {
@@ -274,7 +274,7 @@ namespace CI.WSANative.Twitter.Core
                     return new Tuple<WSATwitterLoginResult, string>(result, null);
                 }
 
-                string oauthVerifier = parsed["oauth_verifier"];
+                var oauthVerifier = parsed["oauth_verifier"];
 
                 return new Tuple<WSATwitterLoginResult, string>(result, oauthVerifier);
             }
@@ -295,14 +295,14 @@ namespace CI.WSANative.Twitter.Core
                     { "oauth_token", _oauthToken }
                 };
 
-                string authHeader = _headerGenerator.Generate("POST", "https://api.twitter.com/oauth/access_token", additionalParts, null, null);
+                var authHeader = _headerGenerator.Generate("POST", "https://api.twitter.com/oauth/access_token", additionalParts, null, null);
 
                 IDictionary<string, string> body = new Dictionary<string, string>()
                 {
                     { "oauth_verifier", oauthVerifier }
                 };
 
-                HttpResponseMessage response = await MakeRequest("https://api.twitter.com/oauth/access_token", authHeader, new FormUrlEncodedContent(body), HttpAction.Post);
+                var response = await MakeRequest("https://api.twitter.com/oauth/access_token", authHeader, new FormUrlEncodedContent(body), HttpAction.Post);
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -311,7 +311,7 @@ namespace CI.WSANative.Twitter.Core
                     return result;
                 }
 
-                string content = response.ReadAsString();
+                var content = response.ReadAsString();
 
                 IDictionary<string, string> parsed = ParseResponse(content);
 
@@ -378,7 +378,7 @@ namespace CI.WSANative.Twitter.Core
 
         private IDictionary<string, string> ParseResponse(string response)
         {
-            string[] parts = response.Split('&');
+            var parts = response.Split('&');
 
             IDictionary<string, string> kvps = new Dictionary<string, string>();
 
