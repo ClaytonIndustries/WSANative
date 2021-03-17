@@ -52,13 +52,14 @@ namespace CI.WSANative.Twitter
         /// Shows the login dialog to the user.
         /// If login is successful an access token will be generated and automatically stored.
         /// </summary>
+        /// <param name="includeEmail">Should the response include the users email ("Request email addresses from users" must be set on twitter first)</param>
         /// <param name="response">Did the login request succeed</param>
-        public static void Login(Action<WSATwitterLoginResult> response)
+        public static void Login(bool includeEmail, Action<WSATwitterLoginResult> response)
         {
 #if ENABLE_WINMD_SUPPORT
             ThreadRunner.RunOnUIThread(async () =>
             {
-                WSATwitterLoginResult result = await _twitterApi.Login();
+                WSATwitterLoginResult result = await _twitterApi.Login(includeEmail);
 
                 ThreadRunner.RunOnAppThread(() =>
                 {
@@ -82,7 +83,7 @@ namespace CI.WSANative.Twitter
         }
 
         /// <summary>
-        /// Requests details about the logged in user - json response is returned (parse the fields you need)
+        /// Requests full details about the logged in user - json response is returned (parse the fields you need)
         /// </summary>
         /// <param name="includeEmail">Should the response include the users email ("Request email addresses from users" must be set on twitter first)</param>
         /// <param name="response">Response containing user details if successful</param>
@@ -101,7 +102,7 @@ namespace CI.WSANative.Twitter
                 { "include_email", includeEmail ? "true" : "false" }
             };
 
-            WSATwitterResponse result = await _twitterApi.ApiRead("https://api.twitter.com/1.1/account/verify_credentials.json", parameters);
+            WSATwitterResponse result = await _twitterApi.ApiRead("https://api.twitter.com/1.1/account/verify_credentials.json", parameters, true);
 
             if (response != null)
             {
@@ -111,7 +112,7 @@ namespace CI.WSANative.Twitter
 #endif
 
         /// <summary>
-        /// Call any GET method on the twitter api
+        /// Call any GET method on the twitter api - json response is returned (parse the fields you need)
         /// </summary>
         /// <param name="url">The base url (e.g https://api.twitter.com/1.1/statuses/user_timeline.json) - any query string arguments should be added to the parameters dictionary</param>
         /// <param name="parameters">Any parameters to be appended to the url - can be a null or empty dictionary if there are none</param>
@@ -126,7 +127,7 @@ namespace CI.WSANative.Twitter
 #if ENABLE_WINMD_SUPPORT
         private static async void ApiReadAsync(string url, IDictionary<string, string> parameters, Action<WSATwitterResponse> response)
         {
-            WSATwitterResponse result = await _twitterApi.ApiRead(url, parameters);
+            WSATwitterResponse result = await _twitterApi.ApiRead(url, parameters, true);
 
             if (response != null)
             {

@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////////
+﻿////////////////////////////////////////////////////////////////////////////////
 //  
 // @module WSA Native for Unity3D 
 // @author Michael Clayton
@@ -8,22 +8,21 @@
 
 #if ENABLE_WINMD_SUPPORT
 using System;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
-namespace CI.WSANative.Facebook.Core
+namespace CI.WSANative.Twitter.Core
 {
-    public sealed class FacebookLogin : UserControl
+    public sealed class TwitterLogin : UserControl
     {
         private readonly WebView _iFrame;
         private readonly Button _closeButton;		
 		private readonly TaskCompletionSource<string> _taskCompletionSource;
 
-        public FacebookLogin(int screenWidth, int screenHeight)
+        public TwitterLogin(int screenWidth, int screenHeight)
         {
             _iFrame = new WebView();
             _iFrame.SetValue(Grid.RowProperty, 0);
@@ -67,11 +66,18 @@ namespace CI.WSANative.Facebook.Core
         {
             _iFrame.NavigationStarting += (s, e) =>
             {
-                if (e.Uri.AbsolutePath == responseUri)
-                {
-                    Match match = Regex.Match(e.Uri.Fragment, "access_token=(.+?)&");
+                var path = String.Format("{0}{1}{2}{3}", e.Uri.Scheme, Uri.SchemeDelimiter, e.Uri.Authority, e.Uri.AbsolutePath);
 
-                    Close(parent, match.Groups.Count >= 2 ? match.Groups[1].Value : string.Empty);
+                if (path == responseUri)
+                {
+                    string query = "";
+
+                    if (!string.IsNullOrEmpty(e.Uri.Query))
+                    {
+                        query = e.Uri.Query.Substring(1);
+                    }
+
+                    Close(parent, query);
                 }
             };
 

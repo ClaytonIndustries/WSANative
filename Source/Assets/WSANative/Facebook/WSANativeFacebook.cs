@@ -38,7 +38,6 @@ namespace CI.WSANative.Facebook
         /// Initialise the facebook api - this must be called first - see the website for additional information
         /// </summary>
         /// <param name="facebookAppId">Your apps facebook id</param>
-        /// <param name="packageSID">Your apps SID</param>
         public static void Initialise(string facebookAppId)
         {
 #if ENABLE_WINMD_SUPPORT
@@ -51,7 +50,7 @@ namespace CI.WSANative.Facebook
         /// If login is successful an access token will be generated and automatically stored.
         /// The token normally lasts for about 60 days at which point the user will have to be re-authenticated
         /// </summary>
-        /// <param name="permissions">Any combination of permissions that you need - public profile and email are requested by default, any others require approval from facebook</param>
+        /// <param name="permissions">Any combination of permissions that you need - public profile and email are requested by default, any others require approval from facebook - can be null or empty if no extras</param>
         /// <param name="response">Did the login request succeed</param>
         public static void Login(List<string> permissions, Action<WSAFacebookLoginResult> response)
         {
@@ -84,6 +83,7 @@ namespace CI.WSANative.Facebook
 
         /// <summary>
         /// Requests details about the logged in user based on the permissions you asked for when they logged in
+        /// User details are automatically fetched when you call Login, but you can call this again to refresh them
         /// </summary>
         /// <param name="response">Response containing user details if successful</param>
         public static void GetUserDetails(Action<WSAFacebookResponse<WSAFacebookUser>> response)
@@ -106,7 +106,7 @@ namespace CI.WSANative.Facebook
 #endif
 
         /// <summary>
-        /// Allows you to read from the facebook graph api - see the facebook developer guide for a full list of available actions
+        /// Allows you to read from the facebook graph api - json response is returned (parse the fields you need) - see the facebook developer guide for a full list of available actions
         /// </summary>
         /// <param name="edge">The api edge e.g me/</param>
         /// <param name="parameters">Parameters to include in the request - null or empty if none</param>

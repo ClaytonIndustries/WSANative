@@ -26,6 +26,16 @@ namespace CI.WSANative.Twitter
         public string ScreenName { get; set; }
 
         /// <summary>
+        /// The users full name
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// The users email
+        /// </summary>
+        public string Email { get; set; }
+
+        /// <summary>
         /// Error message if the login was not successful
         /// </summary>
         public string ErrorMessage { get; set; }

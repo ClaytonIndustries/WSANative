@@ -67,6 +67,11 @@ namespace CI.WSANative.Facebook
             {
                 Logout(false);
 
+                if (!WSANativeCore.IsDxSwapChainPanelConfigured())
+                {
+                    throw new InvalidOperationException("CI.WSANative.Common.Initialise() must be called first");
+                }
+
                 var requestPermissions = "email";
 
                 if (permissions != null && permissions.Count > 0)
@@ -271,7 +276,7 @@ namespace CI.WSANative.Facebook
         {
             if (!WSANativeCore.IsDxSwapChainPanelConfigured())
             {
-                throw new InvalidOperationException("CI.WSANative.Common.Initialise() must first be called first");
+                throw new InvalidOperationException("CI.WSANative.Common.Initialise() must be called first");
             }
 
             Dictionary<string, string> parameters = new Dictionary<string, string>()
@@ -291,7 +296,7 @@ namespace CI.WSANative.Facebook
         {
             if (!WSANativeCore.IsDxSwapChainPanelConfigured())
             {
-                throw new InvalidOperationException("CI.WSANative.Common.Initialise() must first be called first");
+                throw new InvalidOperationException("CI.WSANative.Common.Initialise() must be called first");
             }
 
             Dictionary<string, string> parameters = new Dictionary<string, string>()
@@ -311,7 +316,7 @@ namespace CI.WSANative.Facebook
         {
             if(!WSANativeCore.IsDxSwapChainPanelConfigured())
             {
-                throw new InvalidOperationException("CI.WSANative.Common.Initialise() must first be called first");
+                throw new InvalidOperationException("CI.WSANative.Common.Initialise() must be called first");
             }
 
             Dictionary<string, string> parameters = new Dictionary<string, string>()

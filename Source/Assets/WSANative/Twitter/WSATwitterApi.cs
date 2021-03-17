@@ -17,6 +17,7 @@ using Windows.Security.Authentication.Web;
 using Windows.Storage;
 using CI.WSANative.Common;
 using CI.WSANative.Common.Http;
+using CI.WSANative.Twitter.Models;
 
 namespace CI.WSANative.Twitter.Core
 {
@@ -67,7 +68,7 @@ namespace CI.WSANative.Twitter.Core
             _headerGenerator = new WSATwitterHeaderGenerator(consumerKey, consumerSecret);
         }
 
-        public async Task<WSATwitterLoginResult> Login()
+        public async Task<WSATwitterLoginResult> Login(bool includeEmail)
         {
             Logout();
 
@@ -75,6 +76,13 @@ namespace CI.WSANative.Twitter.Core
             {
                 Success = true
             };
+
+            if (!WSANativeCore.IsDxSwapChainPanelConfigured())
+            {
+                result.Success = false;
+                result.ErrorMessage = "CI.WSANative.Common.Initialise() must be called first";
+                return result;
+            }
 
             result = await GetRequestToken(result);
             if (!result.Success)
@@ -94,6 +102,35 @@ namespace CI.WSANative.Twitter.Core
                 return result;
             }
 
+            IDictionary<string, string> parameters = new Dictionary<string, string>()
+            {
+                { "include_email", includeEmail ? "true" : "false" }
+            };
+
+            var userDetails = await ApiRead("https://api.twitter.com/1.1/account/verify_credentials.json", parameters, false);
+
+            if (!userDetails.Success)
+            {
+                result.Success = false;
+                result.ErrorMessage = userDetails.Error.Message;
+                return result;
+            }
+
+            try 
+	        {	        
+		        var user = JsonUtility.FromJson<WSATwitterUserDto>(userDetails.Data);
+                result.UserId = user.id;
+                result.ScreenName = user.screen_name;
+                result.Name = user.name;
+                result.Email = user.email;
+	        }
+	        catch (Exception e)
+	        {
+                result.Success = false;
+                result.ErrorMessage = e.Message;
+                return result;
+	        }
+            
             IsLoggedIn = true;
 
             try
@@ -129,14 +166,14 @@ namespace CI.WSANative.Twitter.Core
             }
         }
 
-        public async Task<WSATwitterResponse> ApiRead(string url, IDictionary<string, string> parameters)
+        public async Task<WSATwitterResponse> ApiRead(string url, IDictionary<string, string> parameters, bool checkLoginStatus)
         {
             WSATwitterResponse wsaTwitterResponse = new WSATwitterResponse()
             {
                 Success = false
             };
 
-            if (!IsLoggedIn)
+            if (checkLoginStatus && !IsLoggedIn)
             {
                 wsaTwitterResponse.Error = new WSATwitterError()
                 {
@@ -196,7 +233,7 @@ namespace CI.WSANative.Twitter.Core
         {
             if (!WSANativeCore.IsDxSwapChainPanelConfigured())
             {
-                throw new InvalidOperationException("CI.WSANative.Common.Initialise() must first be called first");
+                throw new InvalidOperationException("CI.WSANative.Common.Initialise() must be called first");
             }
 
             var dialog = new TwitterWebIntent(Screen.width, Screen.height);
@@ -252,20 +289,13 @@ namespace CI.WSANative.Twitter.Core
         {
             try
             {
-                var requestUri = new Uri(string.Format("https://api.twitter.com/oauth/authenticate?oauth_token={0}", _oauthToken));
+                var requestUri = string.Format("https://api.twitter.com/oauth/authorize?oauth_token={0}", _oauthToken);
 
-                var callbackUri = new Uri(_oauthCallback);
+                var dialog = new TwitterLogin(Screen.width, Screen.height);
 
-                var authentication = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, requestUri, callbackUri);
+                var authentication = await dialog.Show(requestUri, _oauthCallback, WSANativeCore.DxSwapChainPanel);
 
-                if (authentication.ResponseStatus != WebAuthenticationStatus.Success)
-                {
-                    result.Success = false;
-                    result.ErrorMessage = authentication.ResponseStatus.ToString();
-                    return new Tuple<WSATwitterLoginResult, string>(result, null);
-                }
-
-                IDictionary<string, string> parsed = ParseResponse(authentication.ResponseData);
+                IDictionary<string, string> parsed = ParseResponse(authentication);
 
                 if ((parsed.ContainsKey("oauth_token") && parsed["oauth_token"] != _oauthToken) || !parsed.ContainsKey("oauth_verifier"))
                 {
@@ -322,22 +352,12 @@ namespace CI.WSANative.Twitter.Core
                     return result;
                 }
 
-                if (parsed.ContainsKey("user_id"))
-                {
-                    result.UserId = parsed["user_id"];
-                }
-
-                if (parsed.ContainsKey("screen_name"))
-                {
-                    result.ScreenName = parsed["screen_name"];
-                }
-
                 _oauthToken = parsed["oauth_token"];
                 _oauthTokenSecret = parsed["oauth_token_secret"];
 
                 return result;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 result.Success = false;
                 result.ErrorMessage = e.Message;
