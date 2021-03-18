@@ -7,11 +7,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System;
+using CI.WSANative.Common;
 
 #if ENABLE_WINMD_SUPPORT
 using System.Runtime.InteropServices;
 using AOT;
-using CI.WSANative.Common;
 #endif
 
 namespace CI.WSANative.Advertising
@@ -19,14 +19,14 @@ namespace CI.WSANative.Advertising
     public static class WSANativeBannerAd
     {
 #if ENABLE_WINMD_SUPPORT
-        private delegate void AdRefreshedCallbackDelegate([MarshalAs(UnmanagedType.LPWStr)]string adType);
+        private delegate void AdRefreshedCallbackDelegate([MarshalAs(UnmanagedType.LPWStr)]string adType, [MarshalAs(UnmanagedType.LPWStr)]string adUnitOrPlacementId);
         private delegate void ErrorOccurredCallbackDelegate([MarshalAs(UnmanagedType.LPWStr)]string adType, [MarshalAs(UnmanagedType.LPWStr)]string errorMessage);
 
         [DllImport("__Internal")]
         private static extern void _BannerAdInitialise(AdRefreshedCallbackDelegate adRefreshedCallback, ErrorOccurredCallbackDelegate errorOccurredCallback);
 
         [DllImport("__Internal")]
-        private static extern void _BannerAdCreate([MarshalAs(UnmanagedType.LPWStr)]string adType, [MarshalAs(UnmanagedType.LPWStr)]string appId, [MarshalAs(UnmanagedType.LPWStr)]string adUnitId, 
+        private static extern void _BannerAdCreate([MarshalAs(UnmanagedType.LPWStr)]string adType, [MarshalAs(UnmanagedType.LPWStr)]string appId, [MarshalAs(UnmanagedType.LPWStr)]string adUnitOrPlacementId, 
             int width, int height, [MarshalAs(UnmanagedType.LPWStr)]string verticalPlacement, [MarshalAs(UnmanagedType.LPWStr)]string horizontalPlacement);
 
         [DllImport("__Internal")]
@@ -43,7 +43,7 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// Raised when a new ad is received
         /// </summary>
-        public static Action<WSABannerAdType> AdRefreshed
+        public static Action<WSABannerAdType, string> AdRefreshed
         {
             get; set;
         }
@@ -57,9 +57,6 @@ namespace CI.WSANative.Advertising
         }
 
 #if ENABLE_WINMD_SUPPORT
-        private static string _msAppId;
-        private static string _msAdUnitId;
-
         private static string _adDuplexAppId;
         private static string _adDuplexAdUnitId;
 #endif
@@ -69,19 +66,15 @@ namespace CI.WSANative.Advertising
         /// </summary>
         /// <param name="adType">The ad network to initialise</param>
         /// <param name="appId">Your apps id</param>
-        /// <param name="adUnitId">Your apps ad unit id</param>
-        public static void Initialise(WSABannerAdType adType, string appId, string adUnitId)
+        /// <param name="adUnitOrPlacementId">The adUnit or placement id</param>
+        public static void Initialise(WSABannerAdType adType, string appId, string adUnitOrPlacementId)
         {
 #if ENABLE_WINMD_SUPPORT
             switch (adType)
             {
                 case WSABannerAdType.AdDuplex:
                     _adDuplexAppId = appId;
-                    _adDuplexAdUnitId = adUnitId;
-                    break;
-                case WSABannerAdType.Microsoft:
-                    _msAppId = appId;
-                    _msAdUnitId = adUnitId;
+                    _adDuplexAdUnitId = adUnitOrPlacementId;
                     break;
             }
 
@@ -97,7 +90,7 @@ namespace CI.WSANative.Advertising
         /// <param name="height">Height of the ad</param>
         /// <param name="verticalPlacement">Where should the ad be placed vertically</param>
         /// <param name="horizontalPlacement">Where should the ad be placed horizontally</param>
-        public static void CreatAd(WSABannerAdType adType, int width, int height, WSAAdVerticalPlacement verticalPlacement, WSAAdHorizontalPlacement horizontalPlacement)
+        public static void CreatAd(WSABannerAdType adType, int width, int height, WSAVerticalPlacement verticalPlacement, WSAHorizontalPlacement horizontalPlacement)
         {
 #if ENABLE_WINMD_SUPPORT
             ThreadRunner.RunOnUIThread(() =>
@@ -105,10 +98,6 @@ namespace CI.WSANative.Advertising
                 if (adType == WSABannerAdType.AdDuplex)
                 {
                     _BannerAdCreate(adType.ToString(), _adDuplexAppId, _adDuplexAdUnitId, width, height, verticalPlacement.ToString(), horizontalPlacement.ToString());
-                }
-                else if (adType == WSABannerAdType.Microsoft)
-                {
-                    _BannerAdCreate(adType.ToString(), _msAppId, _msAdUnitId, width, height, verticalPlacement.ToString(), horizontalPlacement.ToString());
                 }
             });
 #endif
@@ -137,7 +126,7 @@ namespace CI.WSANative.Advertising
         /// <param name="height">Height of the ad</param>
         /// <param name="verticalPlacement">Where should the ad be placed vertically</param>
         /// <param name="horizontalPlacement">Where should the ad be placed horizontally</param>
-        public static void ReconfigureAd(WSABannerAdType adType, int width, int height, WSAAdVerticalPlacement verticalPlacement, WSAAdHorizontalPlacement horizontalPlacement)
+        public static void ReconfigureAd(WSABannerAdType adType, int width, int height, WSAVerticalPlacement verticalPlacement, WSAHorizontalPlacement horizontalPlacement)
         {
 #if ENABLE_WINMD_SUPPORT
             ThreadRunner.RunOnUIThread(() =>
@@ -163,11 +152,11 @@ namespace CI.WSANative.Advertising
 
 #if ENABLE_WINMD_SUPPORT
         [MonoPInvokeCallback(typeof(AdRefreshedCallbackDelegate))]
-        private static void AdRefreshedCallback(string adType)
+        private static void AdRefreshedCallback(string adType, string adUnitOrPlacementId)
         {
             if (AdRefreshed != null)
             {
-                AdRefreshed(GetAdType(adType));
+                AdRefreshed(GetAdType(adType), adUnitOrPlacementId);
             }
         }
 
@@ -188,7 +177,7 @@ namespace CI.WSANative.Advertising
             }
             else
             {
-                return WSABannerAdType.Microsoft;
+                return WSABannerAdType.AdDuplex;
             }
         }
 #endif

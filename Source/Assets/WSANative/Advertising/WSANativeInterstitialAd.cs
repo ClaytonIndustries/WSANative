@@ -7,8 +7,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System;
+using System.Collections.Generic;
 
 #if ENABLE_WINMD_SUPPORT
+using System.Linq;
 using System.Runtime.InteropServices;
 using AOT;
 #endif
@@ -18,35 +20,35 @@ namespace CI.WSANative.Advertising
     public static class WSANativeInterstitialAd
     {
 #if ENABLE_WINMD_SUPPORT
-        private delegate void AdReadyCallbackDelegate([MarshalAs(UnmanagedType.LPWStr)]string adType);
-        private delegate void CancelledCallbackDelegate([MarshalAs(UnmanagedType.LPWStr)]string adType);
-        private delegate void CompletedCallbackDelegate([MarshalAs(UnmanagedType.LPWStr)]string adType);
+        private delegate void AdReadyCallbackDelegate([MarshalAs(UnmanagedType.LPWStr)]string adType, [MarshalAs(UnmanagedType.LPWStr)]string adUnitOrPlacementId);
+        private delegate void CancelledCallbackDelegate([MarshalAs(UnmanagedType.LPWStr)]string adType, [MarshalAs(UnmanagedType.LPWStr)]string adUnitOrPlacementId);
+        private delegate void CompletedCallbackDelegate([MarshalAs(UnmanagedType.LPWStr)]string adType, [MarshalAs(UnmanagedType.LPWStr)]string adUnitOrPlacementId);
         private delegate void ErrorOccurredCallbackDelegate([MarshalAs(UnmanagedType.LPWStr)]string adType, [MarshalAs(UnmanagedType.LPWStr)]string errorMessage);
 
         [DllImport("__Internal")]
-        private static extern void _InterstitialAdInitialise(AdReadyCallbackDelegate adReadyCallbackDelegate, CancelledCallbackDelegate cancelledCallbackDelegate, 
+        private static extern void _InterstitialAdInitialise([MarshalAs(UnmanagedType.LPWStr)]string adType, [MarshalAs(UnmanagedType.LPWStr)]string appId,
+            AdReadyCallbackDelegate adReadyCallbackDelegate, CancelledCallbackDelegate cancelledCallbackDelegate, 
             CompletedCallbackDelegate completedCallbackDelegate, ErrorOccurredCallbackDelegate errorOccurredCallbackDelegate);
 
         [DllImport("__Internal")]
-        private static extern void _InterstitialAdRequest([MarshalAs(UnmanagedType.LPWStr)]string adType, [MarshalAs(UnmanagedType.LPWStr)]string adVariant, 
-            [MarshalAs(UnmanagedType.LPWStr)]string appId, [MarshalAs(UnmanagedType.LPWStr)]string adUnitId);
+        private static extern void _InterstitialAdRequest([MarshalAs(UnmanagedType.LPWStr)]string adType, [MarshalAs(UnmanagedType.LPWStr)]string adUnitOrPlacementId);
 
         [DllImport("__Internal")]
-        private static extern void _InterstitialAdShow([MarshalAs(UnmanagedType.LPWStr)]string adType);
+        private static extern void _InterstitialAdShow([MarshalAs(UnmanagedType.LPWStr)]string adType, [MarshalAs(UnmanagedType.LPWStr)]string adUnitOrPlacementId);
 #endif
 
         /// <summary>
         /// Raised when the interstitial ad is ready to be shown
         /// </summary>
-        public static Action<WSAInterstitialAdType> AdReady
+        public static Action<WSAInterstitialAdType, string> AdReady
         {
             get; set;
         }
 
         /// <summary>
-        /// Raised when the user cancels the interstitial ad before it is considered complete
+        /// Raised when the user cancels the interstitial ad before it is considered complete (AdDuplex does not raise this event)
         /// </summary>
-        public static Action<WSAInterstitialAdType> Cancelled
+        public static Action<WSAInterstitialAdType, string> Cancelled
         {
             get; set;
         }
@@ -54,7 +56,7 @@ namespace CI.WSANative.Advertising
         /// <summary>
         /// Raised when the interstitial ad has been closed and the experience is considered complete
         /// </summary>
-        public static Action<WSAInterstitialAdType> Completed
+        public static Action<WSAInterstitialAdType, string> Completed
         {
             get; set;
         }
@@ -67,43 +69,15 @@ namespace CI.WSANative.Advertising
             get; set;
         }
 
-#if ENABLE_WINMD_SUPPORT
-        private static string _adDuplexAppId;
-        private static string _adDuplexAdUnitId;
-
-        private static string _msAppId;
-        private static string _msAdUnitId;
-
-        private static string _vungleAppId;
-        private static string _vunglePlacementId;
-#endif
-
         /// <summary>
         /// Initialise the interstitial ad for the specified provider
         /// </summary>
 		/// <param name="adType">The ad network to initialise</param>
         /// <param name="appId">Your apps id</param>
-        /// <param name="adUnitId">Your apps ad unit id (plcaement id for Vungle)</param>
-        public static void Initialise(WSAInterstitialAdType adType,  string appId, string adUnitId)
+        public static void Initialise(WSAInterstitialAdType adType, string appId)
         {
 #if ENABLE_WINMD_SUPPORT
-            switch (adType)
-            {
-                case WSAInterstitialAdType.AdDuplex:
-                    _adDuplexAppId = appId;
-                    _adDuplexAdUnitId = adUnitId;
-                    break;
-                case WSAInterstitialAdType.Microsoft:
-                    _msAppId = appId;
-                    _msAdUnitId = adUnitId;
-                    break;
-                case WSAInterstitialAdType.Vungle:
-                    _vungleAppId = appId;
-                    _vunglePlacementId = adUnitId;
-                    break;
-            }
-
-            _InterstitialAdInitialise(AdReadyCallback, CancelledCallback, CompletedCallback, ErrorOccurredCallback);
+            _InterstitialAdInitialise(adType.ToString(), appId, AdReadyCallback, CancelledCallback, CompletedCallback, ErrorOccurredCallback);
 #endif
         }
 
@@ -113,22 +87,11 @@ namespace CI.WSANative.Advertising
         /// Only needs to be called once for Vungle ads (ads will be automatically fetched from then on)
         /// </summary>
         /// <param name="adType">The type of ad to request</param>
-        /// <param name="adVariant">The variant to request - "Display" for banner interstitial, "Video" for video interstitial. ONLY relevant to Microsoft ads, otherwise specify "Video"</param>
-        public static void RequestAd(WSAInterstitialAdType adType, WSAInterstitialAdVariant adVariant)
+        /// <param name="adUnitOrPlacementId">The adUnit or placement id</param>
+        public static void RequestAd(WSAInterstitialAdType adType, string adUnitOrPlacementId)
         {
 #if ENABLE_WINMD_SUPPORT
-            switch (adType)
-            {
-                case WSAInterstitialAdType.AdDuplex:
-                    _InterstitialAdRequest(adType.ToString(), adVariant.ToString(), _adDuplexAppId, _adDuplexAdUnitId);
-                    break;
-                case WSAInterstitialAdType.Microsoft:
-                    _InterstitialAdRequest(adType.ToString(), adVariant.ToString(), _msAppId, _msAdUnitId);
-                    break;
-                case WSAInterstitialAdType.Vungle:
-                    _InterstitialAdRequest(adType.ToString(), adVariant.ToString(), _vungleAppId, _vunglePlacementId);
-                    break;
-            }
+            _InterstitialAdRequest(adType.ToString(), adUnitOrPlacementId);
 #endif
         }
 
@@ -137,38 +100,39 @@ namespace CI.WSANative.Advertising
         /// It is recommended that you have at least a 60 second gap between ads
         /// </summary>
         /// <param name="adType">The type of ad to show</param>
-        public static void ShowAd(WSAInterstitialAdType adType)
+        /// <param name="placement">The adUnit or placement id</param>
+        public static void ShowAd(WSAInterstitialAdType adType, string adUnitOrPlacementId)
         {
 #if ENABLE_WINMD_SUPPORT
-            _InterstitialAdShow(adType.ToString());
+            _InterstitialAdShow(adType.ToString(), adUnitOrPlacementId);
 #endif
         }
 
 #if ENABLE_WINMD_SUPPORT
         [MonoPInvokeCallback(typeof(AdReadyCallbackDelegate))]
-        private static void AdReadyCallback(string adType)
+        private static void AdReadyCallback(string adType, string adUnitOrPlacementId)
         {
             if (AdReady != null)
             {
-                AdReady(GetAdType(adType));
+                AdReady(GetAdType(adType), adUnitOrPlacementId);
             }
         }
 
         [MonoPInvokeCallback(typeof(CancelledCallbackDelegate))]
-        private static void CancelledCallback(string adType)
+        private static void CancelledCallback(string adType, string adUnitOrPlacementId)
         {
             if (Cancelled != null)
             {
-                Cancelled(GetAdType(adType));
+                Cancelled(GetAdType(adType), adUnitOrPlacementId);
             }
         }
 
         [MonoPInvokeCallback(typeof(CompletedCallbackDelegate))]
-        private static void CompletedCallback(string adType)
+        private static void CompletedCallback(string adType, string adUnitOrPlacementId)
         {
             if (Completed != null)
             {
-                Completed(GetAdType(adType));
+                Completed(GetAdType(adType), adUnitOrPlacementId);
             }
         }
 
@@ -186,10 +150,6 @@ namespace CI.WSANative.Advertising
             if(adType == WSAInterstitialAdType.AdDuplex.ToString())
             {
                 return WSAInterstitialAdType.AdDuplex;
-            }
-            else if(adType == WSAInterstitialAdType.Microsoft.ToString())
-            {
-                return WSAInterstitialAdType.Microsoft;
             }
             else
             {
