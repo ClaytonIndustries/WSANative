@@ -25,10 +25,8 @@ namespace CI.WSANative.Notification
         /// </summary>
         /// <param name="title">Title for the toast notification</param>
         /// <param name="text">Text to show on the toast notification</param>
-        /// <param name="tag">Optional tag, toast notifications with the same tag will overwrite each other in the action centre 
-        /// (null or empty if not needed - has no effect on Windows 8.1)</param>
-        /// <param name="image">Image to show on the toast notification - specified as the location in the built uwp solution e.g ms-appx:///Assets/Square150x150Logo.png 
-        /// (optional and will not show on Windows Phone 8.1)</param>
+        /// <param name="tag">Optional tag, toast notifications with the same tag will overwrite each other in the action centre - (null or empty if not needed)</param>
+        /// <param name="image">Image to show on the toast notification, specified as the location in the built uwp solution e.g ms-appx:///Assets/Square150x150Logo.png - (null or don't specify if not needed)</param>
         public static void ShowToastNotification(string title, string text, string tag, Uri image = null)
         {
 #if ENABLE_WINMD_SUPPORT
@@ -75,10 +73,8 @@ namespace CI.WSANative.Notification
         /// <param name="title">Title for the toast notification</param>
         /// <param name="text">Text to show on the toast notification</param>
         /// <param name="deliveryTime">The date and time that the toast notification should be displayed </param>
-        /// <param name="tag">Optional tag, toast notifications with the same tag will overwrite each other in the action centre 
-        /// (null or empty if not needed - has no effect on Windows 8.1)</param>
-        /// <param name="image">Image to show on the toast notification - specified as the location in the built uwp solution e.g ms-appx:///Assets/Square150x150Logo.png 
-        /// (optional and will not show on Windows Phone 8.1)</param>
+        /// <param name="tag">Optional tag, toast notifications with the same tag will overwrite each other in the action centre - (null or empty if not needed)</param>
+        /// <param name="image">Image to show on the toast notification, specified as the location in the built uwp solution e.g ms-appx:///Assets/Square150x150Logo.png - (null or don't specify if not needed)</param>
         public static void ShowScheduledToastNotification(string title, string text, DateTime deliveryTime, string tag, Uri image = null)
         {
 #if ENABLE_WINMD_SUPPORT
@@ -120,7 +116,7 @@ namespace CI.WSANative.Notification
         }
 
         /// <summary>
-        /// Removes a toast notification from the action centre (Has no effect on Windows 8.1)
+        /// Removes a toast notification from the action centre
         /// </summary>
         /// <param name="tag">The tag assigned to the toast notification</param>
         public static void RemoveToastNotification(string tag)

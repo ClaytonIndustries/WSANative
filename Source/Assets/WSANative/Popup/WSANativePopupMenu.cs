@@ -18,7 +18,7 @@ namespace CI.WSANative.Dialogs
         /// </summary>
         /// <param name="xPos">The xpos to center on in screen co-ordinates</param>
         /// <param name="yPos">The ypos to center on in screen co-ordinates</param>
-        /// <param name="commands">Button names (max 6 for desktop - 5 for mobile) if more than max are added an exception will be thrown</param>
+        /// <param name="commands">Button names (max 6 for desktop) if more than max are added an exception will be thrown</param>
         /// <param name="placement">How the popup menu should be positioned</param>
         /// <param name="response">User response</param>
         public static void ShowPopupMenu(double xPos, double yPos, List<WSADialogCommand> commands, WSAPopupMenuPlacement placement, Action<WSADialogResult> response)

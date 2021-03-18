@@ -44,7 +44,7 @@ namespace CI.WSANative.Dialogs
         /// </summary>
         /// <param name="title">Dialog title</param>
         /// <param name="message">Dialog message</param>
-        /// <param name="commands">Button names (max 3 for desktop - 2 for mobile) if more than max are added an exception will be thrown</param>
+        /// <param name="commands">Button names (max 3 for desktop) if more than max are added an exception will be thrown</param>
         /// <param name="defaultCommandIndex">The default button, zero based index based on the commands list</param>
         /// <param name="cancelCommandIndex">The default cancel button, zero based index based on the commands list</param>
         /// <param name="response">User response</param>
