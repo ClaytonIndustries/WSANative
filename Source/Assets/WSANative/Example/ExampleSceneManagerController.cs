@@ -4,7 +4,7 @@ using CI.WSANative.Device;
 using CI.WSANative.Dialogs;
 using CI.WSANative.Facebook;
 using CI.WSANative.FileStorage;
-using CI.WSANative.IAPStore;
+using CI.WSANative.Store;
 using CI.WSANative.Mapping;
 using CI.WSANative.Notification;
 using CI.WSANative.Pickers;
@@ -12,19 +12,17 @@ using CI.WSANative.Security;
 using CI.WSANative.Serialisers;
 using CI.WSANative.Twitter;
 using UnityEngine;
+using CI.WSANative.Common;
+using System.Linq;
+using CI.WSANative.Web;
+using System;
 
 public class ExampleSceneManagerController : MonoBehaviour
 {
-    public void Start()
+    public void Awake()
     {
-        // Uncomment these lines when testing in app purchases 
-        // ReloadSimulator will throw an exception if it is not correctly configured - see website for details
-
-        // A new store implementation is now available - see the online docs for details
-
-        //WSANativeStore.EnableTestMode();
-
-        //WSANativeStore.ReloadSimulator();
+        // Call this once when your app starts up to configure the library
+        WSANativeCore.Initialise();
     }
 
     public void CreateDialog()
@@ -100,15 +98,13 @@ public class ExampleSceneManagerController : MonoBehaviour
 
     public void PurchaseProduct()
     {
-        // A new store implementation is now available - see the online docs for details
-
-        WSANativeStore.GetProductListings((List<WSAProduct> products) =>
+        WSANativeStore.GetAddOns(products =>
         {
-            if (products != null && products.Count > 0)
+            if (products.Products != null && products.Products.Count > 0)
             {
-                WSANativeStore.PurchaseProduct(products[0].Id, (WSAPurchaseResult result) =>
+                WSANativeStore.RequestPurchase(products.Products.Keys.First(), result =>
                 {
-                    if (result.Status == WSAPurchaseResultStatus.Succeeded)
+                    if (result.Status == WSAStorePurchaseStatus.Succeeded)
                     {
                         WSANativeDialog.ShowDialog("Purchased", "YAY");
                     }
@@ -121,34 +117,10 @@ public class ExampleSceneManagerController : MonoBehaviour
         });
     }
 
-    public void PurchaseApp()
-    {
-        // A new store implementation is now available - see the online docs for details
-
-        WSANativeStore.PurchaseApp((string response) =>
-        {
-            if (!string.IsNullOrEmpty(response))
-            {
-                WSANativeDialog.ShowDialog("Purchased", response);
-            }
-            else
-            {
-                WSANativeDialog.ShowDialog("Not Purchased", "NAY");
-            }
-        });
-    }
-
     public void ShowFileOpenPicker()
     {
         WSANativeFilePicker.PickSingleFile("Select", WSAPickerViewMode.Thumbnail, WSAPickerLocationId.PicturesLibrary, new[] { ".png", ".jpg" }, result =>
         {
-            if (result != null)
-            {
-#pragma warning disable 0219
-                byte[] fileBytes = result.ReadBytes();
-                string fileString = result.ReadText();
-#pragma warning restore 0219
-            }
         });
     }
 
@@ -156,11 +128,6 @@ public class ExampleSceneManagerController : MonoBehaviour
     {
         WSANativeFilePicker.PickSaveFile("Save", ".txt", "Test Text File", WSAPickerLocationId.DocumentsLibrary, new List<KeyValuePair<string, IList<string>>>() { new KeyValuePair<string, IList<string>>("Text Files", new List<string>() { ".txt" }) }, result =>
         {
-            if (result != null)
-            {
-                result.WriteBytes(new byte[2]);
-                result.WriteText("Hello World");
-            }
         });
     }
 
@@ -171,23 +138,30 @@ public class ExampleSceneManagerController : MonoBehaviour
         });
     }
 
+    public void ShowContactPicker()
+    {
+        WSANativeContactPicker.PickContact(result =>
+        {
+        });
+    }
+
     public void CreateInterstitialAd()
     {
-        WSANativeInterstitialAd.Initialise(WSAInterstitialAdType.Microsoft, "d25517cb-12d4-4699-8bdc-52040c712cab", "11389925");
-        WSANativeInterstitialAd.AdReady += (adType) =>
+        WSANativeInterstitialAd.Initialise(WSAInterstitialAdType.Vungle, "Your app id");
+        WSANativeInterstitialAd.AdReady += (adType, adUnitOrPlacementId) =>
         {
-            if (adType == WSAInterstitialAdType.Microsoft)
+            if (adType == WSAInterstitialAdType.Vungle)
             {
-                WSANativeInterstitialAd.ShowAd(WSAInterstitialAdType.Microsoft);
+                WSANativeInterstitialAd.ShowAd(WSAInterstitialAdType.Vungle, adUnitOrPlacementId);
             }
         };
-        WSANativeInterstitialAd.RequestAd(WSAInterstitialAdType.Microsoft, WSAInterstitialAdVariant.Video);
+        WSANativeInterstitialAd.RequestAd(WSAInterstitialAdType.Vungle, "Your ad unit or placement id");
     }
 
     public void CreateBannerAd()
     {
-        WSANativeBannerAd.Initialise(WSABannerAdType.Microsoft, "3f83fe91-d6be-434d-a0ae-7351c5a997f1", "10865270");
-        WSANativeBannerAd.CreatAd(WSABannerAdType.Microsoft, 728, 90, WSAAdVerticalPlacement.Top, WSAAdHorizontalPlacement.Centre);
+        WSANativeBannerAd.Initialise(WSABannerAdType.AdDuplex, "Your app id", "Your ad unit or placement id");
+        WSANativeBannerAd.CreatAd(WSABannerAdType.AdDuplex, 728, 90, WSAVerticalPlacement.Top, WSAHorizontalPlacement.Centre);
     }
 
     public void LaunchMapsApp()
@@ -197,10 +171,19 @@ public class ExampleSceneManagerController : MonoBehaviour
 
     public void CreateMap()
     {
-        int xPos = (Screen.width / 2) - 350;
-        int yPos = (Screen.height / 2) - 350;
-
-        WSANativeMap.CreateMap(string.Empty, 700, 700, new WSAPosition() { X = xPos, Y = yPos }, new WSAGeoPoint() { Latitude = 50, Longitude = 0 }, 6, WSAMapInteractionMode.GestureAndControl);
+        WSANativeMap.CreateMap(new WSAMapSettings()
+        {
+            MapServiceToken = "",
+            HorizontalPlacement = WSAHorizontalPlacement.Centre,
+            VerticalPlacement = WSAVerticalPlacement.Centre,
+            Centre = new WSAGeoPoint() { Latitude = 50, Longitude = 0 },
+            ZoomLevel = 6,
+            Height = 700,
+            Width = 700,
+            InteractionMode = WSAMapInteractionMode.GestureAndControl,
+            OffsetX = 0,
+            OffsetY = 0
+        });
     }
 
     public void DestroyMap()
@@ -223,14 +206,42 @@ public class ExampleSceneManagerController : MonoBehaviour
         WSANativeMap.CenterMap(new WSAGeoPoint() { Latitude = 52, Longitude = 5 });
     }
 
-    public void EnableFlashlight()
+    public void CreateBrowser()
     {
-        WSANativeDevice.EnableFlashlight(new WSANativeColour() { Red = 0, Green = 0, Blue = 255 });
+        WSANativeWebView.Create(new WSAWebViewSettings()
+        {
+            HorizontalPlacement = WSAHorizontalPlacement.Centre,
+            VerticalPlacement = WSAVerticalPlacement.Centre,
+            Height = 700,
+            Width = 700,
+            Uri = new Uri("https://google.co.uk"),
+            OffsetX = 0,
+            OffsetY = 0
+        });
     }
 
-    public void DisableFlashlight()
+    public void DestroyBrowser()
     {
-        WSANativeDevice.DisableFlashlight();
+        WSANativeWebView.Destroy();
+    }
+
+    public void CreateSpinner()
+    {
+        WSANativeDevice.CreateProgressRing(new WSAProgressControlSettings()
+        {
+            HorizontalPlacement = WSAHorizontalPlacement.Centre,
+            VerticalPlacement = WSAVerticalPlacement.Centre,
+            Height = 45,
+            Width = 45,
+            Colour = new Color32(255, 20, 147, 255),
+            OffsetX = 0,
+            OffsetY = 0
+        });
+    }
+
+    public void DestroySpinner()
+    {
+        WSANativeDevice.DestroyProgressRing();
     }
 
     public void CameraCapture()
@@ -249,40 +260,22 @@ public class ExampleSceneManagerController : MonoBehaviour
 
     public void FacebookLogin()
     {
-        WSANativeFacebook.Initialise("facebookId", "packageSID");
-        WSANativeFacebook.Login(new List<string>() { "public_profile", "email", "user_birthday" }, result =>
+        WSANativeFacebook.Initialise("facebookId");
+        WSANativeFacebook.Login(null, result =>
         {
             if (result.Success)
             {
-                WSANativeFacebook.GetUserDetails(response =>
-                {
-                    if (response.Success)
-                    {
-#pragma warning disable 0219
-                        WSAFacebookUser user = response.Data;
-#pragma warning restore 0219
-                    }
-                });
             }
         });
     }
 
     public void TwitterLogin()
     {
-        WSANativeTwitter.Initialise("consumerKey", "consumerSecret", "https://www.twitter.com");
-        WSANativeTwitter.Login(result =>
+        WSANativeTwitter.Initialise("consumerKey", "consumerSecret", "https://www.twitter.com/");
+        WSANativeTwitter.Login(true, result =>
         {
             if (result.Success)
             {
-                WSANativeTwitter.GetUserDetails(true, response =>
-                {
-                    if (response.Success)
-                    {
-#pragma warning disable 0219
-                        string user = response.Data;
-#pragma warning restore 0219
-                    }
-                });
             }
         });
     }

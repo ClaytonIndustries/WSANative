@@ -1,4 +1,12 @@
-﻿#if ENABLE_WINMD_SUPPORT
+﻿////////////////////////////////////////////////////////////////////////////////
+//  
+// @module WSA Native for Unity3D 
+// @author Michael Clayton
+// @support clayton.inds+support@gmail.com 
+//
+////////////////////////////////////////////////////////////////////////////////
+
+#if ENABLE_WINMD_SUPPORT
 using System.Runtime.InteropServices;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -18,6 +26,9 @@ namespace CI.WSANative.Common
         private static bool _isInitialised;
 #endif
 
+        /// <summary>
+        /// Initialises WSANAtive - call this once when your app first starts up
+        /// </summary>
         public static void Initialise()
         {
 #if ENABLE_WINMD_SUPPORT
@@ -38,6 +49,10 @@ namespace CI.WSANative.Common
 #endif
         }
 
+        /// <summary>
+        /// For internal use only
+        /// </summary>
+        /// <returns></returns>
         public static bool IsDxSwapChainPanelConfigured()
         {
 #if ENABLE_WINMD_SUPPORT

@@ -15,10 +15,13 @@ using Windows.Foundation;
 using Windows.Media.Capture;
 using Windows.Storage;
 using Windows.Storage.Streams;
-using CI.WSANative.Common;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 #endif
 
 using System;
+using CI.WSANative.Common;
 using UnityEngine;
 
 namespace CI.WSANative.Device
@@ -27,6 +30,8 @@ namespace CI.WSANative.Device
     {
 #if ENABLE_WINMD_SUPPORT
         private static Lamp _lamp;
+        private static ProgressBar _progressBar;
+        private static ProgressRing _progressRing;
 #endif
 
         /// <summary>
@@ -141,5 +146,95 @@ namespace CI.WSANative.Device
             return bytes;
         }
 #endif
+
+        /// <summary>
+        /// Create an indeterminate progress bar
+        /// </summary>
+        /// <param name="settings">Settings to configure the progress bar</param>
+        public static void CreateProgressBar(WSAProgressControlSettings settings)
+        {
+
+#if ENABLE_WINMD_SUPPORT
+            ThreadRunner.RunOnUIThread(() =>
+            {
+                if(WSANativeCore.IsDxSwapChainPanelConfigured() && _progressBar == null)
+                {
+                    _progressBar = new ProgressBar()
+                    {
+                        HorizontalAlignment = (HorizontalAlignment)settings.HorizontalPlacement,
+                        VerticalAlignment = (VerticalAlignment)settings.VerticalPlacement,
+                        IsIndeterminate = true,
+                        Width = settings.Width,
+                        Margin = new Thickness(settings.OffsetX, settings.OffsetY, 0, 0),
+                        Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(settings.Colour.a, settings.Colour.r, settings.Colour.g, settings.Colour.b))
+                    };
+
+                    WSANativeCore.DxSwapChainPanel.Children.Add(_progressBar);
+                }
+            }, true);
+#endif
+        }
+
+        /// <summary>
+        /// Destroy the progress bar if it is currently active
+        /// </summary>
+        public static void DestroyProgressBar()
+        {
+#if ENABLE_WINMD_SUPPORT
+            if (WSANativeCore.IsDxSwapChainPanelConfigured() && _progressBar != null)
+            {
+                ThreadRunner.RunOnUIThread(() =>
+                {
+                    WSANativeCore.DxSwapChainPanel.Children.Remove(_progressBar);
+                    _progressBar = null;
+                }, true);
+            }
+#endif
+        }
+
+        /// <summary>
+        /// Create an indeterminate progress ring
+        /// </summary>
+        /// <param name="settings">Settings to configure the progress ring</param>
+        public static void CreateProgressRing(WSAProgressControlSettings settings)
+        {
+#if ENABLE_WINMD_SUPPORT
+            if (WSANativeCore.IsDxSwapChainPanelConfigured() && _progressRing == null)
+            {
+                ThreadRunner.RunOnUIThread(() =>
+                {
+                    _progressRing = new ProgressRing()
+                    {
+                        HorizontalAlignment = (HorizontalAlignment)settings.HorizontalPlacement,
+                        VerticalAlignment = (VerticalAlignment)settings.VerticalPlacement,
+                        IsActive = true,
+                        Width = settings.Width,
+                        Height = settings.Height,
+                        Margin = new Thickness(settings.OffsetX, settings.OffsetY, 0, 0),
+                        Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(settings.Colour.a, settings.Colour.r, settings.Colour.g, settings.Colour.b))
+                    };
+
+                    WSANativeCore.DxSwapChainPanel.Children.Add(_progressRing);
+                }, true);
+            }
+#endif
+        }
+
+        /// <summary>
+        /// Destroy the progress ring if it is currently active
+        /// </summary>
+        public static void DestroyProgressRing()
+        {
+#if ENABLE_WINMD_SUPPORT
+            if (WSANativeCore.IsDxSwapChainPanelConfigured() && _progressRing != null)
+            {
+                ThreadRunner.RunOnUIThread(() =>
+                {
+                    WSANativeCore.DxSwapChainPanel.Children.Remove(_progressRing);
+                    _progressRing = null;
+                }, true);
+            }
+#endif
+        }
     }
 }

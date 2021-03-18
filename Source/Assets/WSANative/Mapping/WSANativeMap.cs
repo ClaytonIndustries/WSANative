@@ -43,13 +43,7 @@ namespace CI.WSANative.Mapping
         /// <summary>
         /// Create a map
         /// </summary>
-        /// <param name="mapServiceToken">Your bing maps auth token - register on the bing maps portal (can leave blank for testing)</param>
-        /// <param name="width">Width of the map in pixels</param>
-        /// <param name="height">Height of the map in pixels</param>
-        /// <param name="position">Map position in pixels offset from the top left corner</param>
-        /// <param name="center">Center the map on this lat / long</param>
-        /// <param name="zoomLevel">How zoomed in should the map initially be (1 - 20)</param>
-        /// <param name="interactionMode">How should the user be allowed to interact with the map</param>
+        /// <param name="settings">Settings to configure the map</param>
         public static void CreateMap(WSAMapSettings settings)
         {
 #if ENABLE_WINMD_SUPPORT

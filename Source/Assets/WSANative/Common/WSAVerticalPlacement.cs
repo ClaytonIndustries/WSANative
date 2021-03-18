@@ -5,7 +5,7 @@
 // @support clayton.inds+support@gmail.com 
 //
 ////////////////////////////////////////////////////////////////////////////////
-///
+
 namespace CI.WSANative.Common
 {
     public enum WSAVerticalPlacement

@@ -37,11 +37,11 @@ namespace CI.WSANative.Mapping
         /// </summary>
         public WSAMapInteractionMode InteractionMode { get; set; }
         /// <summary>
-        /// Horizontal position of the webview
+        /// Horizontal position of the map
         /// </summary>
         public WSAHorizontalPlacement HorizontalPlacement { get; set; }
         /// <summary>
-        /// Vertical position of the webview
+        /// Vertical position of the map
         /// </summary>
         public WSAVerticalPlacement VerticalPlacement { get; set; }
     }

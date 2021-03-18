@@ -19,5 +19,5 @@ Why not check out our other plugins:
 ------------------------------------------------------------------------------------------------------------------------
 Basics - all functions listed below have detailed comments in the code
 
-***All the functions below except the Dispatcher, Image and Serialisation functions will only work once you build a Windows Store Solution - however they are safe to use in the editor***
-***Banner and Interstitial Ads as well as Maps, Facebook, Feedback Hub, Input and Twitter require additional setup - please see the website for details***
+***All the functions except the Dispatcher, Image and Serialisation functions will only work once you build a Windows Store Solution - however they are safe to use in the editor***
+***Banner and Interstitial Ads require additional setup - please see the website for details***

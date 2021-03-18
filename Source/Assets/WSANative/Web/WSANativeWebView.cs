@@ -59,14 +59,8 @@ namespace CI.WSANative.Web
         /// <summary>
         /// Create and show a web view
         /// </summary>
-        /// <param name="horizontalPlacement">Horizontal position of the webview</param>
-        /// <param name="verticalPlacement">Vertical position of the webview</param>
-        /// <param name="width">Width of the web view</param>
-        /// <param name="height">Height of the web view</param>
-        /// <param name="x">X offset from the horizontal placement (0 for no offset)</param>
-        /// <param name="y">Y offset from the vertical placement (0 for no offset)</param>
-        /// <param name="uri">Initial url to navigate to</param>
-        public static void Create(WSAHorizontalPlacement horizontalPlacement, WSAVerticalPlacement verticalPlacement, int width, int height, int offsetX, int offsetY, Uri uri)
+        /// <param name="settings">Settings to configure the webview</param>
+        public static void Create(WSAWebViewSettings settings)
         {
 #if ENABLE_WINMD_SUPPORT
             if (WSANativeCore.IsDxSwapChainPanelConfigured() && _webView == null)
@@ -75,11 +69,11 @@ namespace CI.WSANative.Web
                 {
                     _webView = new WebView()
                     {
-                        HorizontalAlignment = (HorizontalAlignment)horizontalPlacement,
-                        VerticalAlignment = (VerticalAlignment)verticalPlacement,
-                        Width = width,
-                        Height = height,
-                        Margin = new Thickness(offsetX, offsetY, 0, 0)
+                        HorizontalAlignment = (HorizontalAlignment)settings.HorizontalPlacement,
+                        VerticalAlignment = (VerticalAlignment)settings.VerticalPlacement,
+                        Width = settings.Width,
+                        Height = settings.Height,
+                        Margin = new Thickness(settings.OffsetX, settings.OffsetY, 0, 0)
                     };
 
                     _webView.NavigationStarting += (s, e) => { if (NavigationStarting != null) { NavigationStarting(e.Uri); } };
@@ -87,7 +81,7 @@ namespace CI.WSANative.Web
                     _webView.DOMContentLoaded += (s, e) => { if (DOMContentLoaded != null) { DOMContentLoaded(e.Uri); } };
                     _webView.NavigationCompleted += (s, e) => { if (NavigationCompleted != null) { NavigationCompleted(e.Uri, e.IsSuccess); } };
 
-                    _webView.Navigate(uri);
+                    _webView.Navigate(settings.Uri);
 
                     WSANativeCore.DxSwapChainPanel.Children.Add(_webView);
                 }, true);
