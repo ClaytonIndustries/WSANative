@@ -56,7 +56,7 @@ namespace CI.WSANative.Facebook
             _facebookAppId = facebookAppId;
         }
 
-        public async Task<WSAFacebookLoginResult> Login(List<string> permissions)
+        public async Task<WSAFacebookLoginResult> Login(List<string> permissions, string redirectUri)
         {
             WSAFacebookLoginResult loginResult = new WSAFacebookLoginResult()
             {
@@ -79,12 +79,12 @@ namespace CI.WSANative.Facebook
                     requestPermissions = string.Join(",", permissions);
                 }
 
-                var requestUri = string.Format("https://www.facebook.com/v10.0/dialog/oauth?client_id={0}&response_type=token&redirect_uri={1}&scope={2}&display=popup",
-                    _facebookAppId, WSAFacebookConstants.WebRedirectUri, requestPermissions);
+                var requestUri = string.Format("https://www.facebook.com/v10.0/dialog/oauth?client_id={0}&response_type=token&redirect_uri={1}&display=popup",
+                    _facebookAppId, redirectUri);
 
                 var dialog = new FacebookLogin(Screen.width, Screen.height);
 
-                _accessToken = await dialog.Show(requestUri, WSAFacebookConstants.LoginDialogResponseUri, WSANativeCore.DxSwapChainPanel);
+                _accessToken = await dialog.Show(requestUri, new Uri(redirectUri).AbsolutePath, WSANativeCore.DxSwapChainPanel);
 
                 if (string.IsNullOrEmpty(_accessToken))
                 {
@@ -289,7 +289,7 @@ namespace CI.WSANative.Facebook
 
             FeedDialog dialog = new FeedDialog(Screen.width, Screen.height);
 
-            dialog.Show(feedBaseUri, parameters, WSAFacebookConstants.FeedDialogResponseUri, WSANativeCore.DxSwapChainPanel, closed);
+            dialog.Show(feedBaseUri, parameters, new Uri(WSAFacebookConstants.WebRedirectUri).AbsolutePath, WSANativeCore.DxSwapChainPanel, closed);
         }
 
         public void ShowRequestDialog(string title, string message, Action<IEnumerable<string>> closed)
@@ -309,7 +309,7 @@ namespace CI.WSANative.Facebook
 
             RequestDialog dialog = new RequestDialog(Screen.width, Screen.height);
 
-            dialog.Show(requestBaseUri, parameters, WSAFacebookConstants.RequestDialogResponseUri, WSANativeCore.DxSwapChainPanel, closed);    
+            dialog.Show(requestBaseUri, parameters, new Uri(WSAFacebookConstants.WebRedirectUri).AbsolutePath, WSANativeCore.DxSwapChainPanel, closed);    
         }
 
         public void ShowSendDialog(string link, Action closed)
@@ -328,7 +328,7 @@ namespace CI.WSANative.Facebook
 
             SendDialog dialog = new SendDialog(Screen.width, Screen.height);
 
-            dialog.Show(sendBaseUri, parameters, WSAFacebookConstants.SendDialogResponseUri, WSANativeCore.DxSwapChainPanel, closed);
+            dialog.Show(sendBaseUri, parameters, new Uri(WSAFacebookConstants.WebRedirectUri).AbsolutePath, WSANativeCore.DxSwapChainPanel, closed);
         }
 
         private Task<HttpResponseMessage> MakeRequest(string url, HttpAction method)
