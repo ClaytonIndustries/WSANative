@@ -260,7 +260,7 @@ public class ExampleSceneManagerController : MonoBehaviour
 
     public void FacebookLogin()
     {
-        WSANativeFacebook.Initialise("facebookId");
+        WSANativeFacebook.Initialise("facebookId", "redirectUri");
         WSANativeFacebook.Login(null, result =>
         {
             if (result.Success)

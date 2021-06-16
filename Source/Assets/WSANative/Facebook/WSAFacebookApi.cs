@@ -26,6 +26,7 @@ namespace CI.WSANative.Facebook
         public bool IsLoggedIn { get; private set; }
 
         private string _facebookAppId;
+        private string _redirectUri;
         private string _accessToken;
 
         private const string _savedDataFilename = "FacebookData.sav";
@@ -51,12 +52,13 @@ namespace CI.WSANative.Facebook
             }
         }
 
-        public void Initialise(string facebookAppId)
+        public void Initialise(string facebookAppId, string redirectUri)
         {
             _facebookAppId = facebookAppId;
+            _redirectUri = redirectUri;
         }
 
-        public async Task<WSAFacebookLoginResult> Login(List<string> permissions, string redirectUri)
+        public async Task<WSAFacebookLoginResult> Login(List<string> permissions)
         {
             WSAFacebookLoginResult loginResult = new WSAFacebookLoginResult()
             {
@@ -80,11 +82,11 @@ namespace CI.WSANative.Facebook
                 }
 
                 var requestUri = string.Format("https://www.facebook.com/v10.0/dialog/oauth?client_id={0}&response_type=token&redirect_uri={1}&display=popup",
-                    _facebookAppId, redirectUri);
+                    _facebookAppId, _redirectUri);
 
                 var dialog = new FacebookLogin(Screen.width, Screen.height);
 
-                _accessToken = await dialog.Show(requestUri, new Uri(redirectUri).AbsolutePath, WSANativeCore.DxSwapChainPanel);
+                _accessToken = await dialog.Show(_redirectUri, new Uri(redirectUri).AbsolutePath, WSANativeCore.DxSwapChainPanel);
 
                 if (string.IsNullOrEmpty(_accessToken))
                 {

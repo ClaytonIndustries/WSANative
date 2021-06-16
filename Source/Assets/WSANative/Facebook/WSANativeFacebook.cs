@@ -38,10 +38,11 @@ namespace CI.WSANative.Facebook
         /// Initialise the facebook api - this must be called first - see the website for additional information
         /// </summary>
         /// <param name="facebookAppId">Your apps facebook id</param>
-        public static void Initialise(string facebookAppId)
+        /// <param name="redirectUri">The exact OAuth redirect uri that you entered on the facebook developer portal</param>
+        public static void Initialise(string facebookAppId, string redirectUri)
         {
 #if ENABLE_WINMD_SUPPORT
-            _facebookApi.Initialise(facebookAppId);
+            _facebookApi.Initialise(facebookAppId, redirectUri);
 #endif
         }
 
@@ -51,14 +52,13 @@ namespace CI.WSANative.Facebook
         /// The token normally lasts for about 60 days at which point the user will have to be re-authenticated
         /// </summary>
         /// <param name="permissions">Any combination of permissions that you need - public profile and email are requested by default, any others require approval from facebook - can be null or empty if no extras</param>
-        /// <param name="redirectUri">The exact redirect uri that you entered on the facebook developer portal</param>
         /// <param name="response">Did the login request succeed</param>
-        public static void Login(List<string> permissions, string redirectUri, Action<WSAFacebookLoginResult> response)
+        public static void Login(List<string> permissions, Action<WSAFacebookLoginResult> response)
         {
 #if ENABLE_WINMD_SUPPORT
             ThreadRunner.RunOnUIThread(async () =>
             {
-                WSAFacebookLoginResult result = await _facebookApi.Login(permissions, redirectUri);
+                WSAFacebookLoginResult result = await _facebookApi.Login(permissions);
 
                 ThreadRunner.RunOnAppThread(() =>
                 {
