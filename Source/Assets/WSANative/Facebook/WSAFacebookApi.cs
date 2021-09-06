@@ -86,7 +86,7 @@ namespace CI.WSANative.Facebook
 
                 var dialog = new FacebookLogin(Screen.width, Screen.height);
 
-                _accessToken = await dialog.Show(_redirectUri, new Uri(redirectUri).AbsolutePath, WSANativeCore.DxSwapChainPanel);
+                _accessToken = await dialog.Show(requestUri, new Uri(_redirectUri).AbsolutePath, WSANativeCore.DxSwapChainPanel);
 
                 if (string.IsNullOrEmpty(_accessToken))
                 {
