@@ -12,8 +12,8 @@ namespace CI.WSANative.Store
     {
         Succeeded = 0,
         AlreadyPurchased = 1,
-        NetworkError = 2,
-        NotPurchased = 3,
+        NotPurchased = 2,
+        NetworkError = 3,
         ServerError = 4
     }
 }
