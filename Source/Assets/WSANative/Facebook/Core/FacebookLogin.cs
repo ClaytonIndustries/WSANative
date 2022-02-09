@@ -43,8 +43,8 @@ namespace CI.WSANative.Facebook.Core
 			
 			_taskCompletionSource = new TaskCompletionSource<string>();
 
-            int horizontalMargin = (screenWidth - 600) / 2;
-            int verticalMargin = (screenHeight - 700) / 2;
+            int horizontalMargin = screenWidth / 10;
+            int verticalMargin = screenHeight / 10;
 
             Margin = new Thickness(horizontalMargin, verticalMargin, horizontalMargin, verticalMargin);
             VerticalAlignment = VerticalAlignment.Stretch;
