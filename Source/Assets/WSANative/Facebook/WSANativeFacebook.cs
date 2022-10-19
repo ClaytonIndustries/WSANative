@@ -34,6 +34,33 @@ namespace CI.WSANative.Facebook
 #endif
         }
 
+        public static string AccessToken
+        {
+#if ENABLE_WINMD_SUPPORT
+            get { return _facebookApi.AccessToken; }
+#else
+            get { return null; }
+#endif
+        }
+
+        public static DateTime AccessTokenExpiry
+        {
+#if ENABLE_WINMD_SUPPORT
+            get { return _facebookApi.AccessTokenExpiry; }
+#else
+            get { return DateTime.MinValue; }
+#endif
+        }
+
+        public static string UserId
+        {
+#if ENABLE_WINMD_SUPPORT
+            get { return _facebookApi.UserId; }
+#else
+            get { return null; }
+#endif
+        }
+
         /// <summary>
         /// Initialise the facebook api - this must be called first - see the website for additional information
         /// </summary>

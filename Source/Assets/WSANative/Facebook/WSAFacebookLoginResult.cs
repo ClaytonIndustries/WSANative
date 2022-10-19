@@ -6,6 +6,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+using System;
+
 namespace CI.WSANative.Facebook
 {
     public class WSAFacebookLoginResult
@@ -19,6 +21,11 @@ namespace CI.WSANative.Facebook
         /// The users access token which will be automatically used in future requests to the facebook api. Will be null if the login was not successful
         /// </summary>
         public string AccessToken { get; set; }
+
+        /// <summary>
+        /// The date that the users access token expires
+        /// </summary>
+        public DateTime AccessTokenExpiry { get; set; }
 
         /// <summary>
         /// Data about the user

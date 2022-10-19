@@ -1,4 +1,4 @@
-﻿Windows Store Native (v2.1.2)
+﻿Windows Store Native (v2.2)
 ----------------------------
 
 Thank you for downloading Windows Store Native we hope you enjoy using it!
@@ -19,5 +19,4 @@ Why not check out our other plugins:
 ------------------------------------------------------------------------------------------------------------------------
 Basics - all functions listed below have detailed comments in the code
 
-***All the functions except the Dispatcher, Image and Serialisation functions will only work once you build a Windows Store Solution - however they are safe to use in the editor***
 ***Banner and Interstitial Ads require additional setup - please see the website for details***

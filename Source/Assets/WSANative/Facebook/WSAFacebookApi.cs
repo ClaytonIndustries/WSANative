@@ -24,10 +24,12 @@ namespace CI.WSANative.Facebook
     public class WSAFacebookApi
     {
         public bool IsLoggedIn { get; private set; }
+        public string AccessToken { get; private set; }
+        public DateTime AccessTokenExpiry { get; private set; }
+        public string UserId { get; private set; }
 
         private string _facebookAppId;
         private string _redirectUri;
-        private string _accessToken;
 
         private const string _savedDataFilename = "FacebookData.sav";
         private const string _authenticationErrorCode = "190";
@@ -43,7 +45,13 @@ namespace CI.WSANative.Facebook
             {
                 var file = await ApplicationData.Current.LocalFolder.GetFileAsync(_savedDataFilename);
 
-                _accessToken = await FileIO.ReadTextAsync(file);
+                var content = await FileIO.ReadTextAsync(file);
+
+                var split = content.Split('&');
+
+                AccessToken = split.Length > 0 ? split[0] : null;
+                AccessTokenExpiry = split.Length > 1 ? DateTime.Parse(split[1]) : DateTime.MinValue;
+                UserId = split.Length > 2 ? split[2] : null;
 
                 IsLoggedIn = true;
             }
@@ -67,8 +75,6 @@ namespace CI.WSANative.Facebook
 
             try
             {
-                Logout(false);
-
                 if (!WSANativeCore.IsDxSwapChainPanelConfigured())
                 {
                     throw new InvalidOperationException("CI.WSANative.Common.Initialise() must be called first");
@@ -81,27 +87,25 @@ namespace CI.WSANative.Facebook
                     requestPermissions = string.Join(",", permissions);
                 }
 
-                var requestUri = string.Format("https://www.facebook.com/v10.0/dialog/oauth?client_id={0}&response_type=token&redirect_uri={1}&display=popup",
-                    _facebookAppId, _redirectUri);
+                var requestUri = string.Format("{0}?client_id={1}&response_type=token&redirect_uri={2}&display=popup",
+                    WSAFacebookConstants.LoginApiUri, _facebookAppId, _redirectUri);
 
                 var dialog = new FacebookLogin(Screen.width, Screen.height);
 
-                _accessToken = await dialog.Show(requestUri, new Uri(_redirectUri).AbsolutePath, WSANativeCore.DxSwapChainPanel);
+                var result = await dialog.Show(requestUri, new Uri(_redirectUri).AbsolutePath, WSANativeCore.DxSwapChainPanel);
 
-                if (string.IsNullOrEmpty(_accessToken))
+                if (result == null)
+                {
+                    throw new InvalidOperationException("Login was cancelled");
+                }
+
+                if (string.IsNullOrEmpty(result.AccessToken))
                 {
                     throw new InvalidOperationException("Access token was null");
                 }
 
-                try
-                {
-                    var file = await ApplicationData.Current.LocalFolder.CreateFileAsync(_savedDataFilename, CreationCollisionOption.ReplaceExisting);
-
-                    await FileIO.WriteTextAsync(file, _accessToken);
-                }
-                catch
-                {
-                }
+                AccessToken = result.AccessToken;
+                AccessTokenExpiry = result.AccessTokenExpiry;
 
                 var userDetails = await GetUserDetails(false);
 
@@ -109,10 +113,22 @@ namespace CI.WSANative.Facebook
                 {
                     throw new InvalidOperationException("Failed to get user details");
                 }
-
+                
+                UserId = userDetails.Data.UserId;
                 IsLoggedIn = true;
 
-                loginResult.AccessToken = _accessToken;
+                try
+                {
+                    var file = await ApplicationData.Current.LocalFolder.CreateFileAsync(_savedDataFilename, CreationCollisionOption.ReplaceExisting);
+
+                    await FileIO.WriteTextAsync(file, AccessToken + "&" + AccessTokenExpiry.ToString("s", System.Globalization.CultureInfo.InvariantCulture) + "&" + UserId);
+                }
+                catch
+                {
+                }
+
+                loginResult.AccessToken = AccessToken;
+                loginResult.AccessTokenExpiry = AccessTokenExpiry;
                 loginResult.User = userDetails.Data;
                 return loginResult;
             }
@@ -133,7 +149,7 @@ namespace CI.WSANative.Facebook
                 {
                     try
                     {
-                        var requestUri = string.Format("{0}me/permissions?access_token={1}", WSAFacebookConstants.GraphApiUri, _accessToken);
+                        var requestUri = string.Format("{0}me/permissions?access_token={1}", WSAFacebookConstants.GraphApiUri, AccessToken);
 
                         await MakeRequest(requestUri, HttpAction.Delete);
                     }
@@ -143,7 +159,9 @@ namespace CI.WSANative.Facebook
                 }
 
                 IsLoggedIn = false;
-                _accessToken = null;
+                AccessToken = null;
+                AccessTokenExpiry = DateTime.MinValue;
+                UserId = null;
 
                 try
                 {
@@ -154,6 +172,11 @@ namespace CI.WSANative.Facebook
                 catch
                 {
                 }
+
+                ThreadRunner.RunOnUIThread(() =>
+                {
+                    Windows.UI.Xaml.Controls.WebView.ClearTemporaryWebDataAsync();
+                });
             }
         }
 
@@ -165,7 +188,7 @@ namespace CI.WSANative.Facebook
             {
                 var fields = "id,email,first_name,name,picture";
 
-                var requestUri = string.Format("{0}me?fields={1}&access_token={2}", WSAFacebookConstants.GraphApiUri, fields, _accessToken);
+                var requestUri = string.Format("{0}me?fields={1}&access_token={2}", WSAFacebookConstants.GraphApiUri, fields, AccessToken);
 
                 try
                 {
@@ -226,7 +249,7 @@ namespace CI.WSANative.Facebook
                     fields = parameters.Aggregate(string.Empty, (total, next) => total += (next.Key + "=" + next.Value + "&"));
                 }
 
-                var requestUri = string.Format("{0}{1}?{2}access_token={3}", WSAFacebookConstants.GraphApiUri, edge, fields, _accessToken);
+                var requestUri = string.Format("{0}{1}?{2}access_token={3}", WSAFacebookConstants.GraphApiUri, edge, fields, AccessToken);
 
                 try
                 {

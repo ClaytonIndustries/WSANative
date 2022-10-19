@@ -21,7 +21,7 @@ namespace CI.WSANative.Facebook.Core
     {
         private readonly WebView _iFrame;
         private readonly Button _closeButton;		
-		private readonly TaskCompletionSource<string> _taskCompletionSource;
+		private readonly TaskCompletionSource<LoginResult> _taskCompletionSource;
 
         public FacebookLogin(int screenWidth, int screenHeight)
         {
@@ -41,7 +41,7 @@ namespace CI.WSANative.Facebook.Core
 
             _closeButton.SetValue(Grid.RowProperty, 1);
 			
-			_taskCompletionSource = new TaskCompletionSource<string>();
+			_taskCompletionSource = new TaskCompletionSource<LoginResult>();
 
             int horizontalMargin = screenWidth / 10;
             int verticalMargin = screenHeight / 10;
@@ -63,21 +63,30 @@ namespace CI.WSANative.Facebook.Core
             Content = container;
         }
 
-        public async Task<string> Show(string requestUri, string responseUri, Grid parent)
+        public async Task<LoginResult> Show(string requestUri, string responseUri, Grid parent)
         {
             _iFrame.NavigationStarting += (s, e) =>
             {
                 if (e.Uri.AbsolutePath == responseUri)
                 {
-                    Match match = Regex.Match(e.Uri.Fragment, "access_token=(.+?)&");
+                    var accessTokenMatch = Regex.Match(e.Uri.Fragment, "access_token=(.+?)(&|$)");
+                    var accessToken = accessTokenMatch.Groups.Count >= 2 ? accessTokenMatch.Groups[1].Value : string.Empty;
+                    var accessTokenExpiryMatch = Regex.Match(e.Uri.Fragment, "expires_in=(.+?)(&|$)");
+                    int.TryParse(accessTokenExpiryMatch.Groups.Count >= 2 ? accessTokenExpiryMatch.Groups[1].Value : "0", out int accessTokenExpiry);
 
-                    Close(parent, match.Groups.Count >= 2 ? match.Groups[1].Value : string.Empty);
+                    var result = new LoginResult()
+                    {
+                        AccessToken = accessToken,
+                        AccessTokenExpiry = DateTime.Now.AddSeconds(accessTokenExpiry)
+                    };
+
+                    Close(parent, result);
                 }
             };
 
             _closeButton.Click += (s, e) =>
             {
-                Close(parent, string.Empty);
+                Close(parent, null);
             };
 
             _iFrame.Navigate(new Uri(requestUri));
@@ -87,7 +96,7 @@ namespace CI.WSANative.Facebook.Core
             return await _taskCompletionSource.Task;
         }
 
-        private void Close(Grid parent, string result)
+        private void Close(Grid parent, LoginResult result)
         {
             parent.Children.Remove(this);
 			
