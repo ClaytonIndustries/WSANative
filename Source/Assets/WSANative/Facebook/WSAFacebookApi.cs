@@ -173,9 +173,9 @@ namespace CI.WSANative.Facebook
                 {
                 }
 
-                ThreadRunner.RunOnUIThread(() =>
+                ThreadRunner.RunOnUIThread(async () =>
                 {
-                    Windows.UI.Xaml.Controls.WebView.ClearTemporaryWebDataAsync();
+                    await Windows.UI.Xaml.Controls.WebView.ClearTemporaryWebDataAsync();
                 });
             }
         }

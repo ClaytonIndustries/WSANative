@@ -43,24 +43,31 @@ namespace CI.WSANative.Facebook.Core
 			
 			_taskCompletionSource = new TaskCompletionSource<LoginResult>();
 
-            int horizontalMargin = screenWidth / 10;
-            int verticalMargin = screenHeight / 10;
-
-            Margin = new Thickness(horizontalMargin, verticalMargin, horizontalMargin, verticalMargin);
             VerticalAlignment = VerticalAlignment.Stretch;
             HorizontalAlignment = HorizontalAlignment.Stretch;
+
+            int horizontalMargin = screenWidth / 10;
+            int verticalMargin = screenHeight / 10;
 
             Grid container = new Grid()
             {
                 Background = new SolidColorBrush(Colors.White)
             };
 
+            container.Margin = new Thickness(horizontalMargin, verticalMargin, horizontalMargin, verticalMargin);
             container.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
             container.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
             container.Children.Add(_iFrame);
             container.Children.Add(_closeButton);
 
-            Content = container;
+            Grid background = new Grid()
+            {
+                Background = new SolidColorBrush(Color.FromArgb(128, 0, 0, 0))
+            };
+
+            background.Children.Add(container);
+
+            Content = background;
         }
 
         public async Task<LoginResult> Show(string requestUri, string responseUri, Grid parent)
