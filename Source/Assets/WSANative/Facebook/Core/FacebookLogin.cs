@@ -8,12 +8,14 @@
 
 #if ENABLE_WINMD_SUPPORT
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using CI.WSANative.Facebook.Models;
 
 namespace CI.WSANative.Facebook.Core
 {
@@ -21,7 +23,9 @@ namespace CI.WSANative.Facebook.Core
     {
         private readonly WebView _iFrame;
         private readonly Button _closeButton;		
-		private readonly TaskCompletionSource<LoginResult> _taskCompletionSource;
+		private readonly TaskCompletionSource<WSAFacebookLoginResult> _taskCompletionSource;
+
+        private bool _isMounted = false;
 
         public FacebookLogin(int screenWidth, int screenHeight)
         {
@@ -41,7 +45,7 @@ namespace CI.WSANative.Facebook.Core
 
             _closeButton.SetValue(Grid.RowProperty, 1);
 			
-			_taskCompletionSource = new TaskCompletionSource<LoginResult>();
+			_taskCompletionSource = new TaskCompletionSource<WSAFacebookLoginResult>();
 
             VerticalAlignment = VerticalAlignment.Stretch;
             HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -70,7 +74,7 @@ namespace CI.WSANative.Facebook.Core
             Content = background;
         }
 
-        public async Task<LoginResult> Show(string requestUri, string responseUri, Grid parent)
+        public async Task<WSAFacebookLoginResult> Show(string requestUri, string responseUri, bool delayDialog, Grid parent)
         {
             _iFrame.NavigationStarting += (s, e) =>
             {
@@ -81,13 +85,19 @@ namespace CI.WSANative.Facebook.Core
                     var accessTokenExpiryMatch = Regex.Match(e.Uri.Fragment, "expires_in=(.+?)(&|$)");
                     int.TryParse(accessTokenExpiryMatch.Groups.Count >= 2 ? accessTokenExpiryMatch.Groups[1].Value : "0", out int accessTokenExpiry);
 
-                    var result = new LoginResult()
+                    var result = new WSAFacebookLoginResult()
                     {
                         AccessToken = accessToken,
                         AccessTokenExpiry = DateTime.Now.AddSeconds(accessTokenExpiry)
                     };
 
                     Close(parent, result);
+                }
+
+                if (delayDialog && e.Uri.AbsolutePath == "/login" && !_isMounted)
+                {
+                    parent.Children.Add(this);
+                    _isMounted = true;
                 }
             };
 
@@ -98,12 +108,16 @@ namespace CI.WSANative.Facebook.Core
 
             _iFrame.Navigate(new Uri(requestUri));
 
-            parent.Children.Add(this);
+            if (!delayDialog)
+            {
+                parent.Children.Add(this);
+                _isMounted = true;
+            }
 
             return await _taskCompletionSource.Task;
         }
 
-        private void Close(Grid parent, LoginResult result)
+        private void Close(Grid parent, WSAFacebookLoginResult result)
         {
             parent.Children.Remove(this);
 			

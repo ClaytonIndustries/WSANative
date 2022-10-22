@@ -92,7 +92,7 @@ namespace CI.WSANative.Facebook
 
                 var dialog = new FacebookLogin(Screen.width, Screen.height);
 
-                var result = await dialog.Show(requestUri, new Uri(_redirectUri).AbsolutePath, WSANativeCore.DxSwapChainPanel);
+                var result = await dialog.Show(requestUri, new Uri(_redirectUri).AbsolutePath, IsLoggedIn, WSANativeCore.DxSwapChainPanel);
 
                 if (result == null)
                 {

@@ -34,6 +34,9 @@ namespace CI.WSANative.Facebook
 #endif
         }
 
+        /// <summary>
+        /// The users access token
+        /// </summary>
         public static string AccessToken
         {
 #if ENABLE_WINMD_SUPPORT
@@ -43,6 +46,9 @@ namespace CI.WSANative.Facebook
 #endif
         }
 
+        /// <summary>
+        /// The date that the users access token expires
+        /// </summary>
         public static DateTime AccessTokenExpiry
         {
 #if ENABLE_WINMD_SUPPORT
@@ -52,6 +58,9 @@ namespace CI.WSANative.Facebook
 #endif
         }
 
+        /// <summary>
+        /// The users id
+        /// </summary>
         public static string UserId
         {
 #if ENABLE_WINMD_SUPPORT
@@ -74,11 +83,12 @@ namespace CI.WSANative.Facebook
         }
 
         /// <summary>
-        /// Shows the login dialog to the user and request permissions.
+        /// Shows the login dialog to the user and requests permissions.
         /// If login is successful an access token will be generated and automatically stored.
         /// The token normally lasts for about 60 days at which point the user will have to be re-authenticated
+        /// If the users access token has expired or you call login when a user is already logged in we'll attempt a silent login first
         /// </summary>
-        /// <param name="permissions">Any combination of permissions that you need - public profile and email are requested by default, any others require approval from facebook - can be null or empty if no extras</param>
+        /// <param name="permissions">Any combination of permissions that you need - public profile and email are requested by default, any others require approval from facebook - can be null or empty list if no extras</param>
         /// <param name="response">Did the login request succeed</param>
         public static void Login(List<string> permissions, Action<WSAFacebookLoginResult> response)
         {
