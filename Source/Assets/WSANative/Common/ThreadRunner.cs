@@ -19,6 +19,7 @@ namespace CI.WSANative.Common
         /// <param name="waitUntilDone">Should we block until the action completes</param>
         public static void RunOnUIThread(Action action, bool waitUntilDone = false)
         {
+#if ENABLE_WINMD_SUPPORT
             if (UnityEngine.WSA.Application.RunningOnUIThread())
             {
                 action();
@@ -30,6 +31,7 @@ namespace CI.WSANative.Common
                     action();
                 }, waitUntilDone);
             }
+#endif
         }
 
         /// <summary>
@@ -39,6 +41,7 @@ namespace CI.WSANative.Common
         /// <param name="waitUntilDone">Should we block until the action completes</param>
         public static void RunOnAppThread(Action action, bool waitUntilDone = false)
         {
+#if ENABLE_WINMD_SUPPORT
             if (UnityEngine.WSA.Application.RunningOnAppThread())
             {
                 action();
@@ -50,6 +53,7 @@ namespace CI.WSANative.Common
                     action();
                 }, waitUntilDone);
             }
+#endif
         }
     }
 }
