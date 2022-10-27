@@ -87,8 +87,8 @@ namespace CI.WSANative.Facebook
                     requestPermissions = string.Join(",", permissions);
                 }
 
-                var requestUri = string.Format("{0}?client_id={1}&response_type=token&redirect_uri={2}&display=popup",
-                    WSAFacebookConstants.LoginApiUri, _facebookAppId, _redirectUri);
+                var requestUri = string.Format("{0}?client_id={1}&response_type=token&redirect_uri={2}&scope={3}&display=popup",
+                    WSAFacebookConstants.LoginApiUri, _facebookAppId, _redirectUri, requestPermissions);
 
                 var dialog = new FacebookLogin(Screen.width, Screen.height);
 
