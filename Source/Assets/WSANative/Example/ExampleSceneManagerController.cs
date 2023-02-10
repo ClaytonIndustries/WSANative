@@ -180,9 +180,7 @@ public class ExampleSceneManagerController : MonoBehaviour
             ZoomLevel = 6,
             Height = 700,
             Width = 700,
-            InteractionMode = WSAMapInteractionMode.GestureAndControl,
-            OffsetX = 0,
-            OffsetY = 0
+            InteractionMode = WSAMapInteractionMode.GestureAndControl
         });
     }
 
@@ -214,9 +212,7 @@ public class ExampleSceneManagerController : MonoBehaviour
             VerticalPlacement = WSAVerticalPlacement.Centre,
             Height = 700,
             Width = 700,
-            Uri = new Uri("https://google.co.uk"),
-            OffsetX = 0,
-            OffsetY = 0
+            Uri = new Uri("https://google.co.uk")
         });
     }
 
@@ -233,9 +229,7 @@ public class ExampleSceneManagerController : MonoBehaviour
             VerticalPlacement = WSAVerticalPlacement.Centre,
             Height = 45,
             Width = 45,
-            Colour = new Color32(255, 20, 147, 255),
-            OffsetX = 0,
-            OffsetY = 0
+            Colour = new Color32(255, 20, 147, 255)
         });
     }
 

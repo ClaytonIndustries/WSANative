@@ -14,13 +14,9 @@ namespace CI.WSANative.Media
         /// </summary>
         public int Height { get; set; }
         /// <summary>
-        /// X offset from the horizontal placement (default is 0)
+        /// The outer margin around the media player
         /// </summary>
-        public int OffsetX { get; set; }
-        /// <summary>
-        /// Y offset from the vertical placement (default is 0)
-        /// </summary>
-        public int OffsetY { get; set; }
+        public WSAMargin Margin { get; set; }
         /// <summary>
         /// Horizontal position of the media player
         /// </summary>

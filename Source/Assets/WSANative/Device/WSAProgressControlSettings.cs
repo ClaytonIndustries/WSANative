@@ -22,13 +22,9 @@ namespace CI.WSANative.Device
         /// </summary>
         public int Height { get; set; }
         /// <summary>
-        /// X offset from the horizontal placement (default is 0)
+        /// The outer margin around the control
         /// </summary>
-        public int OffsetX { get; set; }
-        /// <summary>
-        /// Y offset from the vertical placement (default is 0)
-        /// </summary>
-        public int OffsetY { get; set; }
+        public WSAMargin Margin { get; set; }
         /// <summary>
         /// Horizontal position of the control
         /// </summary>

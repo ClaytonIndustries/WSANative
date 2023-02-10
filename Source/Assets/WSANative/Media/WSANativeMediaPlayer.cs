@@ -88,7 +88,7 @@ namespace CI.WSANative.Media
                         VerticalAlignment = (VerticalAlignment)settings.VerticalPlacement,
                         Width = settings.HorizontalPlacement == WSAHorizontalPlacement.Stretch ? double.NaN : settings.Width,
                         Height = settings.VerticalPlacement == WSAVerticalPlacement.Stretch ? double.NaN : settings.Height,
-                        Margin = new Thickness(settings.OffsetX, settings.OffsetY, 0, 0),
+                        Margin = settings.Margin != null ? new Thickness(settings.Margin.Left, settings.Margin.Top, settings.Margin.Right, settings.Margin.Bottom) : new Thickness(),
                         AreTransportControlsEnabled = settings.AreTransportControlsEnabled,
                         AutoPlay = settings.AutoPlay,
                         IsFullWindow = settings.IsFullWindow,

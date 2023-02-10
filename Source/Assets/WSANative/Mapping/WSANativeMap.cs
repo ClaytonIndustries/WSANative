@@ -54,7 +54,7 @@ namespace CI.WSANative.Mapping
                     _mapControl = new MapControl();
                     _mapControl.Width = settings.HorizontalPlacement == WSAHorizontalPlacement.Stretch ? double.NaN : settings.Width;
                     _mapControl.Height = settings.VerticalPlacement == WSAVerticalPlacement.Stretch ? double.NaN : settings.Height;
-                    _mapControl.Margin = new Thickness(settings.OffsetX, settings.OffsetY, 0, 0);
+                    _mapControl.Margin = settings.Margin != null ? new Thickness(settings.Margin.Left, settings.Margin.Top, settings.Margin.Right, settings.Margin.Bottom) : new Thickness();
                     _mapControl.Center = new Windows.Devices.Geolocation.Geopoint(new Windows.Devices.Geolocation.BasicGeoposition() { Latitude = settings.Centre.Latitude, Longitude = settings.Centre.Longitude });
                     _mapControl.ZoomLevel = settings.ZoomLevel;
                     _mapControl.HorizontalAlignment = (HorizontalAlignment)settings.HorizontalPlacement;

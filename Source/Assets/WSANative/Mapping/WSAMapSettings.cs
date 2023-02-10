@@ -17,13 +17,9 @@ namespace CI.WSANative.Mapping
         /// </summary>
         public int Height { get; set; }
         /// <summary>
-        /// X offset from the horizontal placement (default is 0)
+        /// The outer margin around the map
         /// </summary>
-        public int OffsetX { get; set; }
-        /// <summary>
-        /// Y offset from the vertical placement (default is 0)
-        /// </summary>
-        public int OffsetY { get; set; }
+        public WSAMargin Margin { get; set; }
         /// <summary>
         /// Center the map on this lat / long
         /// </summary>
