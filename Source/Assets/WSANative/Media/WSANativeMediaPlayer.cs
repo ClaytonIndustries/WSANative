@@ -138,7 +138,7 @@ namespace CI.WSANative.Media
         }
 
         /// <summary>
-        /// Attempts to set the playback position
+        /// Set the playback position
         /// </summary>
         /// <param name="position"></param>
         public static void SetPosition(TimeSpan position)
