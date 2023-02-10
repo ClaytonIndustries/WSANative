@@ -8,6 +8,7 @@ using CI.WSANative.Dialogs;
 using CI.WSANative.Facebook;
 using CI.WSANative.FileStorage;
 using CI.WSANative.Mapping;
+using CI.WSANative.Media;
 using CI.WSANative.Notification;
 using CI.WSANative.Pickers;
 using CI.WSANative.Security;
@@ -271,6 +272,21 @@ public class ExampleSceneManagerController : MonoBehaviour
             if (result.Success)
             {
             }
+        });
+    }
+
+    public void CreateMediaPlayer()
+    {
+        WSANativeMediaPlayer.Create(new WSAMediaPlayerSettings()
+        {
+            HorizontalPlacement = WSAHorizontalPlacement.Centre,
+            VerticalPlacement = WSAVerticalPlacement.Centre,
+            Height = 700,
+            Width = 700,
+            AreTransportControlsEnabled = true,
+            AutoPlay = true,
+            IsFullWindow = false,
+            Uri = new Uri("https://cdn.flowplayer.com/a30bd6bc-f98b-47bc-abf5-97633d4faea0/hls/de3f6ca7-2db3-4689-8160-0f574a5996ad/playlist.m3u8")
         });
     }
 }
