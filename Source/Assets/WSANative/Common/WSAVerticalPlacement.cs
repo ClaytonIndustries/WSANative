@@ -12,6 +12,7 @@ namespace CI.WSANative.Common
     {
         Top = 0,
         Centre = 1,
-        Bottom = 2
+        Bottom = 2,
+        Stretch = 3
     }
 }

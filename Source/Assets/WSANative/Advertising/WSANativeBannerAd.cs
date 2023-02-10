@@ -88,8 +88,8 @@ namespace CI.WSANative.Advertising
         /// <param name="adType">The ad type</param>
         /// <param name="width">Width of the ad</param>
         /// <param name="height">Height of the ad</param>
-        /// <param name="verticalPlacement">Where should the ad be placed vertically</param>
-        /// <param name="horizontalPlacement">Where should the ad be placed horizontally</param>
+        /// <param name="verticalPlacement">Where should the ad be placed vertically - Stretch is not supported</param>
+        /// <param name="horizontalPlacement">Where should the ad be placed horizontally - Stretch is not supported</param>
         public static void CreatAd(WSABannerAdType adType, int width, int height, WSAVerticalPlacement verticalPlacement, WSAHorizontalPlacement horizontalPlacement)
         {
 #if ENABLE_WINMD_SUPPORT
@@ -124,8 +124,8 @@ namespace CI.WSANative.Advertising
         /// <param name="adType">The ad type</param>
         /// <param name="width">Width of the ad</param>
         /// <param name="height">Height of the ad</param>
-        /// <param name="verticalPlacement">Where should the ad be placed vertically</param>
-        /// <param name="horizontalPlacement">Where should the ad be placed horizontally</param>
+        /// <param name="verticalPlacement">Where should the ad be placed vertically - Stretch is not supported</param>
+        /// <param name="horizontalPlacement">Where should the ad be placed horizontally - Stretch is not supported</param>
         public static void ReconfigureAd(WSABannerAdType adType, int width, int height, WSAVerticalPlacement verticalPlacement, WSAHorizontalPlacement horizontalPlacement)
         {
 #if ENABLE_WINMD_SUPPORT

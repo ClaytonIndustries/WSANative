@@ -164,7 +164,7 @@ namespace CI.WSANative.Device
                         HorizontalAlignment = (HorizontalAlignment)settings.HorizontalPlacement,
                         VerticalAlignment = (VerticalAlignment)settings.VerticalPlacement,
                         IsIndeterminate = true,
-                        Width = settings.Width,
+                        Width = settings.HorizontalPlacement == WSAHorizontalPlacement.Stretch ? double.NaN : settings.Width,
                         Margin = new Thickness(settings.OffsetX, settings.OffsetY, 0, 0),
                         Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(settings.Colour.a, settings.Colour.r, settings.Colour.g, settings.Colour.b))
                     };
@@ -208,8 +208,8 @@ namespace CI.WSANative.Device
                         HorizontalAlignment = (HorizontalAlignment)settings.HorizontalPlacement,
                         VerticalAlignment = (VerticalAlignment)settings.VerticalPlacement,
                         IsActive = true,
-                        Width = settings.Width,
-                        Height = settings.Height,
+                        Width = settings.HorizontalPlacement == WSAHorizontalPlacement.Stretch ? double.NaN : settings.Width,
+                        Height = settings.VerticalPlacement == WSAVerticalPlacement.Stretch ? double.NaN : settings.Height,
                         Margin = new Thickness(settings.OffsetX, settings.OffsetY, 0, 0),
                         Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(settings.Colour.a, settings.Colour.r, settings.Colour.g, settings.Colour.b))
                     };

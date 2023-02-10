@@ -9,19 +9,19 @@ namespace CI.WSANative.Mapping
         /// </summary>
         public string MapServiceToken { get; set; }
         /// <summary>
-        /// Width of the map in pixels
+        /// Width of the map in pixels - ignored if HorizontalPlacement is set to Stretch
         /// </summary>
         public int Width { get; set; }
         /// <summary>
-        /// Height of the map in pixels
+        /// Height of the map in pixels - ignored if VerticalPlacement is set to Stretch
         /// </summary>
         public int Height { get; set; }
         /// <summary>
-        /// X offset from the horizontal placement (0 for no offset)
+        /// X offset from the horizontal placement (default is 0)
         /// </summary>
         public int OffsetX { get; set; }
         /// <summary>
-        /// Y offset from the vertical placement (0 for no offset)
+        /// Y offset from the vertical placement (default is 0)
         /// </summary>
         public int OffsetY { get; set; }
         /// <summary>

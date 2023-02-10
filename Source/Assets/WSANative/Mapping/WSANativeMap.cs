@@ -52,8 +52,8 @@ namespace CI.WSANative.Mapping
                 ThreadRunner.RunOnUIThread(() =>
                 {
                     _mapControl = new MapControl();
-                    _mapControl.Width = settings.Width;
-                    _mapControl.Height = settings.Height;
+                    _mapControl.Width = settings.HorizontalPlacement == WSAHorizontalPlacement.Stretch ? double.NaN : settings.Width;
+                    _mapControl.Height = settings.VerticalPlacement == WSAVerticalPlacement.Stretch ? double.NaN : settings.Height;
                     _mapControl.Margin = new Thickness(settings.OffsetX, settings.OffsetY, 0, 0);
                     _mapControl.Center = new Windows.Devices.Geolocation.Geopoint(new Windows.Devices.Geolocation.BasicGeoposition() { Latitude = settings.Centre.Latitude, Longitude = settings.Centre.Longitude });
                     _mapControl.ZoomLevel = settings.ZoomLevel;

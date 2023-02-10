@@ -71,8 +71,8 @@ namespace CI.WSANative.Web
                     {
                         HorizontalAlignment = (HorizontalAlignment)settings.HorizontalPlacement,
                         VerticalAlignment = (VerticalAlignment)settings.VerticalPlacement,
-                        Width = settings.Width,
-                        Height = settings.Height,
+                        Width = settings.HorizontalPlacement == WSAHorizontalPlacement.Stretch ? double.NaN : settings.Width,
+                        Height = settings.VerticalPlacement == WSAVerticalPlacement.Stretch ? double.NaN : settings.Height,
                         Margin = new Thickness(settings.OffsetX, settings.OffsetY, 0, 0)
                     };
 
