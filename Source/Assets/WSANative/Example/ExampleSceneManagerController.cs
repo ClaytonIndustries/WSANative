@@ -209,11 +209,9 @@ public class ExampleSceneManagerController : MonoBehaviour
     {
         WSANativeWebView.Create(new WSAWebViewSettings()
         {
-            HorizontalPlacement = WSAHorizontalPlacement.Centre,
-            VerticalPlacement = WSAVerticalPlacement.Centre,
-            Height = 700,
-            Width = 700,
-            Uri = new Uri("https://google.co.uk")
+            HorizontalPlacement = WSAHorizontalPlacement.Stretch,
+            VerticalPlacement = WSAVerticalPlacement.Stretch,
+            Uri = new Uri("https://www.claytoninds.com/")
         });
     }
 
