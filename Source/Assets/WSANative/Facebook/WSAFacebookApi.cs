@@ -90,9 +90,9 @@ namespace CI.WSANative.Facebook
                 var requestUri = string.Format("{0}?client_id={1}&response_type=token&redirect_uri={2}&scope={3}&display=popup",
                     WSAFacebookConstants.LoginApiUri, _facebookAppId, _redirectUri, requestPermissions);
 
-                var dialog = new FacebookLogin(Screen.width, Screen.height);
+                var dialog = new FacebookLogin();
 
-                var result = await dialog.Show(requestUri, new Uri(_redirectUri).AbsolutePath, IsLoggedIn, WSANativeCore.DxSwapChainPanel);
+                var result = await dialog.Show(Screen.width, Screen.height, requestUri, new Uri(_redirectUri).AbsolutePath, IsLoggedIn);
 
                 if (result == null)
                 {
@@ -297,7 +297,7 @@ namespace CI.WSANative.Facebook
             return graphApiReadResponse;
         }
 
-        public void ShowFeedDialog(string link, string source, Action closed)
+        public void ShowFeedDialog(string link, string hashtag, Action closed)
         {
             if (!WSANativeCore.IsDxSwapChainPanelConfigured())
             {
@@ -306,11 +306,14 @@ namespace CI.WSANative.Facebook
 
             Dictionary<string, string> parameters = new Dictionary<string, string>()
             {
-                { "link", link },
-                { "source", source }
+                { "app_id", _facebookAppId },
+                { "redirect_uri", _redirectUri },
+                { "href", link },
+                { "hashtag", hashtag },
+                { "display", "popup" }
             };
 
-            string feedBaseUri = string.Format("{0}?app_id={1}&display=popup&redirect_url={2}", WSAFacebookConstants.FeedDialogUri, _facebookAppId, WSAFacebookConstants.WebRedirectUri);
+            string feedBaseUri = string.Format("{0}?app_id={1}&display=popup&redirect_url={2}", WSAFacebookConstants.ShareDialogUri, _facebookAppId, WSAFacebookConstants.WebRedirectUri);
 
             FeedDialog dialog = new FeedDialog(Screen.width, Screen.height);
 
@@ -326,8 +329,11 @@ namespace CI.WSANative.Facebook
 
             Dictionary<string, string> parameters = new Dictionary<string, string>()
             {
+                { "app_id", _facebookAppId },
+                { "redirect_uri", _redirectUri },
                 { "title", title },
                 { "message", message },
+                { "display", "popup" }
             };
 
             string requestBaseUri = string.Format("{0}?app_id={1}&display=popup&redirect_uri={2}", WSAFacebookConstants.RequestDialogUri, _facebookAppId, WSAFacebookConstants.WebRedirectUri);
@@ -346,7 +352,10 @@ namespace CI.WSANative.Facebook
 
             Dictionary<string, string> parameters = new Dictionary<string, string>()
             {
-                { "link", link }
+                { "app_id", _facebookAppId },
+                { "redirect_uri", _redirectUri },
+                { "link", link },
+                { "display", "popup" }
             };
 
             string sendBaseUri = string.Format("{0}?app_id={1}&display=popup&redirect_uri={2}", WSAFacebookConstants.SendDialogUri, _facebookAppId, WSAFacebookConstants.WebRedirectUri);

@@ -71,7 +71,7 @@ namespace CI.WSANative.Facebook
         }
 
         /// <summary>
-        /// Initialise the facebook api - this must be called first - see the website for additional information
+        /// Initialise the facebook api - this must be called first - see the documentation for additional information
         /// </summary>
         /// <param name="facebookAppId">Your apps facebook id</param>
         /// <param name="redirectUri">The exact OAuth redirect uri that you entered on the facebook developer portal</param>
@@ -173,14 +173,14 @@ namespace CI.WSANative.Facebook
         /// You don't need to specify all of the following parameters, null the ones you don't want
         /// </summary>
         /// <param name="link">The link attached to this post</param>
-        /// <param name="source">The URL of a media file (either SWF or MP3) attached to this post. If SWF, you must also specify a picture to provide a thumbnail for the video</param>
+        /// <param name="hashtag">A hashtag to add to the shared content</param>
         /// <param name="closed">A callback indicating that the dialog has closed</param>
-        public static void ShowFeedDialog(string link, string source, Action closed)
+        public static void ShowFeedDialog(string link, string hashtag, Action closed)
         {
 #if ENABLE_WINMD_SUPPORT
             ThreadRunner.RunOnUIThread(() =>
             {
-                _facebookApi.ShowFeedDialog(link, source, closed);
+                _facebookApi.ShowFeedDialog(link, hashtag, closed);
             });
 #endif
         }
