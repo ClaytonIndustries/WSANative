@@ -7,7 +7,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #if ENABLE_WINMD_SUPPORT
-using Windows.UI.Xaml.Controls;
 using CI.WSANative.Common;
 #endif
 
@@ -178,9 +177,17 @@ namespace CI.WSANative.Facebook
         public static void ShowFeedDialog(string link, string hashtag, Action closed)
         {
 #if ENABLE_WINMD_SUPPORT
-            ThreadRunner.RunOnUIThread(() =>
+            ThreadRunner.RunOnUIThread(async () =>
             {
-                _facebookApi.ShowFeedDialog(link, hashtag, closed);
+                await _facebookApi.ShowFeedDialog(link, hashtag);
+
+                ThreadRunner.RunOnAppThread(() =>
+                {
+                    if (closed != null)
+                    {
+                        closed();
+                    }
+                }, true);
             });
 #endif
         }
@@ -194,9 +201,17 @@ namespace CI.WSANative.Facebook
         public static void ShowRequestDialog(string title, string message, Action<IEnumerable<string>> closed)
         {
 #if ENABLE_WINMD_SUPPORT
-            ThreadRunner.RunOnUIThread(() =>
+            ThreadRunner.RunOnUIThread(async () =>
             {
-                _facebookApi.ShowRequestDialog(title, message, closed);
+                var response = await _facebookApi.ShowRequestDialog(title, message);
+
+                ThreadRunner.RunOnAppThread(() =>
+                {
+                    if (closed != null)
+                    {
+                        closed(response);
+                    }
+                }, true);
             });
 #endif
         }
@@ -209,9 +224,17 @@ namespace CI.WSANative.Facebook
         public static void ShowSendDialog(string link, Action closed)
         {
 #if ENABLE_WINMD_SUPPORT
-            ThreadRunner.RunOnUIThread(() =>
+            ThreadRunner.RunOnUIThread(async () =>
             {
-                _facebookApi.ShowSendDialog(link, closed);
+                await _facebookApi.ShowSendDialog(link);
+
+                ThreadRunner.RunOnAppThread(() =>
+                {
+                    if (closed != null)
+                    {
+                        closed();
+                    }
+                }, true);
             });
 #endif
         }

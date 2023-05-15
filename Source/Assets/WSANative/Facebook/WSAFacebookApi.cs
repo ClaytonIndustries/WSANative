@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Storage;
 using CI.WSANative.Common;
@@ -75,11 +76,6 @@ namespace CI.WSANative.Facebook
 
             try
             {
-                if (!WSANativeCore.IsDxSwapChainPanelConfigured())
-                {
-                    throw new InvalidOperationException("CI.WSANative.Common.Initialise() must be called first");
-                }
-
                 var requestPermissions = "email";
 
                 if (permissions != null && permissions.Count > 0)
@@ -90,7 +86,7 @@ namespace CI.WSANative.Facebook
                 var requestUri = string.Format("{0}?client_id={1}&response_type=token&redirect_uri={2}&scope={3}&display=popup",
                     WSAFacebookConstants.LoginApiUri, _facebookAppId, _redirectUri, requestPermissions);
 
-                var dialog = new FacebookLogin();
+                var dialog = new FacebookDialog();
 
                 var result = await dialog.Show(Screen.width, Screen.height, requestUri, new Uri(_redirectUri).AbsolutePath, IsLoggedIn);
 
@@ -99,13 +95,21 @@ namespace CI.WSANative.Facebook
                     throw new InvalidOperationException("Login was cancelled");
                 }
 
-                if (string.IsNullOrEmpty(result.AccessToken))
+                var accessTokenMatch = Regex.Match(result, "access_token=(.+?)(&|$)");
+                var accessToken = accessTokenMatch.Groups.Count >= 2 ? accessTokenMatch.Groups[1].Value : string.Empty;
+                var accessTokenExpiryMatch = Regex.Match(result, "expires_in=(.+?)(&|$)");
+                int.TryParse(accessTokenExpiryMatch.Groups.Count >= 2 ? accessTokenExpiryMatch.Groups[1].Value : "0", out int accessTokenExpiry);
+
+                loginResult.AccessToken = accessToken;
+                loginResult.AccessTokenExpiry = DateTime.Now.AddSeconds(accessTokenExpiry);
+
+                if (string.IsNullOrEmpty(loginResult.AccessToken))
                 {
                     throw new InvalidOperationException("Access token was null");
                 }
 
-                AccessToken = result.AccessToken;
-                AccessTokenExpiry = result.AccessTokenExpiry;
+                AccessToken = loginResult.AccessToken;
+                AccessTokenExpiry = loginResult.AccessTokenExpiry;
 
                 var userDetails = await GetUserDetails(false);
 
@@ -297,13 +301,8 @@ namespace CI.WSANative.Facebook
             return graphApiReadResponse;
         }
 
-        public void ShowFeedDialog(string link, string hashtag, Action closed)
+        public async Task ShowFeedDialog(string link, string hashtag)
         {
-            if (!WSANativeCore.IsDxSwapChainPanelConfigured())
-            {
-                throw new InvalidOperationException("CI.WSANative.Common.Initialise() must be called first");
-            }
-
             Dictionary<string, string> parameters = new Dictionary<string, string>()
             {
                 { "app_id", _facebookAppId },
@@ -313,20 +312,23 @@ namespace CI.WSANative.Facebook
                 { "display", "popup" }
             };
 
-            string feedBaseUri = string.Format("{0}?app_id={1}&display=popup&redirect_url={2}", WSAFacebookConstants.ShareDialogUri, _facebookAppId, WSAFacebookConstants.WebRedirectUri);
+            var requestUri = string.Format("{0}{1}", WSAFacebookConstants.ShareDialogUri, parameters.Aggregate(string.Empty, (total, current) =>
+            {
+                if(!string.IsNullOrEmpty(current.Value))
+                {
+                    total = string.Format("{0}{1}{2}={3}", total, string.IsNullOrEmpty(total) ? "?" : "&", current.Key, Uri.EscapeUriString(current.Value));
+                }
 
-            FeedDialog dialog = new FeedDialog(Screen.width, Screen.height);
+                return total;
+            }));
 
-            dialog.Show(feedBaseUri, parameters, new Uri(WSAFacebookConstants.WebRedirectUri).AbsolutePath, WSANativeCore.DxSwapChainPanel, closed);
+            var dialog = new FacebookDialog();
+
+            await dialog.Show(Screen.width, Screen.height, requestUri, new Uri(_redirectUri).AbsolutePath, false);
         }
 
-        public void ShowRequestDialog(string title, string message, Action<IEnumerable<string>> closed)
+        public async Task<IEnumerable<string>> ShowRequestDialog(string title, string message)
         {
-            if (!WSANativeCore.IsDxSwapChainPanelConfigured())
-            {
-                throw new InvalidOperationException("CI.WSANative.Common.Initialise() must be called first");
-            }
-
             Dictionary<string, string> parameters = new Dictionary<string, string>()
             {
                 { "app_id", _facebookAppId },
@@ -336,20 +338,40 @@ namespace CI.WSANative.Facebook
                 { "display", "popup" }
             };
 
-            string requestBaseUri = string.Format("{0}?app_id={1}&display=popup&redirect_uri={2}", WSAFacebookConstants.RequestDialogUri, _facebookAppId, WSAFacebookConstants.WebRedirectUri);
-
-            RequestDialog dialog = new RequestDialog(Screen.width, Screen.height);
-
-            dialog.Show(requestBaseUri, parameters, new Uri(WSAFacebookConstants.WebRedirectUri).AbsolutePath, WSANativeCore.DxSwapChainPanel, closed);    
-        }
-
-        public void ShowSendDialog(string link, Action closed)
-        {
-            if(!WSANativeCore.IsDxSwapChainPanelConfigured())
+            var requestUri = string.Format("{0}{1}", WSAFacebookConstants.RequestDialogUri, parameters.Aggregate(string.Empty, (total, current) =>
             {
-                throw new InvalidOperationException("CI.WSANative.Common.Initialise() must be called first");
+                if(!string.IsNullOrEmpty(current.Value))
+                {
+                    total = string.Format("{0}{1}{2}={3}", total, string.IsNullOrEmpty(total) ? "?" : "&", current.Key, Uri.EscapeUriString(current.Value));
+                }
+
+                return total;
+            }));
+
+            var dialog = new FacebookDialog();
+
+            var result = await dialog.Show(Screen.width, Screen.height, requestUri, new Uri(_redirectUri).AbsolutePath, false);
+
+            IList<string> userIds = new List<string>();
+
+            if (result != null)
+            {
+                MatchCollection matches = Regex.Matches(result, "&to\\[\\d+\\]=(\\d+)");
+
+                for (int i = 0; i < matches.Count; i++)
+                {
+                    if (matches[i].Success)
+                    {
+                        userIds.Add(matches[i].Groups[1].Value);
+                    }
+                }
             }
 
+            return userIds;
+        }
+
+        public async Task ShowSendDialog(string link)
+        {
             Dictionary<string, string> parameters = new Dictionary<string, string>()
             {
                 { "app_id", _facebookAppId },
@@ -358,11 +380,19 @@ namespace CI.WSANative.Facebook
                 { "display", "popup" }
             };
 
-            string sendBaseUri = string.Format("{0}?app_id={1}&display=popup&redirect_uri={2}", WSAFacebookConstants.SendDialogUri, _facebookAppId, WSAFacebookConstants.WebRedirectUri);
+            var requestUri = string.Format("{0}{1}", WSAFacebookConstants.SendDialogUri, parameters.Aggregate(string.Empty, (total, current) =>
+            {
+                if(!string.IsNullOrEmpty(current.Value))
+                {
+                    total = string.Format("{0}{1}{2}={3}", total, string.IsNullOrEmpty(total) ? "?" : "&", current.Key, Uri.EscapeUriString(current.Value));
+                }
 
-            SendDialog dialog = new SendDialog(Screen.width, Screen.height);
+                return total;
+            }));
 
-            dialog.Show(sendBaseUri, parameters, new Uri(WSAFacebookConstants.WebRedirectUri).AbsolutePath, WSANativeCore.DxSwapChainPanel, closed);
+            var dialog = new FacebookDialog();
+
+            await dialog.Show(Screen.width, Screen.height, requestUri, new Uri(_redirectUri).AbsolutePath, false);
         }
 
         private Task<HttpResponseMessage> MakeRequest(string url, HttpAction method)
