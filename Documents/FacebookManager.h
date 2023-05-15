@@ -31,7 +31,7 @@ inline void FacebookManager::Initialise(Grid^ grid)
     _FacebookDialogShowAction = [](FacebookCallbackDialogResponse callback, int screenWidth, int screenHeight, wchar_t* requestUri, wchar_t* responseUri, bool delayDialog)
     {
         auto _iframe = ref new WebView2();
-        _iframe->SetValue(Grid::RowProperty, 0);
+        _iframe->SetValue(Grid::RowProperty, safe_cast<Object^>(0));
 
         auto _closeButton = ref new Button();
         _closeButton->Content = "Close";
