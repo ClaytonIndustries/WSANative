@@ -5,7 +5,8 @@ Windows Store Native is a plugin that makes it easy to use Universal Windows Pla
 
 ## Requirements
 
- * Unity 2019.4 or above
+ * Unity 2019.4 or above for most features
+ * Unity 2021 or above for Facebook login
  
 ## Built with
 
