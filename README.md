@@ -14,4 +14,4 @@ Windows Store Native is a plugin that makes it easy to use Universal Windows Pla
  
 ## Documentation
 
-Available [here](https://github.com/ClaytonIndustries/WSANative/wiki)
+Available [here](https://www.claytoninds.com/wsa-native/docs/home)
