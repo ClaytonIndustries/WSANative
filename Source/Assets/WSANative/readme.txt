@@ -1,4 +1,4 @@
-﻿Windows Store Native (v2.4)
+﻿Windows Store Native (v3.0.0)
 ----------------------------
 
 Thank you for downloading Windows Store Native we hope you enjoy using it!
@@ -15,6 +15,7 @@ Why not check out our other plugins:
 - Http Client (Http requests made easy)
 - Quick Save (Saving made easy)
 - Task Parallel (Threading made easy)
+- Power Console (Debugging made easy)
 
 ------------------------------------------------------------------------------------------------------------------------
 Basics - all functions listed below have detailed comments in the code

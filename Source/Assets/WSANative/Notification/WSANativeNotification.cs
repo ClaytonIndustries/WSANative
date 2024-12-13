@@ -7,7 +7,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #if ENABLE_WINMD_SUPPORT
-using System.Collections.Generic;
 using Windows.Data.Xml.Dom;
 using System.Net.Http;
 using Windows.Networking.PushNotifications;
@@ -15,6 +14,7 @@ using Windows.UI.Notifications;
 #endif
 
 using System;
+using System.Collections.Generic;
 
 namespace CI.WSANative.Notification
 {
@@ -23,16 +23,13 @@ namespace CI.WSANative.Notification
         /// <summary>
         /// Shows a toast notfication
         /// </summary>
-        /// <param name="title">Title for the toast notification</param>
-        /// <param name="text">Text to show on the toast notification</param>
-        /// <param name="tag">Optional tag, toast notifications with the same tag will overwrite each other in the action centre - (null or empty if not needed)</param>
-        /// <param name="image">Image to show on the toast notification, specified as the location in the built uwp solution e.g ms-appx:///Assets/Square150x150Logo.png - (null or don't specify if not needed)</param>
-        public static void ShowToastNotification(string title, string text, string tag, Uri image = null)
+        /// <param name="notification">The notification to show</param>
+        public static void ShowToastNotification(WSAToastNotification notification)
         {
 #if ENABLE_WINMD_SUPPORT
             XmlDocument toastXml = null;
 
-            if (image != null)
+            if (notification.Image != null)
             {
                 toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastImageAndText02);
 
@@ -40,7 +37,7 @@ namespace CI.WSANative.Notification
 
                 if (imageElements != null && imageElements.Length >= 1)
                 {
-                    ((XmlElement)imageElements[0]).SetAttribute("src", image.OriginalString);
+                    ((XmlElement)imageElements[0]).SetAttribute("src", notification.Image.OriginalString);
                 }
             }
             else
@@ -52,17 +49,17 @@ namespace CI.WSANative.Notification
 
             if (stringElements != null && stringElements.Length >= 2)
             {
-                stringElements[0].AppendChild(toastXml.CreateTextNode(title));
-                stringElements[1].AppendChild(toastXml.CreateTextNode(text));
+                stringElements[0].AppendChild(toastXml.CreateTextNode(notification.Title));
+                stringElements[1].AppendChild(toastXml.CreateTextNode(notification.Text));
 
                 ToastNotification toast = new ToastNotification(toastXml);
-#if UNITY_WSA_10_0
-                if(!string.IsNullOrEmpty(tag))
+
+                if(!string.IsNullOrEmpty(notification.Tag))
                 {
-                    toast.Tag = tag;
+                    toast.Tag = notification.Tag;
                 }
-#endif
-                ToastNotificationManager.CreateToastNotifier().Show(toast);
+
+               ToastNotificationManager.CreateToastNotifier().Show(toast);
             }
 #endif
         }
@@ -70,17 +67,13 @@ namespace CI.WSANative.Notification
         /// <summary>
         /// Shows a toast notification at a specific date and time
         /// </summary>
-        /// <param name="title">Title for the toast notification</param>
-        /// <param name="text">Text to show on the toast notification</param>
-        /// <param name="deliveryTime">The date and time that the toast notification should be displayed </param>
-        /// <param name="tag">Optional tag, toast notifications with the same tag will overwrite each other in the action centre - (null or empty if not needed)</param>
-        /// <param name="image">Image to show on the toast notification, specified as the location in the built uwp solution e.g ms-appx:///Assets/Square150x150Logo.png - (null or don't specify if not needed)</param>
-        public static void ShowScheduledToastNotification(string title, string text, DateTime deliveryTime, string tag, Uri image = null)
+        /// <param name="notification">The notification to schedule</param>
+        public static void ShowScheduledToastNotification(WSAScheduledToastNotification notification)
         {
 #if ENABLE_WINMD_SUPPORT
             XmlDocument toastXml = null;
 
-            if (image != null)
+            if (notification.Image != null)
             {
                 toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastImageAndText02);
 
@@ -88,7 +81,7 @@ namespace CI.WSANative.Notification
 
                 if (imageElements != null && imageElements.Length >= 1)
                 {
-                    ((XmlElement)imageElements[0]).SetAttribute("src", image.OriginalString);
+                    ((XmlElement)imageElements[0]).SetAttribute("src", notification.Image.OriginalString);
                 }
             }
             else
@@ -100,17 +93,64 @@ namespace CI.WSANative.Notification
 
             if (stringElements != null && stringElements.Length >= 2)
             {
-                stringElements[0].AppendChild(toastXml.CreateTextNode(title));
-                stringElements[1].AppendChild(toastXml.CreateTextNode(text));
+                stringElements[0].AppendChild(toastXml.CreateTextNode(notification.Title));
+                stringElements[1].AppendChild(toastXml.CreateTextNode(notification.Text));
 
-                ScheduledToastNotification toast = new ScheduledToastNotification(toastXml, new DateTimeOffset(deliveryTime));
-#if UNITY_WSA_10_0
-                if(!string.IsNullOrEmpty(tag))
+                ScheduledToastNotification toast = new ScheduledToastNotification(toastXml, new DateTimeOffset(notification.DeliveryTime));
+                toast.Id = notification.Id;
+
+                if(!string.IsNullOrEmpty(notification.Tag))
                 {
-                    toast.Tag = tag;
+                    toast.Tag = notification.Tag;
                 }
-#endif
+
                 ToastNotificationManager.CreateToastNotifier().AddToSchedule(toast);
+            }
+#endif
+        }
+
+        /// <summary>
+        /// Gets a list of the scheduled toast notifications - (only id, tag and deliveryTime will be returned for each notification)
+        /// </summary>
+        /// <returns>Scheduled toast notifications</returns>
+        public static List<WSAScheduledToastNotification> GetScheduledToastNotifications()
+        {
+            var notifications = new List<WSAScheduledToastNotification>();
+
+#if ENABLE_WINMD_SUPPORT
+            var notifier = ToastNotificationManager.CreateToastNotifier();
+            var scheduled = notifier.GetScheduledToastNotifications();
+
+            for (var i = 0; i < scheduled.Count; i++)
+            {
+                notifications.Add(new WSAScheduledToastNotification()
+                {
+                    Id = scheduled[i].Id,
+                    Tag = scheduled[i].Tag,
+                    DeliveryTime = scheduled[i].DeliveryTime.UtcDateTime
+                });
+            }
+#endif
+
+            return notifications;
+        }
+
+        /// <summary>
+        /// Remove a scheduled toast notification
+        /// </summary>
+        /// <param name="id">The id of the notification</param>
+        public static void RemoveScheduledToastNotification(string id)
+        {
+#if ENABLE_WINMD_SUPPORT
+            var notifier = ToastNotificationManager.CreateToastNotifier();
+            var scheduled = notifier.GetScheduledToastNotifications();
+
+            for (var i = 0; i < scheduled.Count; i++)
+            {
+                if (scheduled[i].Id == id)
+                {
+                    notifier.RemoveFromSchedule(scheduled[i]);
+                }
             }
 #endif
         }
